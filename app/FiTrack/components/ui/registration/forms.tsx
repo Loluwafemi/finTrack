@@ -107,7 +107,7 @@ class Bank extends Component{
                     <Text>Select Bank</Text>
                     <TextInput 
                     style={formStyle.formInput}
-                    placeholder='Davis'
+                    placeholder='Access Bank'
                     />
                 </View>
 
@@ -115,7 +115,7 @@ class Bank extends Component{
                     <Text>Account Number</Text>
                     <TextInput 
                     style={formStyle.formInput}
-                    placeholder='Jones'
+                    placeholder='12345678900'
                     />
                 </View>
 
@@ -123,7 +123,7 @@ class Bank extends Component{
                     <Text>Account Name</Text>
                     <TextInput 
                     style={formStyle.formInput}
-                    placeholder='Jones'
+                    placeholder='Davis Jones'
                     />
                 </View>
             </View>

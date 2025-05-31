@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
 
     horizontal: {
       margin: 8,
-      borderTopWidth: 2,
+      borderTopWidth: 0.4,
       borderColor: '#000000'
 
     }

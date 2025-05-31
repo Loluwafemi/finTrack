@@ -20,15 +20,7 @@ export default function RegistrationPage() {
 
           {/* tabs */}
           <View style={styles.form}>
-            {/* Use tab*/}
-            {/* <Tabs>
-              <TabSlot>
-                <TabTrigger name='personal' >
-                    <Text>Home</Text>
-                </TabTrigger>
-              </TabSlot>
-            </Tabs> */}
-
+            <Text style={styles.signup}>Sign Up</Text>
             <FormNav />
           </View>
       </View>
@@ -64,6 +56,14 @@ const styles = StyleSheet.create({
       backgroundColor: '#FEFCFD',
       marginBottom: 4,
       display: 'flex'
+    },
+    signup: {
+      fontSize: 25,
+      fontStyle: 'normal',
+      fontWeight: '300',
+      marginLeft: 5,
+      marginTop: 10,
+      marginBottom: 20
     }
     
 });
