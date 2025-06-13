@@ -7,9 +7,9 @@ import '~/global.css'
 import { Icon } from "@roninoss/icons";
 import { TransactionList } from "./transactionList";
 import { SelectList } from "react-native-dropdown-select-list";
-import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import { GrantFeatureList } from "./grantFeatureList";
 import { GrantFeatureGraph } from "./grantFeatureGraph";
+import { AcivityPage } from "./activitiesPage";
 
 export class UserHome extends Component{
     render(): ReactNode {
@@ -73,37 +73,6 @@ export class UserHome extends Component{
 
     }
 }
-
-// function DateManager() {
-//         const [date, setDate] = useState(new Date(1598051730000))
-//         const [mode, setMode] = useState('Date')
-//         const [show, setShow] = useState(false)
-
-//         const onChange = (event, selectedDate) => {
-//             const currentDate = selectedDate;
-//             setShow(false);
-//             setDate(currentDate);
-//         };
-
-//         const showMode = (currentMode) => {
-//             setShow(true);
-//             setMode(currentMode);
-//         };
-
-//         const showDatepicker = () => {
-//             showMode('date');
-//         };
-
-//         const showTimepicker = () => {
-//             showMode('time');
-//         };
-
-
-//     return (
-//         <Text>Hello</Text>
-//     )
-
-// }
 
 export class UserRecord extends Component{
     constructor(prop){
@@ -216,9 +185,7 @@ export class Acivity extends Component{
 
     render(): ReactNode {
         return (
-            <View style={{margin: 'auto'}}>
-                <Text>Activity</Text>
-            </View>
+            <AcivityPage />
         );
 
     }
@@ -230,8 +197,11 @@ export class Settings extends Component{
 
     render(): ReactNode {
         return (
-            <View style={{margin: 'auto'}}>
+            <View className="m-auto">
                 <Text>Settings</Text>
+                <Text>Backup</Text>
+                <Text>Generate Report</Text>
+                <Text>Export Report</Text>
             </View>
         );
 

@@ -38,6 +38,16 @@ export default function UsersDashboardIndex() {
                   title: '',
                   drawerLabel: 'Home'
                 }}/>
+
+                <Drawer.Screen name='App Settings' component={AppSettings} options={{
+                  title: '',
+                  drawerLabel: 'App Settings'
+                }}/>
+
+                <Drawer.Screen name='Profile Settings' component={ProfileSettings} options={{
+                  title: '',
+                  drawerLabel: 'Profile Settings'
+                }}/>
                 <Drawer.Screen name='About' component={AboutPage} 
                 options={{
                   title: '',
@@ -61,6 +71,39 @@ function AboutPage() {
     </View>
   )
 }
+
+
+function ProfileSettings() {
+  return (
+    <View className='m-auto'>
+      <Text>
+        Profile Settings Page
+      </Text>
+      <Text>Profile Picture</Text>
+      <Text>Name</Text>
+      <Text>Email</Text>
+      <Text>Password</Text>
+      <Text>Bank</Text>
+      <Text>Finances</Text>
+    </View>
+  )
+}
+
+
+function AppSettings() {
+  return (
+    <View className='m-auto'>
+      <Text>
+        App Settings Page
+      </Text>
+      <Text>Theme</Text>
+      <Text>Notification</Text>
+      <Text>Security, etc</Text>
+    </View>
+  )
+}
+
+
 
 function TabPage() {
   return (      
@@ -113,15 +156,6 @@ function TabPage() {
       );
 }
 
-
-function semiProfilePageOnModal() {
-  return (
-    <View style={style.semiprofile}>
-
-    </View>
-
-  );
-}
 
 
 const style = StyleSheet.create({
