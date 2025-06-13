@@ -1,0 +1,6 @@
+[submodule "app/figapp"]
+	path = app/figapp
+	url = https://github.com/Loluwafemi/figtrack
+[submodule "app/figtrack"]
+	path = app/figtrack
+	url = https://github.com/Loluwafemi/figtrack
