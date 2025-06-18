@@ -3,7 +3,11 @@ import { useRouter, Link } from 'expo-router';
 import { Text, View, StyleSheet, Button, TouchableOpacity, StatusBar } from 'react-native';
 import { ScrollView, TextInput } from 'react-native';
 import Checkbox from 'expo-checkbox';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Field, Formik } from 'formik';
+import { loginSchema } from '~/lib/func/auth';
+
+
 
 export default function Authentication() {
     const navigation = useRouter()
@@ -19,12 +23,25 @@ export default function Authentication() {
                     <View>
                         <Text style={[styles.header, styles.headerText]}>Welcome Back</Text>
                         <Text style={[styles.header, styles.headerDescription]}>Sign in to access your financial aid dashboard</Text>
+
+                        <Formik
+                          initialValues={{email: '', password: ''}}
+                          onSubmit={(res)=>{
+                            console.log(res);
+                          }}
+                          validationSchema={loginSchema}
+                        
+                        >{({handleSubmit, handleChange, handleBlur, values, errors})=>(
                         <View style={styles.form}>
                         <View style={styles.formItem}>
                             <Text>Email</Text>
+                            {/* <Field name="email" type="email" /> */}
                             <TextInput 
                             style={styles.formInput}
                             placeholder='name@university.edu.com'
+                            value={values.email}
+                            onBlur={handleBlur('email')}
+                            onChangeText={handleChange('email')}
                             />
                         </View>
                         <View style={styles.formItem}>
@@ -33,9 +50,15 @@ export default function Authentication() {
                             style={styles.formInput}
                             placeholder='********'
                             textContentType='newPassword'
-                                                
+                            value={values.password}
+                            onBlur={handleBlur('password')}
+                            onChangeText={handleChange('password')}
                             />
                         </View>
+                        {errors.email || errors.password? <Text className='text-red-500 font-bold px-2'>
+                          Invalid Credential!
+                        </Text>: ''}
+                        
                         <View style={[styles.formOptionsItems]}>
                             <View style={styles.formOptions}>
                                 <Checkbox style={ {margin: 3} } />
@@ -48,7 +71,11 @@ export default function Authentication() {
                         </View>
             
                         <View style={[styles.formOptionsItems]}>
-                            <TouchableOpacity style={styles.formSubmit}>
+                            <TouchableOpacity 
+                              onPress={(e)=>{
+                                handleSubmit(e)
+                              }}
+                              style={styles.formSubmit}>
                             <Text style={styles.formSubmitText}>Sign In</Text>
                             </TouchableOpacity>
                         </View>
@@ -65,6 +92,9 @@ export default function Authentication() {
                         </View>
                         
                         </View>
+                        )}
+                      </Formik>
+
             
                     </View>
             </View>

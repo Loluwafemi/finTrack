@@ -22,13 +22,15 @@ export default function UsersDashboardIndex() {
         <NavigationIndependentTree>
             <NavigationContainer>
               <Drawer.Navigator
+                
                 screenOptions={({navigation})=>({
                   headerLeft: ()=>{
                     return <TopNav navigation={navigation} />
                   },
                   drawerStyle: {
                     backgroundColor: 'pink',
-                  }
+                  },
+                  
                   
                 })}
                 
@@ -109,7 +111,7 @@ function TabPage() {
   return (      
         <NavigationIndependentTree>
           <Tab.Navigator 
-                initialRouteName='Records'
+                initialRouteName='Home'
                 safeAreaInsets={{bottom: 10, left: 0, right: 0, top: 0}}
                 screenLayout={({children, navigation})=>{
                   return (
