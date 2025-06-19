@@ -6,10 +6,7 @@ import { View } from 'react-native';
 export default function AuthRoot() {
 
   return (
-    <Stack 
-    screenLayout={()=>{
-      return <View></View>
-    }}
+    <Stack
     
     screenOptions={{
       title: ""

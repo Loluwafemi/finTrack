@@ -5,109 +5,127 @@ import { SelectList } from 'react-native-dropdown-select-list'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { BankList } from '../variables/banks';
 import { institutionList } from '../variables/institution';
+import { Formik } from 'formik';
+import { signupSchema } from '~/lib/func/auth';
 
 
-// define tabs here
+function Personal (
+    { validation }: any ){
+    return (
+        <View style={formStyle.form}>
 
-// Tab A: names, ...
-
-// Tab B: B1 institution / B2 non-institution: unavailble
-// B1 institution name, Level, matric Number, Department
-// B2 BVN / others 
-
-// Tab C: Bank name, Account Number, Account Name
-  
-
-class Personal extends Component{
-    
-    render(): ReactNode {
-        return (
-            <View style={formStyle.form}>
-                <View style={formStyle.formItem}>
-                    <Text>First Name</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='Davis'
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Last Name</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='Jones'
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Title</Text>
-                    <SelectList 
-                        setSelected={(val) => console.log(val)
-                        } 
-                        data={[
-                            {key:'Mrs', value:'Mrs'},
-                            {key:'Mr', value:'Mr'},
-                        ]} 
-                        save="value"
-                    />
-                </View>
+            <View style={formStyle.formItem}>
+                <Text>First Name</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder='Davis'
+                onBlur={validation.handleBlur('firstname')}
+                onChangeText={validation.handleChange('firstname')}
+                value={validation.values.firstname}
+                />
+                {validation.errors.firstname? <Text className='text-red-500 font-bold px-2'>
+                {validation.errors.firstname}
+                </Text>: ''}
             </View>
-            
-          );
-    }
+
+            <View style={formStyle.formItem}>
+                <Text>Last Name</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder='Jones'
+                onBlur={validation.handleBlur('lastname')}
+                onChangeText={validation.handleChange('lastname')}
+                value={validation.values.lastname}
+                />
+                {validation.errors.lastname? <Text className='text-red-500 font-bold px-2'>
+                {validation.errors.lastname}
+                </Text>: ''}
+            </View>
+
+            <View style={formStyle.formItem}>
+                <Text>Email</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder='youremail@email.com'
+                onBlur={validation.handleBlur('email')}
+                onChangeText={validation.handleChange('email')}
+                value={validation.values.email}
+                />
+                {validation.errors.email? <Text className='text-red-500 font-bold px-2'>
+                {validation.errors.email}
+                </Text>: ''}
+            </View>
+
+            <View style={formStyle.formItem}>
+                <Text>Password</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder='********'
+                onBlur={validation.handleBlur('password')}
+                onChangeText={validation.handleChange('password')}
+                value={validation.values.password}
+                />
+
+                {validation.errors.password? <Text className='text-red-500 font-bold px-2'>
+                {validation.errors.password}
+                </Text>: ''}
+            </View>
+        </View>
+    
+    );
 }
 
-class Organization extends Component{
-    organization: 'University' |'Company' | 'Individual' | ''
-    constructor(props:any){
-        super(props);
-        this.state = {selectedOrganization: ''};
-        this.organization = ''
-    }
+// organization page
+function Organization ({ validation }: any){
 
-    changeOraganization(stateValue){
+    let organization: 'Institution' |'Company' | 'Individual' | '' = 'Individual';
+
+    const [organizationSelected, switchOraganization] = useState('')
+
+    const changeOraganization = (stateValue: typeof organization)=>{
         if (stateValue) {            
-            this.setState({selectedOrganization: stateValue})
+            switchOraganization(stateValue)
+            validation.setFieldValue('organization', stateValue)
+            validation.setFieldTouched('organization', true)
+            console.log("working", validation.values.organization);
         }
     }
 
-
-    
-    render(): ReactNode {
         return (
             <View style={formStyle.form}>
                 <View style={formStyle.formItem}>
                     <Text>Select Organization</Text>
                     <SelectList 
-                        setSelected={(val) => {
-                            this.changeOraganization(val)
+                        setSelected={(val:any) => {                            
+                            changeOraganization(val)
                         }
                         } 
                         data={[
-                            {key:'University', value:'University', disabled: false},
+                            {key:'Institution', value:'Institution', disabled: true},
                             {key:'Individual', value:'Individual', disabled: false},
-                            {key:'Company', value:'Company'},
+                            {key:'Business', value:'Business', disabled: true},
                         ]} 
-                        save="value"
+                        save="key"
+                        
                     />
+                    {validation.errors.organization || validation.values.organization === undefined? <Text className='text-red-500 font-bold px-2'>
+                    Required
+                    </Text>: ''}
                 </View>
-
                 {
-                    this.state.selectedOrganization == 'Company' ? <Company /> :
-                    this.state.selectedOrganization == 'Individual' ? <Individual /> :
-                    this.state.selectedOrganization == 'University'? <Institution />: 
+                    organizationSelected == 'Business' ? <Company validation={validation} /> :
+                    organizationSelected == 'Individual' ? <Individual validation={validation} /> :
+                    organizationSelected == 'Institution'? <Institution validation={validation} />: 
                 ''
                 }
             </View>
 
             
           );
-    }
 }
 
-
-class Institution extends Component {
-    render(): ReactNode {
+// for organization
+function Institution ({ validation }: any) {
         return (
             <View style={formStyle.form}>
                 <View style={formStyle.formItem}>
@@ -149,13 +167,10 @@ class Institution extends Component {
             </View>
             
           );
-    }
 }
 
-
-
-class Individual extends Component {
-    render(): ReactNode {
+// for organization
+function Individual ({ validation }: any) {
         return (
             <View style={formStyle.form}>
                 {/* <View style={formStyle.formItem}>
@@ -192,67 +207,87 @@ class Individual extends Component {
                 <Text style={{'textAlign': 'center', padding: 4}}>Proceed to the next page</Text>
             </View>
             
-          );
-    }
+        );
 }
 
-class Company extends Component {
-    render(): ReactNode {
-        return (
-            <View style={formStyle.form}>
-                <View style={formStyle.formItem}>
-                    <Text>Name</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='e.g Finance & Grant Tracker'
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Address</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder=''
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Phone Number</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder=''
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Registration Number</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder=''
-                    />
-                </View>
+// for organization
+function Company ({ validation }: any) {
+    return (
+        <View style={formStyle.form}>
+            <View style={formStyle.formItem}>
+                <Text>Name</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder='e.g Finance & Grant Tracker'
+                />
             </View>
-            
-          );
-    }
+
+            <View style={formStyle.formItem}>
+                <Text>Address</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder=''
+                />
+            </View>
+
+            <View style={formStyle.formItem}>
+                <Text>Phone Number</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder=''
+                />
+            </View>
+
+            <View style={formStyle.formItem}>
+                <Text>Registration Number</Text>
+                <TextInput 
+                style={formStyle.formInput}
+                placeholder=''
+                />
+            </View>
+        </View>
+        
+        );
 }
 
-class Bank extends Component{
-    render(): ReactNode {
+function Bank ({ validation }){
+        let [selectedBank, changeBank ] = useState('')
+
+        const changeSelectedBank = (bank)=>{
+            changeBank(bank)
+        }
         return (
             
             <View style={formStyle.form}>
                 <View style={formStyle.formItem}>
                     <Text>Select Bank</Text>
-                    <SelectList setSelected={(val) => {
-                            console.log("bank selected: ", val);
-                            
-                        }
-                        } 
+                    <SelectList 
+                        setSelected={(val) => {
+                                changeSelectedBank(val)
+                                validation.setFieldTouched('bank', true)
+                                validation.setFieldValue('bank', val)
+                            }}
                         data={BankList.list()}
-                        save="value">
-
+                        save="key"
+                        placeholder='Select Bank'
+                        >
                     </SelectList>
+                </View>
+
+                <View style={formStyle.formItem}>
+                    <Text>Bank</Text>
+                    <TextInput 
+                    style={formStyle.formInput}
+                    placeholder=''
+                    readOnly={true}
+                    onBlur={validation.handleBlur('bank')}
+                    onChangeText={validation.handleChange('bank')}
+                    value={selectedBank}
+
+                    />
+                    {validation.errors.bank? <Text className='text-red-500 font-bold px-2'>
+                    {validation.errors.bank}
+                    </Text>: ''}
                 </View>
 
                 <View style={formStyle.formItem}>
@@ -260,7 +295,13 @@ class Bank extends Component{
                     <TextInput 
                     style={formStyle.formInput}
                     placeholder='12345678900'
+                    onBlur={validation.handleBlur('accountnumber')}
+                    onChangeText={validation.handleChange('accountnumber')}
+                    value={validation.values.accountnumber}
                     />
+                    {validation.errors.accountnumber? <Text className='text-red-500 font-bold px-2'>
+                    {validation.errors.accountnumber}
+                    </Text>: ''}
                 </View>
 
                 <View style={formStyle.formItem}>
@@ -268,15 +309,19 @@ class Bank extends Component{
                     <TextInput 
                     style={formStyle.formInput}
                     placeholder='Davis Jones'
+                    onBlur={validation.handleBlur('accountname')}
+                    onChangeText={validation.handleChange('accountname')}
+                    value={validation.values.accountname}
                     />
+
+                    {validation.errors.accountname? <Text className='text-red-500 font-bold px-2'>
+                    {validation.errors.accountname}
+                    </Text>: ''}
                 </View>
             </View>
             
           );
-    }
 }
-
-
 
 export class FormNav extends Component{
     limit: number
@@ -301,44 +346,75 @@ export class FormNav extends Component{
     }
     
     render(): ReactNode {
-    
+        const validationSchema = signupSchema
         return (
 
             <SafeAreaProvider>
             <SafeAreaView edges={['top']} style={style.container}>
-            <ScrollView style={formStyle.form}>
 
-            <View>
-                    { 
-                    this.state.currentScreen == 3? <Bank/> :
-                    this.state.currentScreen == 2? <Organization/> :
-                    this.state.currentScreen == 1? <Personal/> :
-                    this.state.currentScreen == 1? <Personal/> :
+            <ScrollView>
+            <Formik
+                initialValues={{ }}
+                onSubmit={(res)=>{
+                        console.log(res);
+                    }}
+                
+                    
+                validationSchema={signupSchema}
+            >{(formObjects)=>(
+                <ScrollView style={formStyle.form}>
+
+
+                    <View>
+                    {
+                    this.state.currentScreen == 3? <Bank validation={formObjects}/> :
+                    this.state.currentScreen == 2? <Organization validation={formObjects} /> :
+                    // this.state.currentScreen == 1? <Personal/> :
+                    this.state.currentScreen == 1? <Personal validation={formObjects} /> :
                     <Text>Done</Text>
                     }
-                </View>
+                    </View>
 
-                <View style={style.navigationsBody}>
-                <TouchableOpacity 
-                    onPress={()=> {
-                        this.decreaseNav(this.state)
+                    <View className='flex flex-row justify-between mx-1'>
+                    <TouchableOpacity 
+                        onPress={()=> {
+                            this.decreaseNav(this.state)
+                        }}
+                        // go back
+                    style={[style.navigator, style.navBack]}>
+                    <Text style={[style.navigatorText, style.navigatorBack]}> Back</Text>
+                    </TouchableOpacity>
+            
+                    <TouchableOpacity 
+                        onPress={()=> {
+                            this.increaseNav(this.state)
+                        }}
+                        // go forward
+                    style={[style.navigator, style.navContinue]}>
+                    <Text style={style.navigatorText}>Continue</Text>
+                    </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity 
+                    // disabled={true}
+                    onPress={(form)=>{
+                        formObjects.handleSubmit(form)
+                        
                     }}
-                    // go back
-                style={[style.navigator, style.navBack]}>
-                <Text style={[style.navigatorText, style.navigatorBack]}> Back</Text>
-                </TouchableOpacity>
-        
-                <TouchableOpacity 
-                    onPress={()=> {
-                        this.increaseNav(this.state)
-                    }}
-                    // go forward
-                style={[style.navigator, style.navContinue]}>
-                <Text style={style.navigatorText}>Continue</Text>
-                </TouchableOpacity>
-                </View>
+                    className=' bg-black flex flex-row justify-center rounded-md p-2 m-4'
+                    >
+                    <Text style={style.navigatorText}>Submit</Text>
+                    </TouchableOpacity>
+
+                </ScrollView>
+
+            )}
+
+
+            </Formik>
             </ScrollView>
-                </SafeAreaView>
+
+            </SafeAreaView>
             </SafeAreaProvider>
 
         );
@@ -350,14 +426,8 @@ export class FormNav extends Component{
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: StatusBar.currentHeight,
+        // paddingTop: StatusBar.currentHeight,
       },
-    navigationsBody: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        borderRadius: 3
-    },
     navigator: {
         padding: 8
     },
