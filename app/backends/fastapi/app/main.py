@@ -8,8 +8,12 @@ Make sure an auth function is defined to authenticate user before an activity.
 from typing import Union
 
 from fastapi import FastAPI
+from lib.routes import router
 
 app = FastAPI()
+
+
+app.include_router(router)
 
 
 @app.get("/")
