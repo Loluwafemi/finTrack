@@ -6,6 +6,7 @@ const CUSTOM_BRAND_COLORS = {
   accent: '#00ADB5',
   text: '#EEEEEE',
   warning: '#CF0F47',
+  success: '#10B981',
   white: '#FFFFFF',
   black: '#000000',
 } as const;
@@ -25,6 +26,7 @@ const FIGTRACK_COLORS = {
     root: CUSTOM_BRAND_COLORS.majorBackground,
     card: CUSTOM_BRAND_COLORS.cardBackground,
     destructive: CUSTOM_BRAND_COLORS.warning,
+    success: CUSTOM_BRAND_COLORS.success,
     primary: CUSTOM_BRAND_COLORS.accent,
     accent: CUSTOM_BRAND_COLORS.accent,
     text: CUSTOM_BRAND_COLORS.text,
@@ -44,6 +46,7 @@ const FIGTRACK_COLORS = {
     root: '#1A1E24',
     card: CUSTOM_BRAND_COLORS.cardBackground,
     destructive: CUSTOM_BRAND_COLORS.warning,
+    success: CUSTOM_BRAND_COLORS.success,
     primary: CUSTOM_BRAND_COLORS.accent,
     accent: CUSTOM_BRAND_COLORS.accent,
     text: CUSTOM_BRAND_COLORS.text,

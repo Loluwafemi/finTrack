@@ -123,14 +123,20 @@ function TabPage() {
   return (
     <NavigationIndependentTree>
       <Tab.Navigator
-        initialRouteName="Records"
+        initialRouteName="Home"
         safeAreaInsets={{ bottom: 0, left: 0, right: 0, top: 0 }}
         screenLayout={({ children, navigation }) => {
           return (
             <SafeAreaProvider>
               <SafeAreaView
                 edges={['top']}
-                style={{ height: '100%', backgroundColor: colors.background, padding: 4 }}
+                style={{ 
+                  height: '100%', 
+                  backgroundColor: colors.background, 
+                  paddingHorizontal: 16,
+                  paddingTop: 8,
+                  paddingBottom: 4
+                }}
               >
                 {children}
               </SafeAreaView>
@@ -144,34 +150,36 @@ function TabPage() {
           headerShown: false,
           tabBarStyle: {
             backgroundColor: colors.card,
-            borderTopWidth: 1,
-            borderTopColor: colors.border,
-            height: Platform.OS === 'ios' ? 85 : 65,
-            paddingBottom: Platform.OS === 'ios' ? 25 : 10,
-            paddingTop: 8,
-            paddingHorizontal: 16,
-            elevation: 8,
-            shadowColor: 'rgba(0, 0, 0, 0.1)',
+            borderTopWidth: 0,
+            height: Platform.OS === 'ios' ? 90 : 70,
+            paddingBottom: Platform.OS === 'ios' ? 28 : 12,
+            paddingTop: 12,
+            paddingHorizontal: 20,
+            elevation: 12,
+            shadowColor: 'rgba(0, 0, 0, 0.15)',
             shadowOffset: {
               width: 0,
-              height: -2,
+              height: -4,
             },
-            shadowOpacity: 0.1,
-            shadowRadius: 8,
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
           },
           tabBarActiveTintColor: CUSTOM_BRAND_COLORS.accent,
           tabBarInactiveTintColor: colors.textSecondary,
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: '600',
-            marginTop: 4,
+            marginTop: 6,
+            letterSpacing: 0.3,
           },
           tabBarIconStyle: {
-            marginBottom: 2,
+            marginBottom: 0,
           },
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
-            const iconSize = focused ? 28 : 24;
+            const iconSize = focused ? 26 : 22;
 
             if (route.name === 'Home') {
               iconName = focused ? 'home-circle' : 'home-circle-outline';
@@ -188,10 +196,11 @@ function TabPage() {
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: focused ? hexToRgba(CUSTOM_BRAND_COLORS.accent, 0.15) : 'transparent',
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: focused ? hexToRgba(CUSTOM_BRAND_COLORS.accent, 0.12) : 'transparent',
+                  transform: [{ scale: focused ? 1.05 : 1 }],
                 }}
               >
                 <Icon

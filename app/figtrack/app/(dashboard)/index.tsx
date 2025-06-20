@@ -112,7 +112,7 @@ function TabPage() {
   return (
     <NavigationIndependentTree>
       <Tab.Navigator
-        initialRouteName="Records"
+        initialRouteName="Home"
         safeAreaInsets={{ bottom: 0, left: 0, right: 0, top: 0 }}
         screenLayout={({ children, navigation }) => {
           return (

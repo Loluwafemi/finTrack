@@ -7,7 +7,7 @@ export default function BudgetCategoryDropList(userGrant?:any) {
     return (
         <SelectList
         placeholder="Select Budget Category" 
-        setSelected={(val) => {
+        setSelected={(val: string) => {
             console.log(val);
             
         }
