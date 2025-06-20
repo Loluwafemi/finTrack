@@ -139,7 +139,7 @@ function TabPage() {
             paddingTop: 8,
             paddingHorizontal: 16,
             elevation: 8,
-            shadowColor: CUSTOM_BRAND_COLORS.black,
+            shadowColor: 'rgba(0, 0, 0, 0.1)',
             shadowOffset: {
               width: 0,
               height: -2,
