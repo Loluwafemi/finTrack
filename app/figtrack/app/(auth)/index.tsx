@@ -6,214 +6,152 @@ import Checkbox from 'expo-checkbox';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Field, Formik } from 'formik';
 import { loginSchema } from '~/lib/func/auth';
+import { 
+  CUSTOM_BRAND_COLORS, 
+  globalStyles, 
+  textStyles, 
+  buttonStyles, 
+  inputStyles, 
+  layoutStyles, 
+  shadowStyles 
+} from '~/theme';
 
 
 
 export default function Authentication() {
     const navigation = useRouter()
         return (
-
-            // <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-            <ScrollView>
-            <View style={styles.login}>
-                    <Text>
-                        Login Page
-                    </Text>
-                    <View>
-                        <Text style={[styles.header, styles.headerText]}>Welcome Back</Text>
-                        <Text style={[styles.header, styles.headerDescription]}>Sign in to access your financial aid dashboard</Text>
+            <View style={styles.mainContainer}>
+                <StatusBar barStyle="light-content" backgroundColor={CUSTOM_BRAND_COLORS.majorBackground} />
+                <SafeAreaView style={styles.safeArea}>
+                    <ScrollView 
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={[globalStyles.card, shadowStyles.medium, styles.loginCard]}>
+                    <View style={[layoutStyles.center, { marginBottom: 32 }]}>
+                        <Text style={[textStyles.title, { fontSize: 28, textAlign: 'center' }]}>Welcome Back</Text>
+                        <Text style={[textStyles.bodySecondary, { textAlign: 'center', marginTop: 8 }]}>Sign in to access your financial aid dashboard</Text>
+                    </View>
 
                         <Formik
                           initialValues={{email: '', password: ''}}
                           onSubmit={(res)=>{
                             console.log(res);
+                            // For development: Navigate to dashboard on any submit
+                            navigation.push('/(dashboard)');
                           }}
                           validationSchema={loginSchema}
                         
                         >{({handleSubmit, handleChange, handleBlur, values, errors})=>(
-                        <View style={styles.form}>
-                        <View style={styles.formItem}>
-                            <Text>Email</Text>
-                            {/* <Field name="email" type="email" /> */}
+                        <View style={{ width: '100%' }}>
+                        <View style={inputStyles.container}>
+                            <Text style={inputStyles.label}>Email</Text>
                             <TextInput 
-                            style={styles.formInput}
+                            style={inputStyles.input}
                             placeholder='name@university.edu.com'
+                            placeholderTextColor='#B8B8B8'
                             value={values.email}
                             onBlur={handleBlur('email')}
                             onChangeText={handleChange('email')}
+                            keyboardType='email-address'
+                            autoCapitalize='none'
                             />
                         </View>
-                        <View style={styles.formItem}>
-                            <Text>Password</Text>
+                        <View style={inputStyles.container}>
+                            <Text style={inputStyles.label}>Password</Text>
                             <TextInput 
-                            style={styles.formInput}
-                            placeholder='********'
-                            textContentType='newPassword'
+                            style={inputStyles.input}
+                            placeholder='Enter your password'
+                            placeholderTextColor='#B8B8B8'
+                            secureTextEntry
                             value={values.password}
                             onBlur={handleBlur('password')}
                             onChangeText={handleChange('password')}
                             />
                         </View>
-                        {errors.email || errors.password? <Text className='text-red-500 font-bold px-2'>
-                          Invalid Credential!
-                        </Text>: ''}
+                        {errors.email || errors.password ? (
+                          <Text style={[textStyles.alert, { marginVertical: 8, textAlign: 'center' }]}>
+                            Invalid Credential!
+                          </Text>
+                        ) : null}
                         
-                        <View style={[styles.formOptionsItems]}>
-                            <View style={styles.formOptions}>
-                                <Checkbox style={ {margin: 3} } />
-                                <Text>Remember me</Text>
+                        <View style={[layoutStyles.rowBetween, { marginVertical: 16 }]}>
+                            <View style={layoutStyles.row}>
+                                <Checkbox 
+                                  style={{ marginRight: 8 }} 
+                                  color={CUSTOM_BRAND_COLORS.accent}
+                                />
+                                <Text style={textStyles.bodySecondary}>Remember me</Text>
                             </View>
             
-                            <View style={styles.formOptions}>
-                                <Link href={'./forgot'}>Forgot password?</Link>
-                            </View>
+                            <Link href={'./forgot'}>
+                              <Text style={[textStyles.bodySecondary, { color: CUSTOM_BRAND_COLORS.accent }]}>Forgot password?</Text>
+                            </Link>
                         </View>
             
-                        <View style={[styles.formOptionsItems]}>
-                            <TouchableOpacity 
-                              onPress={(e)=>{
-                                handleSubmit(e)
-                              }}
-                              style={styles.formSubmit}>
-                            <Text style={styles.formSubmitText}>Sign In</Text>
-                            </TouchableOpacity>
+                        <TouchableOpacity 
+                          onPress={(e)=>{
+                            // For development: Navigate directly to dashboard
+                            navigation.push('/(dashboard)');
+                          }}
+                          style={[buttonStyles.primary, { width: '100%', marginVertical: 8 }]}>
+                          <Text style={buttonStyles.primaryText}>Sign In</Text>
+                        </TouchableOpacity>
+            
+                        <View style={[styles.divider, { marginVertical: 24 }]}>
                         </View>
             
-                        <View style={[styles.horizontal]}>
-                        </View>
-            
-                        <View style={[styles.formOptionsItems]}>
-                            <TouchableOpacity style={styles.formRegister}
-                            onPress={()=> navigation.navigate('./signup')}
-                            >
-                            <Text style={styles.formRegisterText}>Sign Up</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity 
+                          style={[buttonStyles.secondary, { width: '100%' }]}
+                          onPress={()=> navigation.navigate('./signup')}
+                        >
+                          <Text style={buttonStyles.secondaryText}>Create Account</Text>
+                        </TouchableOpacity>
                         
                         </View>
                         )}
                       </Formik>
-
-            
-                    </View>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
             </View>
-
-            </ScrollView>
-            </SafeAreaView>
-            // </SafeAreaProvider>
             
         );
 }
 
 
 const styles = StyleSheet.create({
-    body: {
-        display:'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        // height: '100%'
-    },
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        height: '100%',
-        backgroundColor: 'pink',
-        margin: 5
-      },
-    login: {
-      display: 'flex',
-      alignItems: 'center',
-      padding: 2,
-      borderWidth: 1,
-      borderRadius: 2,
-      borderColor: '#6B6B6B',
-      margin: 1,
-      width: 'auto'
-    },
-    
-    header: {
-        textAlign: 'center',
-    },
-    
-    headerText: {
-      fontWeight: '800',
-      fontSize: 20
-    },
-    headerDescription: {
-      fontSize: 12
-    },
-
-    form: {
-      margin: 20,
-      height: 'auto',
-    },
-    formItem: {
-      margin: 6
-    },
-    formInput: {
-      borderColor: '#000000',
-      borderWidth: .5,
-      width: 'auto',
-      height: 'auto',
-      padding: 5,
-      borderRadius: 3
-    },
-    formOptions: {
-      display: 'flex',
-      // justifyContent: 'space-between',
-      alignItems: 'center',
-      flexDirection: 'row',
-      marginTop: 3,
-    },
-    formOptionsItems: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexDirection: 'row',
-      marginTop: 3,
-      marginRight: 6,
-      marginLeft: 6
-    },
-    formSubmit: {
-      width: 300,
-      backgroundColor: '#000000',
-      height: 30,
-      display: 'flex',
-      justifyContent: 'center',
-      flexDirection: 'row',
-      borderRadius: 2
-    },
-    formSubmitText: {
-      color: '#FEFCFD',
-      padding: 4
-    },
-
-    formRegister: {
-      width: 300,
-      backgroundColor: '#FEFCFD',
-      height: 30,
-      display: 'flex',
-      justifyContent: 'center',
-      flexDirection: 'row',
-      borderRadius: 2,
-      borderColor: '#000000',
-      borderWidth: 1,
-      marginTop: 3
-    },
-    formRegisterText: {
-      color: '#000000',
-      padding: 4
-    },
-
-    horizontal: {
-      margin: 8,
-      borderTopWidth: 0.4,
-      borderColor: '#000000'
-
-    }
-    
+  mainContainer: {
+    flex: 1,
+    backgroundColor: CUSTOM_BRAND_COLORS.majorBackground,
+  },
+  
+  safeArea: {
+    flex: 1,
+    backgroundColor: CUSTOM_BRAND_COLORS.majorBackground,
+  },
+  
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingBottom: 40, // Extra padding for phone navigation area
+    minHeight: '100%',
+  },
+  
+  loginCard: {
+    width: '90%',
+    maxWidth: 400,
+    padding: 32,
+    backgroundColor: CUSTOM_BRAND_COLORS.cardBackground,
+    marginBottom: 20, // Space above phone navigation
+  },
+  
+  divider: {
+    height: 1,
+    backgroundColor: '#4A525C',
+    width: '100%',
+  },
 });
