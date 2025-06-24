@@ -1,16 +1,43 @@
 import * as React from 'react';
 import { useRouter, Link } from 'expo-router';
-import { Text, View, StyleSheet, Button, TouchableOpacity, StatusBar } from 'react-native';
-import { ScrollView, TextInput } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity,ScrollView, TextInput } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Field, Formik } from 'formik';
+import { Formik } from 'formik';
 import { loginSchema } from '~/lib/func/auth';
+import { SessionUser, signinREQUEST } from '~/lib/server/server';
 
 
 
 export default function Authentication() {
     const navigation = useRouter()
+
+        // fetching session
+        const [session, setSession] = React.useState(null)
+        const [status, setStatus] = React.useState(false)
+
+        React.useEffect(()=>{
+          const getSession = async () => {
+            try {
+              const response = await SessionUser()
+              console.log(response);
+              
+              if (response.status) {
+                setSession(response.data)
+                setStatus(true)
+              }else{
+                setSession(null)
+                setStatus(false)
+              }
+            } catch (error) {
+              setStatus(false)
+            }
+          };
+          getSession();
+        }, [])
+
+        // end fetch
+    
         return (
 
             // <SafeAreaProvider>
@@ -26,12 +53,17 @@ export default function Authentication() {
 
                         <Formik
                           initialValues={{email: '', password: ''}}
-                          onSubmit={(res)=>{
-                            console.log(res);
+                          onSubmit={async (res, {setErrors})=>{
+                            const response = await signinREQUEST(res)
+                            if (!response.status) {
+                              await setErrors({email: 'error', password: 'error'})
+                            }else{
+                              navigation.navigate('/(dashboard)')
+                            }
                           }}
                           validationSchema={loginSchema}
                         
-                        >{({handleSubmit, handleChange, handleBlur, values, errors})=>(
+                        >{({handleSubmit, handleChange, handleBlur, values, errors, isValidating})=>(
                         <View style={styles.form}>
                         <View style={styles.formItem}>
                             <Text>Email</Text>
@@ -73,10 +105,21 @@ export default function Authentication() {
                         <View style={[styles.formOptionsItems]}>
                             <TouchableOpacity 
                               onPress={(e)=>{
-                                handleSubmit(e)
+                                handleSubmit(e)                                
                               }}
                               style={styles.formSubmit}>
                             <Text style={styles.formSubmitText}>Sign In</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* make sure to delete later */}
+                        <View style={[styles.formOptionsItems]}>
+                            <TouchableOpacity 
+                              onPress={(e)=>{
+                                handleSubmit(e)                                
+                              }}
+                              style={styles.formSubmit}>
+                            <Text style={styles.formSubmitText}>Log Out</Text>
                             </TouchableOpacity>
                         </View>
             

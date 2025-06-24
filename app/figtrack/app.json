@@ -12,7 +12,8 @@
     "plugins": [
       "expo-router",
       "react-native-edge-to-edge",
-      "expo-document-picker"
+      "expo-document-picker",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

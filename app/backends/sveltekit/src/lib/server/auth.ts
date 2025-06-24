@@ -2,8 +2,9 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import { db } from '$lib/server/db';
+import db from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
+
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -17,25 +18,37 @@ export function generateSessionToken() {
 
 export async function createSession(token: string, userId: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	
 	const session: table.Session = {
 		id: sessionId,
-		userId,
+		userId: userId,
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30)
 	};
 	await db.insert(table.session).values(session);
+
+
 	return session;
 }
+
 
 export async function validateSessionToken(token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const [result] = await db
 		.select({
 			// Adjust user table here to tweak returned data
-			user: { id: table.user.id, username: table.user.username },
-			session: table.session
+			user: { 
+				userid: table.user.userid, 
+				username: table.user.username,
+				status: table.user.status,
+				firstname: table.user.firstname,
+				lastname: table.user.lastname,
+				email: table.user.email,
+				accounttype: table.user.accounttype
+			},
+			session: table.session,
 		})
 		.from(table.session)
-		.innerJoin(table.user, eq(table.session.userId, table.user.id))
+		.innerJoin(table.user, eq(table.session.userId, table.user.userid))
 		.where(eq(table.session.id, sessionId));
 
 	if (!result) {

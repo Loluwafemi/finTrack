@@ -38,3 +38,35 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+<!-- creating certificate for the system: must be private -->
+
+1. openssl genrsa -out ./cert/root-ca.private.pem 2048
+
+or 
+
+1. mkcert figcert https://172.21.208.1:3000
+2. openssl req -x509 -new -nodes -days 100 -key ./cert/figcert+1-key.pem -out ./cert/figcert+1.pem -subj "/C=US/O=Debug certificate/CN=localhost" -extensions v3_ca -config ./cert/openssl_config.txt
+
+3. openssl x509 -outform der -in ./cert/server.crt -out ./cert/debug_certificate.crt
+
+<!-- 4. http-server . ==ssl --cert root-ca.cert.pem --key ./cert/root-ca.private.pem -->
+
+
+
+First Time Setup: Run `npm install` and then `npm run cert`.
+
+
+or
+
+npx -y mkcert-cli --outDir ./cert --cert server.crt --key server.key
+
+
+adb reverse tcp:8080 tcp:8080
+
+
+
+## Reverse the port to ensure the emulator gets access accross 
+
+
+netsh interface portproxy add v4tov4 listenport=8080 listenaddress=172.17.192.1 connectport=4044 protocol=tcp

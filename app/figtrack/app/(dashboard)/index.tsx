@@ -144,7 +144,6 @@ function TabPage() {
                         }else if (route.name === 'Settings') {
                           iconName = focused ? 'cog' : 'cog-outline';
                         }
-                        // You can return any component that you like here!
                         return <Icon name={iconName} size={size} color={color} />;
                       },
                 }
