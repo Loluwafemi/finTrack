@@ -125,8 +125,22 @@ export class User {
         transaction = await db.query.user.findMany({
             with: {}
         })
+
         return transaction
     }
+
+
+    async find(userid:string){
+        let transaction = await db.query.user.findFirst({
+            where: eq(userid, user.userid)
+        })
+
+        if(!transaction) return {status: false, message: "user does not exist"}
+
+        return { status: true, message: "user found", data: transaction }
+    }
+
+
 
     async validate(email:string| any, password:string){
         let transaction;
@@ -169,4 +183,6 @@ export class User {
         return transaction
     }
 
+
+    // the following methods will extract data as query. as many as possible
 }

@@ -1,13 +1,15 @@
 import { SelectList } from "react-native-dropdown-select-list";
 
-export default function BudgetExpenseDropList(selectedBudget?:any) {
+export default function BudgetExpenseDropList({ExpensesFromBudget, selectedBudget}) {
     
+    const ListOfBudget:[] = ExpensesFromBudget
+
+
     return (
         <SelectList
         placeholder="Select Budget Category" 
         setSelected={(val) => {
-            console.log(val);
-            
+            selectedBudget(val)
         }
         } 
         data={[

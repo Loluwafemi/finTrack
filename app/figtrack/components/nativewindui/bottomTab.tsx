@@ -42,7 +42,7 @@ export function UserHome(){
         gettTransactions();
     }, [])
 
-    console.log(user);
+    // console.log(user);
     
 
     return (
@@ -143,7 +143,7 @@ export function UserRecord(){
         changeView(!isChart)
     }
     
-    if (budget.length > 0) {
+    if (budget.length == 0) {
         return (
             <View className="p-2">
                 <Text className="text-sm font-bold">Budget Details</Text>
@@ -189,7 +189,7 @@ export function UserRecord(){
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={()=>{
-                                console.log("Open date");
+                                // console.log("Open date");
                             }}>
                             <Icon color="white" name="calendar-clock" 
                             size={20} />

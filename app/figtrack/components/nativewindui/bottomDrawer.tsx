@@ -5,7 +5,7 @@ import { Icon } from '@roninoss/icons';
 
 const windowHeight = Dimensions.get('window').height
 
-export function BottomSheet ({ children }: Readonly<{children: any}>) {
+export function BottomSheet ({ children, funcClose }: Readonly<{children: any, funcClose:any}>) {
         
     const [isVisible, changeVisibility] = useState(false)
 
@@ -15,9 +15,8 @@ export function BottomSheet ({ children }: Readonly<{children: any}>) {
 
     const closeBottomSheet = ()=>{
         changeVisibility(false)
-    }
+    }    
     
-
     return (
         <View>
             <TouchableHighlight

@@ -9,6 +9,19 @@ export const loginSchema =  Yup.object().shape({
  });
 
 
+export const newBudgetSchema = Yup.object().shape({
+    title: Yup.string().required("name the budget you plan to track!"),
+    category: Yup.string().required("select the budget category you plan to track!. or select custom if not found"),
+    customcategory: Yup.string().required("Required").optional(),
+    expenses: Yup.array().required("add at least 2 expense on this budget").min(2)
+    
+})
+
+export const expenseSchema = Yup.object().shape({
+    expenseCategory: Yup.string().required("Required"),
+    cost: Yup.string().required("Required"),
+})
+
 
 export const signupSchema = Yup.object().shape({
     firstname: Yup.string()

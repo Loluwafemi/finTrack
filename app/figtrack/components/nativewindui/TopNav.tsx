@@ -12,7 +12,7 @@ export function TopNav (props){
                   }}
                 >
                   <View className="h-[30px] w-[30px] rounded-full shadow border-[1px] m-[8px] ml-[10px] flex flex-row items-center justify-center">
-                      <Text>{String(props.username).charAt(0)}</Text>
+                      <Text className="font-bold text-lg text-gray-600">{String(props.username).charAt(0).toUpperCase()}</Text>
                   </View>
                 </TouchableHighlight>
                 <Text className="text-gray-700 text-lg font-bold">Welcome {props.firstname}!</Text>

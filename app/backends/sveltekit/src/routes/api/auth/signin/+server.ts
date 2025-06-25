@@ -16,14 +16,10 @@ export const POST: RequestHandler = async (event) => {
     
     const { email, password } = await responseClone.json()
 
-    
-    console.log(password);
-    
+        
     // validate data
     if (!email && !password) return json({  status: false, message: "Missing Parameter"})    
     // sign user in and redirect to /api
-
-    console.log(email);
     
     // validat user
     const UserModel = new User()

@@ -1,4 +1,5 @@
-import { api_origin_address, apiHeaders, backendORIGIN, getData, SessionUser } from "~/lib/server/server";
+import { useEffect } from "react";
+import { api_origin_address, apiHeaders, backendORIGIN, getData, saveBudget, SessionUser } from "~/lib/server/server";
 
 
 
@@ -8,14 +9,15 @@ import { api_origin_address, apiHeaders, backendORIGIN, getData, SessionUser } f
 */
 
 interface credential {
-    organization: 'string',
-    bank_name: string,
-    bank_account_number: string,
-    bank_account_name: string,
+    organization: 'string' | null,
+    bank_name: string | null,
+    bank_account_number: string | null,
+    bank_account_name: string | null,
     firstname: string | null,
     lastname: string | null,
     username: string | null,
     email: string | null,
+    userid: string | null
 }
 
 
@@ -29,19 +31,19 @@ async function hydrate() {
             method: 'GET',
             credentials: 'same-origin'
         })
-        const session = await request.json()
-
+        const session = await request.json()    
+            
         return session
-
 }
 
 export class Auth {
     authAlive: any
     isActive: boolean = false
+    // user: credential
     constructor(){
-        this.authAlive = hydrate()
         console.log("Initializing authententication for data");
     }
+
 
     async transactions(): Promise<{ tranactions: [], balance: string, spentInterval: string }>{
 
@@ -60,6 +62,31 @@ export class Auth {
         /* 
             run a fetch request to return all expense on the selected budget and then return the polished result in two phase: 
             [array object and chart data]
+
+
+
+            How data is presented
+            1. Budget: this acts as a pointer; a list of object {name, id} all registered budget under this account is returned and used present the first record. 
+            Using the budget id to fetch the expenses.
+
+            2. Expenses: this are generated list from the composite list.
+                Using the two [expense_object, expense_composition] to generate a list of presentable expense;
+                Presentable expense contains the:
+                    Expense name
+                    Expense cost amount
+                    Expense spent amount
+                    Expense spent amount in percentage against the cost amount
+                Note: this data presentation is for list only
+            
+            3. Balances: these are calculated amount which are generated from the Expenses and is classified into two:
+                x. Total Available
+                y. Total Spent
+                z. Total, started amount
+
+            Attempt:
+                1. Use Manual approach to manage these data
+                2. Use library: --
+
         */
         return { budgets: [], expenses: [], balances: {} }
     }
@@ -73,6 +100,10 @@ export class Auth {
        return {activities: []}
     }
 
+    async user():Promise<credential>{
+        let output: credential = await hydrate()        
+        return output
+    }
 
     static async isAlive(){
         
@@ -87,13 +118,14 @@ export class Auth {
         })
 
         const session = await request.json()
-
+        
         if (session){
             // redirect to dashboard.
             return { 
                 status: true,
                 message: "Valid Credential",
-                data: session }
+                data: session 
+            }
         }else{
             return {
                 status: false,
@@ -102,6 +134,18 @@ export class Auth {
             }
         }
         
+    }
+
+
+    async addBudget(expensedata: {title: string, type: string, expenses: []|any}){
+        // send all user's session as a payload
+        const sender = (await this.user())
+        
+        // save budget using user session and return status
+        const requestHandler = await saveBudget({auth: sender, data: expensedata})
+        // console.log(requestHandler);
+        
+        return requestHandler
     }
 
 

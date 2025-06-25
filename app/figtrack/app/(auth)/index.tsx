@@ -24,6 +24,7 @@ export default function Authentication() {
               
               if (response.status) {
                   setStatus(true)
+                  return navigation.navigate('/(dashboard)')
                 // setStatus(true)
               }else{
                 // setSession(null)

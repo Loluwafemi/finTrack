@@ -60,6 +60,6 @@ export class Budget{
 
         if (!transaction) return { status: false, message: "Unable to save user's budget." }
 
-        return transaction
+        return { status: true, message: "Successful", data: transaction }
     }
 }

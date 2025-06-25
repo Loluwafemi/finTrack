@@ -5,20 +5,22 @@ import { ScrollView, Text, TouchableHighlight, View } from "react-native";
 
 
 
-export default function ExpensListCard(expenses?:any) {
-    const arr = [1,2,3,4,5,6,7,8,9,0]
-    
-    return (
-                  <ScrollView className='m-2 px-2 flex flex-col h-[40vh]'>
-                    {arr.map((item)=>(
-                    <ExpenseItem key={item} />
+export default function ExpensListCard({expenses, parentAction}) {
+                
+        return (
+                <ScrollView className='m-2 px-2 flex flex-col h-[40vh]'>
+                    {expenses.map((item, index) => (
+                        <ExpenseItem actionChild={parentAction} index={index} values={item} key={item.id} />
                     ))}
-                  </ScrollView>
-    )
+
+                </ScrollView>
+        )
+
+
 }
 
 
-function ExpenseItem(value?:any) {
+function ExpenseItem({actionChild, values, index}) {
     
     return (
         <View className="rounded-md bg-gray-300 p-[8px] my-1">
@@ -28,14 +30,18 @@ function ExpenseItem(value?:any) {
                     Label
                     </Text>
                     <Text className="font-extrabold text-[16px] text-green-700">
-                    N30,000.00
+                    {values.cost}
                     </Text>
                 </View>
                 <View className="flex flex-row items-center justify-between">
                     <Text className="font-bold">
-                    Project Staff Salaries Partitioned to Paris
+                    {values.expenseCategory}
                     </Text>
-                    <TouchableHighlight>
+                    <TouchableHighlight 
+                        onPress={()=>{
+                            actionChild.remove(index)
+                        }}
+                    >
                         <Icon color="red" name="minus" />
                     </TouchableHighlight>
                 </View>

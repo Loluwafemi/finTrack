@@ -7,10 +7,10 @@ export const POST: RequestHandler = async (event) => {
 
     REQUESTAUTHENTICATOR(event)
     
-    if(event.locals.session) {
-        // console.log("session active");
-        return json({ status: false, message: "Session is active. Try log out to continue this transaction."})
-    }
+    // if(event.locals.session) {
+    //     // console.log("session active");
+    //     return json({ status: false, message: "Session is active. Try log out to continue this transaction."})
+    // }
 
     const {firstname, lastname, email, password, organization, bank_name, bank_account_name, bank_account_number} = await event.request.json()
 

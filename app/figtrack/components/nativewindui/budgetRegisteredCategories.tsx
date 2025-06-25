@@ -1,17 +1,20 @@
+import { useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 
 
 
-export default function BudgetCategoryDropList(userGrant?:any) {
+export default function BudgetCategoryDropList({ onSelect, validation }) {
+    // fetch all template on the system: seperated
     
+
     return (
         <SelectList
         placeholder="Select Budget Category" 
-        setSelected={(val) => {
-            console.log(val);
-            
-        }
-        } 
+        setSelected={(value)=>{
+            onSelect(value)
+            validation.setFieldTouched('category', true)
+            validation.setFieldValue('category', value)
+        }} 
         data={[
             {key:'Couples Budget', value:'Couples Budget', disabled: false},
             {key:'Grocery Budget', value:'Grocery Budget', disabled: false},
@@ -26,7 +29,7 @@ export default function BudgetCategoryDropList(userGrant?:any) {
             {key:'IT Budget', value:'IT Budget'},
             {key:'Clinical Budget', value:'Clinical Budget'},
             {key:'Moving Budget', value:'Moving Budget'},
-            {key:'Custom', value:'CUstom'},
+            {key:'Custom', value:'Custom'},
         ]} 
         save="value"
 />

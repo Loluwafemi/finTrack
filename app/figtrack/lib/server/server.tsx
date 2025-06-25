@@ -74,7 +74,7 @@ export async function signinREQUEST(data) {
 
         if (!responseClone.ok) {
 
-            console.log(responseClone.ok);
+            // console.log(responseClone.ok);
             
             return {
 
@@ -87,12 +87,12 @@ export async function signinREQUEST(data) {
         const {status, message } = await responseClone.json()
         
         
-        console.log(status, message);
+        // console.log(status, message);
         
         if (status){
             
             const cookies = responseClone.headers.get('set-cookie')
-            console.log(typeof cookies);
+            // console.log(typeof cookies);
             
             await storeData(api_origin_address, cookies)
             await getData(api_origin_address)   
@@ -110,7 +110,7 @@ export async function signinREQUEST(data) {
         }
     
     } catch (error) {
-        console.log("error: ", error);
+        // console.log("error: ", error);
         return {
             status: false,
             message: "Invalid Credential",
@@ -152,8 +152,9 @@ export async function signouREQUEST(data?:any) {
     
     if (status){
         // redirect to dashboard.
-        console.log("session has ended");
-        console.log("session: ", session);
+        // console.log("session has ended");
+        // console.log("session: ", session);
+        
         
         return {
             status: true,
@@ -247,4 +248,41 @@ export async function SessionUser() {
             data: null
         }
     }
+}
+
+
+export async function saveBudget(payload: {auth: any, data: any}) {
+
+    const cookie = await getData(api_origin_address)
+    
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
+
+    // breaking incoming data
+    const request = await fetch(`${backendORIGIN}/api/service/add`, {
+        headers: Object.fromEntries(apiHeaders.entries()),
+        body: JSON.stringify(payload),
+        method: 'POST',
+        credentials: 'same-origin'
+    })
+    
+    const responseClone = request.clone()
+    
+    const {status, message} = await responseClone.json()    
+
+    // console.log(status, message);
+    
+    if (status){     
+        
+        return {
+            status: true,
+            message: "Transaction successful",
+        }
+    }else{
+        return {
+            status: false,
+            message: message,
+            cookies: null
+        }
+    }
+
 }
