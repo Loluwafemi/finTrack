@@ -14,7 +14,7 @@ export const GET: RequestHandler = async (event) => {
 
     const response = new Response("Auth root")
 
-    console.log(response);
+    // console.log(response);
     
 
     return response;

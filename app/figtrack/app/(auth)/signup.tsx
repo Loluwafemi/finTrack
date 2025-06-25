@@ -2,9 +2,35 @@ import * as React from 'react';
 import { Link, useRouter } from 'expo-router';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { FormNav } from '~/components/registration/forms';
+import { Auth } from '~/lib/func/tailored';
 
 export default function SignUpAuthentication() {
-    const navigation = useRouter()
+      const navigation = useRouter()
+
+        // fetching session
+        // const [session, setSession] = React.useState(null)
+        const [status, setStatus] = React.useState(false)
+
+        React.useEffect(()=>{
+          const getSession = async () => {
+            try {
+              const response = await Auth.isAlive()
+              
+              if (response.status) {
+                // setSession(response.data)
+                // setStatus(true)
+                return navigation.navigate('/(dashboard)')
+              }else{
+                // setSession(null)
+                setStatus(false)
+              }
+            } catch (error) {
+              setStatus(false)
+            }
+          };
+          getSession();
+        }, [])
+  
         return (
             <View style={styles.body}>
             {/* tabs message */}

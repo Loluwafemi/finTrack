@@ -2,15 +2,19 @@ import { SelectList } from "react-native-dropdown-select-list";
 
 
 
-export default function GrantDropList({userGrant, validation}) {
+export default function GrantDropList({userGrant, validation = null}: {userGrant: any, validation: any|null}) {
     
     return (
         <SelectList
         placeholder="Select Budget" 
         setSelected={(val) => {
-            validation.setFieldTouched('budget', true)
-            validation.setFieldValue('budget', val)
-            console.log(validation.values);
+            if (validation) {
+                validation.setFieldTouched('budget', true)
+                validation.setFieldValue('budget', val)
+                console.log(validation.values);
+            }
+            console.log(val);
+            
             
         }} 
         data={[

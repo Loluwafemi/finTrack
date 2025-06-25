@@ -67,6 +67,8 @@ export const actions: Actions = {
 
     },
     logout: async (event) => {
+        console.log(event);
+        
         if (!event.locals.user) return
         deleteSessionTokenCookie(event)
         return redirect(301, '/')

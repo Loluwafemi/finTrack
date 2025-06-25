@@ -1,7 +1,7 @@
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import React, { Component, ReactNode } from "react";
 import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
-
+import '~/global.css'
 
 export function TopNav (props){
           return (
@@ -11,11 +11,11 @@ export function TopNav (props){
                     props.navigation.openDrawer()
                   }}
                 >
-                  <View style={style.profile}>
-                      
+                  <View className="h-[30px] w-[30px] rounded-full shadow border-[1px] m-[8px] ml-[10px] flex flex-row items-center justify-center">
+                      <Text>{String(props.username).charAt(0)}</Text>
                   </View>
                 </TouchableHighlight>
-                <Text style={{fontWeight: 'bold'}}>Welcome Perryman!</Text>
+                <Text className="text-gray-700 text-lg font-bold">Welcome {props.firstname}!</Text>
             </View>
           );
 }
@@ -30,14 +30,5 @@ const style = StyleSheet.create({
       alignItems: 'center',
       // borderColor: 'grey',
       // borderWidth: 1,
-    },
-
-    profile: {
-      height: 30,
-      width: 30,
-      borderRadius: '50%',
-      borderWidth: 1,
-      margin: 8,
-      marginLeft: 10
     }
   });

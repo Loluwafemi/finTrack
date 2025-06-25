@@ -9,20 +9,17 @@ export const POST: RequestHandler = async (event) => {
     
     REQUESTAUTHENTICATOR(event)
 
-    // receive token
-    const token = await event.request.json()
-    
-    // validate data
-
-    // if (!transaction) return json({status: true, message: "Failed to signout"});
-    // validate user's session
-
-
-
-
-    
+    try {
+        console.log(event);
+        
+        deleteSessionTokenCookie(event)
+    } catch (error) {
+        console.log(error);
+        
+        return json({status: false, message: "Session fail to ended"})
+    }    
 
     // sign user in and redirect to /api
 
-    return json({status: false, message: "Failed to signout"});
+    return json({status: true, message: "Session has ended"});
 };

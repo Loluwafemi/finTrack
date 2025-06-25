@@ -3,21 +3,20 @@ import { Text, View } from "react-native";
 
 
 
-export function TransactionList() {
-
-    const itemsDemo = [1,2,3,4,5,6,7,8]
+export function TransactionList({ transactions }) {
 
     return (
 
         <View>
-            {itemsDemo.map((item)=>(
-                <TransactionItem key={item} />
-            ))}
+            {transactions.map((item)=>{
+                if (item) {
+                    return (<TransactionItem key={item} />);
+                }
+            })}
         </View>
 
     );
 }
-
 
 function TransactionItem(items:any) {
     return (

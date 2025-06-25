@@ -69,4 +69,13 @@ adb reverse tcp:8080 tcp:8080
 ## Reverse the port to ensure the emulator gets access accross 
 
 
-netsh interface portproxy add v4tov4 listenport=8080 listenaddress=172.17.192.1 connectport=4044 protocol=tcp
+1. to show all configured port proxy rules in netsh, use the command `netsh interface portproxy show all`
+
+2. `netsh interface portproxy delete v4tov4 listenport=8080`:
+This command specifically deletes the IPv4 port proxy rule listening on port 8080.
+
+
+3. `netsh interface portproxy reset`: This command resets the portproxy configuration to its default state, effectively deleting all existing rules. 
+
+
+netsh interface portproxy add v4tov4 listenport=8080 connectaddress=172.20.112.1 listenaddress=127.0.0.1 connectport=8080 protocol=tcp

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useRouter, Link } from 'expo-router';
-import { Text, View, StyleSheet, TouchableOpacity,ScrollView, TextInput } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity,ScrollView, TextInput, Button } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Formik } from 'formik';
 import { loginSchema } from '~/lib/func/auth';
-import { SessionUser, signinREQUEST } from '~/lib/server/server';
+import { signinREQUEST } from '~/lib/server/server';
+import { Auth } from '~/lib/func/tailored';
 
 
 
@@ -13,20 +14,19 @@ export default function Authentication() {
     const navigation = useRouter()
 
         // fetching session
-        const [session, setSession] = React.useState(null)
+        // const [session, setSession] = React.useState(null)
         const [status, setStatus] = React.useState(false)
 
         React.useEffect(()=>{
           const getSession = async () => {
             try {
-              const response = await SessionUser()
-              console.log(response);
+              const response = await Auth.isAlive()
               
               if (response.status) {
-                setSession(response.data)
-                setStatus(true)
+                  setStatus(true)
+                // setStatus(true)
               }else{
-                setSession(null)
+                // setSession(null)
                 setStatus(false)
               }
             } catch (error) {
@@ -53,12 +53,19 @@ export default function Authentication() {
 
                         <Formik
                           initialValues={{email: '', password: ''}}
-                          onSubmit={async (res, {setErrors})=>{
-                            const response = await signinREQUEST(res)
-                            if (!response.status) {
-                              await setErrors({email: 'error', password: 'error'})
-                            }else{
-                              navigation.navigate('/(dashboard)')
+
+                          onSubmit={async (value, {setErrors, setSubmitting})=>{
+                            try {
+                              // const jsonString = JSON.stringify(value)
+                              let response = await signinREQUEST(value)
+                              if (response.status) {
+                                
+                                return navigation.navigate('/(dashboard)')
+                              }
+                            } catch (error) {
+                              console.log("Error: ", error);
+                            }finally{
+                              setSubmitting(false)
                             }
                           }}
                           validationSchema={loginSchema}
@@ -101,25 +108,11 @@ export default function Authentication() {
                                 <Link href={'./forgot'}>Forgot password?</Link>
                             </View>
                         </View>
-            
                         <View style={[styles.formOptionsItems]}>
                             <TouchableOpacity 
-                              onPress={(e)=>{
-                                handleSubmit(e)                                
-                              }}
+                              onPress={handleSubmit}
                               style={styles.formSubmit}>
                             <Text style={styles.formSubmitText}>Sign In</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* make sure to delete later */}
-                        <View style={[styles.formOptionsItems]}>
-                            <TouchableOpacity 
-                              onPress={(e)=>{
-                                handleSubmit(e)                                
-                              }}
-                              style={styles.formSubmit}>
-                            <Text style={styles.formSubmitText}>Log Out</Text>
                             </TouchableOpacity>
                         </View>
             

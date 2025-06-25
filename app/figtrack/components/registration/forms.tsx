@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { Component, ReactNode, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Pressable, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
@@ -7,6 +7,7 @@ import { BankList } from '../variables/banks';
 import { institutionList } from '../variables/institution';
 import { Formik } from 'formik';
 import { signupSchema } from '~/lib/func/auth';
+import { signupREQUEST } from '~/lib/server/server';
 
 
 function Personal (
@@ -347,6 +348,8 @@ export class FormNav extends Component{
     
     render(): ReactNode {
         const validationSchema = signupSchema
+    const navigation = useRouter()
+
         return (
 
             <SafeAreaProvider>
@@ -355,8 +358,15 @@ export class FormNav extends Component{
             <ScrollView>
             <Formik
                 initialValues={{ }}
-                onSubmit={(res)=>{
-                        console.log(res);
+                onSubmit={async (res, {setErrors})=>{
+                        const response = await signupREQUEST(res)
+                        
+                        if (!response.status) {
+                            await setErrors("error")
+                        }else{
+                            navigation.navigate('/(auth)')
+                        }
+                        
                     }}
                 
                     

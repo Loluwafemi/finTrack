@@ -5,17 +5,34 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Acivity, Settings, UserHome, UserRecord } from '~/components/nativewindui/bottomTab'
 import { Icon } from '@roninoss/icons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import {  } from 'expo-router';
+import { useRouter } from 'expo-router';
 import {  } from 'expo-status-bar';
 import { TopNav } from '~/components/nativewindui/TopNav';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
+import { Auth } from '~/lib/func/tailored';
+import React, { useMemo }  from 'react';
 
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator()
 
-export default function UsersDashboardIndex() {
+export default function UsersDashboardIndex() {    
+    const navigation = useRouter()
+
+    // middleware
+    const [isAuth, setStatus] = React.useState(null)
+
+    React.useEffect(()=>{
+        const getSession = async () => { 
+
+        const response = await Auth.isAlive()      
+        if (!response.status) return navigation.navigate('/(auth)')
+        setStatus(response.data)
+        };
+        getSession();
+    }, [])
+      
   useInitialAndroidBarSync();
   return (
       <View style={style.body}>
@@ -25,7 +42,8 @@ export default function UsersDashboardIndex() {
                 
                 screenOptions={({navigation})=>({
                   headerLeft: ()=>{
-                    return <TopNav navigation={navigation} />
+                    return <TopNav 
+                    firstname={isAuth?.firstname} username={isAuth?.username} navigation={navigation} />
                   },
                   drawerStyle: {
                     backgroundColor: 'pink',

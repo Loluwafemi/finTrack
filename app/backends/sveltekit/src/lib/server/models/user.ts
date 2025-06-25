@@ -11,14 +11,36 @@ export interface User {
     password: string | null
 }
 
+
+export interface userDataType {
+    organization: string,
+    bank_name: string,
+    bank_account_number: string,
+    bank_account_name: string
+}
+
+export interface UserCredential {
+    firstname: string | null,
+    lastname: string | null,
+    username: string | null,
+    email: string | null,
+    password: string | null
+}
+
+
+
 export class User {
     constructor(){
 
     }
 
+    /* 
+    
+    Remember to create a safe guard for every query with try-catch to return data or null
+    */
 
-    async create(userdata: User | any) {
-        let transaction: any;
+    async create(userdata: UserCredential | any, cred_data: userDataType|null = null) {
+        let transaction;
 
         // check if already exist
         transaction = await db.query.user.findFirst({
@@ -42,8 +64,26 @@ export class User {
         transaction = await db.insert(protection).values({
             password: userdata.password,
             userid: transaction.userid
-        })
+        }).returning()
 
+            if (cred_data){
+                transaction = transaction.pop()
+
+                transaction = await db.insert(user_data).values({
+                    data: cred_data,
+                    id: transaction?.userid!
+                }).returning()
+            }else {
+                transaction = transaction.pop()
+                transaction = await db.insert(user_data).values({
+                    data: {},
+                    id: transaction?.userid!
+                }).returning()
+            }
+
+            transaction = transaction.pop()
+        
+        
         return transaction
 
     }
@@ -88,7 +128,7 @@ export class User {
         return transaction
     }
 
-    async validate(email?:string| any, password:string){
+    async validate(email:string| any, password:string){
         let transaction;
 
         if (email && password) {

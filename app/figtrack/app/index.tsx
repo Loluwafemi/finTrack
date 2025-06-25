@@ -11,6 +11,8 @@ const ROOT_STYLE: ViewStyle = { flex: 1, backgroundColor: 'pink' };
 
 export default function WelcomeConsentScreen() {
   const { colors } = useColorScheme();
+
+
   return (
     <SafeAreaView style={ROOT_STYLE}>
       <View className="mx-auto max-w-sm flex-1 justify-between gap-4 px-8 py-4 ">
