@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { api_origin_address, apiHeaders, backendORIGIN, getData, saveBudget, SessionUser } from "~/lib/server/server";
+import { api_origin_address, apiHeaders, backendORIGIN, getData, requestHandler, saveBudget, SessionUser } from "~/lib/server/server";
 
 
 
@@ -18,6 +18,13 @@ interface credential {
     username: string | null,
     email: string | null,
     userid: string | null
+}
+
+export type budgetList = {
+    key: string,
+    value: string,
+    disabled: false,
+    bid: string
 }
 
 
@@ -58,12 +65,10 @@ export class Auth {
        return {balance: '0', spentInterval: '0', tranactions: []}
     }
 
-    async records(budget_name:any): Promise<{budgets: [], expenses: [], balances: {}}>{
+    async records(budget_id?:any): Promise<{budgets:budgetList[], expenses: expensesTemplate[], balances: balacesTemplate}>{
         /* 
-            run a fetch request to return all expense on the selected budget and then return the polished result in two phase: 
+            Run a fetch request to return all expense on the selected budget and then return the polished result in two phase: 
             [array object and chart data]
-
-
 
             How data is presented
             1. Budget: this acts as a pointer; a list of object {name, id} all registered budget under this account is returned and used present the first record. 
@@ -87,8 +92,67 @@ export class Auth {
                 1. Use Manual approach to manage these data
                 2. Use library: --
 
+            Fetch budget with user
         */
-        return { budgets: [], expenses: [], balances: {} }
+
+
+       let portfolio: {budgets:budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = {
+            budgets: [],
+            expenses: [],   // aasignable to others
+            balances: {
+                total_a: '',
+                total_s: ''
+            }
+       }
+       
+       const requester = await requestHandler({url: 'api/service/records', data: await this.user()})
+    // set budgetlists
+       if (!requester.status) {
+            portfolio.budgets = []
+            portfolio.budgets = portfolio.budgets
+       }else{
+            portfolio.budgets = makeBudgetList(requester.data)
+       }
+
+
+
+
+
+
+    // use the parameter to pick from the generated object
+        let expenses = makeExpenseList(requester.data)
+
+
+
+
+
+
+
+    // create a query manager that select just the expense from the function parameter.
+       portfolio.expenses = expenseQuery(expenses, budget_id).expense_c
+       const expense_object = expenseQuery(expenses, budget_id).expense_o
+
+
+    /* 
+    Restructure the expense to show percentage
+    percentage: to find the percentage for each expense iterated.
+    since the expense object and composite share the same template/structure.
+        - we enumerate the data by: [x,y]
+            x - object
+            y - composite
+
+            percentage =  1 - (x - y)
+    both the inital expense and the object of expense returns the same thing with value difference.
+    both is array. so we do the following.
+
+    */
+    portfolio.expenses = expensePercentageGenerator(expenseQuery(expenses, budget_id).expense_o, expenseQuery(expenses, budget_id).expense_c)
+    
+
+    // create a generator to find the total available and total spent
+       portfolio.balances = balancesGenerator(expenseQuery(expenses, budget_id).expense_c, expenseQuery(expenses, budget_id).expense_o)
+       
+        return portfolio
     }
 
     async activities(pagination:number=10): Promise<{activities: []}>{
@@ -143,10 +207,161 @@ export class Auth {
         
         // save budget using user session and return status
         const requestHandler = await saveBudget({auth: sender, data: expensedata})
-        // console.log(requestHandler);
         
         return requestHandler
     }
 
 
 }
+
+
+
+
+
+
+
+
+function makeBudgetList(budget: any) {
+    
+    let output: budgetList[] = [];
+    let incoming = budget
+
+    incoming.forEach(unitBudget => {
+        output.push({
+            bid: unitBudget?.budgetid,
+            disabled: false,
+            key: unitBudget.budgetname,
+            value: unitBudget.budgetname
+        })
+    });
+
+    return output
+}
+
+
+
+export type expensesTemplate = {
+    expense_c: [],
+    expense_o: [],
+    budgetid: string | null
+}
+
+
+function makeExpenseList(budgets:any) {
+     let expenses: expensesTemplate[] = []
+     
+    /* 
+        expense structure type is
+        it has the following:
+            1. expense_c
+            2. expense_o
+            3. id
+
+        key:value
+        {
+        budget_id: { expense },
+        budget_id: { expense },
+        }
+    */
+    budgets.forEach(budget => {
+        expenses.push({
+            expense_c: budget.expense.expense_composition,
+            expense_o: budget.expense.expense_object,
+            budgetid: budget.budgetid
+        })
+    });
+
+    return expenses;
+}
+
+
+function expenseQuery(expenses: expensesTemplate[], id?:string|null) {
+    // takes in the array and a wanted name and return a single object from the list
+    // select the first one
+
+
+    let output: expensesTemplate = expenses[0];
+
+    if (id) {
+        expenses.forEach(expense => {
+            if (expense.budgetid === id) {
+                output = expense
+            }
+        });
+    }
+
+    return output
+}
+
+
+type unitExpenseTemplate = {
+    cost: string | number,
+    category: string,
+    percentage: string
+
+}
+export type balacesTemplate = { total_a: string, total_s:  string}
+
+function balancesGenerator(expense_c: unitExpenseTemplate[], expense_o: unitExpenseTemplate[]):balacesTemplate  {
+
+    let total_s: string = '0';
+    let total_a: string = '0';
+    let output:balacesTemplate = { total_a: '0', total_s: '0' };
+
+
+    /* 
+    
+    The math behind the total available and total spent
+    from expence_c, all spent amount is summed
+    and it is represented as a negative integer, when summed
+
+    from expense_o: which hold the template for the budget's expense and untouched. all cost is summed
+    and it is represented as a positive integer, when summed
+            
+    */
+
+
+    // for total spent: expense_c
+    expense_c.forEach(expense => {
+        console.log("Spent for: ", expense.category, "is ", expense.cost);
+        let cost:string|number = Number(expense.cost)
+        let arith = Number(total_s) + cost
+        total_s = arith.toFixed(2)
+    });
+
+    // for total cost: expense_o
+    expense_o.forEach(expense => {        
+        let cost:string|number = Number(expense.cost)
+        let arith = Number(total_a) + cost
+        total_a = arith.toFixed(2)
+    });
+    
+
+    output.total_s = total_s
+
+    output.total_a = total_a
+    
+
+    return output
+}
+
+
+function expensePercentageGenerator(arr: unitExpenseTemplate[], arr2: unitExpenseTemplate[]) {
+    
+    const output = arr.map((value, index)=>{
+        let cost = Number(value.cost)
+        let spent = Number(arr2[index].cost)
+        let absAmB = cost - spent
+        absAmB = Math.abs(absAmB)
+        let addABavg = (cost + spent) / 2
+        let percentage = (absAmB / addABavg) * 100        
+        value.percentage = percentage.toString()
+        
+        return value
+    })    
+
+    return output
+    
+}
+
+

@@ -285,4 +285,53 @@ export async function saveBudget(payload: {auth: any, data: any}) {
         }
     }
 
+
+}
+
+
+
+export async function requestHandler(path:{ 
+                                        url: null|string, 
+                                        data: any
+                                    }) {
+    
+    // check if cookie is set
+    const cookie = await getData(api_origin_address)
+    
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
+
+    apiHeaders.set('Cookie', cookie)
+    
+    if (!path.url) return {
+            status: false,
+            message: "Path url to request not set",
+            data: null
+        }
+    
+
+    const request = await fetch(`${backendORIGIN}/api/service/records`, {
+        headers: Object.fromEntries(apiHeaders.entries()),
+        method: 'POST',
+        body: JSON.stringify(path.data),
+        credentials: 'same-origin'
+    })
+    
+
+    const responseClone = request.clone()
+    const sessionData = await responseClone.json()    
+
+    if (sessionData){
+        // redirect to dashboard.
+        return {
+            status: true,
+            message: "Valid Credential",
+            ...sessionData
+        }
+    }else{
+        return {
+            status: false,
+            message: "Invalid Credential",
+            data: null
+        }
+    }
 }

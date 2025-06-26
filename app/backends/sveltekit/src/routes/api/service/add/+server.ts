@@ -15,6 +15,9 @@ export const POST: RequestHandler = async (event) => {
     const findUserByID = await user.find(auth.userid)
 
     if (!findUserByID.status) return json(findUserByID)
+
+    console.log(data);
+    
     
     // // insert senders data 
     // // loose data before insertion

@@ -12,8 +12,10 @@ import { GrantFeatureGraph } from "./grantFeatureGraph";
 import { AcivityPage } from "./activitiesPage";
 import { useRouter } from "expo-router";
 import GrantDropList from "./grantList";
-import { Auth } from "~/lib/func/tailored";
+import { Auth, balacesTemplate, budgetList, expensesTemplate } from "~/lib/func/tailored";
 import { signouREQUEST } from "~/lib/server/server";
+import { Formik } from "formik";
+import { recordProviderForBudgetSchema } from "~/lib/func/auth";
 
 
 
@@ -41,9 +43,6 @@ export function UserHome(){
         };
         gettTransactions();
     }, [])
-
-    // console.log(user);
-    
 
     return (
         <ScrollView className="p[4px]">
@@ -120,20 +119,28 @@ export function UserHome(){
 
 
 export function UserRecord(){
+
+    const userObject = new Auth()
+
+
     const [isChart, changeView] = useState(false)
-    const [budget, selectBudget] = useState([])
-    const [expense, selectExpense] = useState([])
-    const [balances, setBalaces] = useState({})
+
+
+    // this are dynamic space for selectedBudget's expenses and the balances
+    const [budget, selectBudget] = useState <budgetList[] | []>([])
+    const [balances, setBalaces] = useState<balacesTemplate | { total_a: 0;
+    total_s: 0; }>({total_a: 0, total_s: 0})
+
+    const [ selectedBudgetExpenses, selectedBudget ] = useState<expensesTemplate[] | []>([])
+
 
     useEffect(()=>{
         const gettTransactions = async () => {
-        const userObject = new Auth()
-        let transactions: {budgets: [], expenses: [], balances: {}} = await userObject.records('put-first-on-list') 
+        let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')         
 
-        // assign returned data to those useState
         selectBudget(transactions.budgets)
-        selectExpense(transactions.expenses)
         setBalaces(transactions.balances)
+        selectedBudget(transactions.expenses)
 
         };
         gettTransactions();
@@ -143,66 +150,93 @@ export function UserRecord(){
         changeView(!isChart)
     }
     
-    if (budget.length == 0) {
+    // use formik to present data. on select calls and resond immediately
+    if (budget.length > 0) {
         return (
-            <View className="p-2">
-                <Text className="text-sm font-bold">Budget Details</Text>
-                <GrantDropList userGrant={[]} validation={null} />
-                {/* Display selected grant */}
-                <View>
-                    <View className="shadow-2xl mt-3 p-3 bg-black rounded-md">
-                        <View className="flex flex-row justify-between items-center">
-                            <Text  className="text-gray-200 text-xs">Total Available</Text>
-                            <View className="bg-gray-600 p-[3px] px-[8px] rounded-lg">
-                                <Text className="text-gray-200 text-xs">Total Spent</Text>
+            <Formik
+            
+            initialValues={{
+                selectedBuget: ''       // first element
+            }}
+            onSubmit={ async (selectedBudgetID)=>{
+                console.log('ready to parse');
+                let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records(selectedBudgetID.selectedBuget)
+                selectedBudget(transactions.expenses)
+                selectBudget(transactions.budgets)
+                setBalaces(transactions.balances)
+                
+            }}
+
+            validationSchema={recordProviderForBudgetSchema}
+            >
+            {/* add error to display a message when a budget is not approved */}
+            {({handleSubmit, values, setFieldTouched, setFieldValue})=>(
+                <View className="p-2">
+                    <Text className="text-sm font-bold">Budget Details</Text>
+                    <GrantDropList userGrant={budget} validation={null} 
+                        innerEvent={(selected)=>{                        
+                            setFieldTouched('selectedBuget', true)
+                            setFieldValue('selectedBuget', selected)
+                            handleSubmit(selected)                            
+                        }}
+                    />
+
+                    {/* Display selected grant */}
+                    <View>
+                        <View className="shadow-2xl mt-3 p-3 bg-black rounded-md">
+                            <View className="flex flex-row justify-between items-center">
+                                <Text  className="text-gray-200 text-xs">Total </Text>
+                                <View className="bg-gray-600 p-[3px] px-[8px] rounded-lg">
+                                    <Text className="text-gray-200 text-xs">Total Available</Text>
+                                </View>
+                            </View>
+                            <View className="flex flex-row justify-between">
+                                <Text className="text-gray-200 text-2xl font-bold">
+                                    N{balances.total_a}
+                                </Text>
+
+                                <Text className="text-gray-200 text-2xl font-bold">
+                                    N{balances.total_s}
+                                </Text>
+                            </View>
+                            <View className="flex flex-row justify-between">
+                                <Text className="text-gray-200 text-[10px]">
+                                    Dec 23, 2024
+                                </Text>
+                                <Text className="text-gray-200 text-[10px]">
+                                    N0.00 this week
+                                </Text>
                             </View>
                         </View>
-                        <View className="flex flex-row justify-between">
-                            <Text className="text-gray-200 text-2xl font-bold">
-                                N12,450.00
-                            </Text>
-
-                            <Text className="text-gray-200 text-2xl font-bold">
-                                N12,450.00
-                            </Text>
+                        {/* Filter */}
+                        <View className="flex flex-row p-2 mt-2 bg-red-700 rounded-lg justify-between items-center">
+                            <TouchableHighlight
+                                onPress={toggleScreen}
+                            >
+                                {
+                                isChart? 
+                                <Icon color="white" name="chart-pie" size={20}/>: <Icon color="white" name="clipboard-list" size={20}/>
+                                }
+                            </TouchableHighlight>
+                            <TouchableHighlight
+                                onPress={()=>{
+                                    // console.log("Open date");
+                                }}>
+                                <Icon color="white" name="calendar-clock" 
+                                size={20} />
+                            </TouchableHighlight>
                         </View>
-                        <View className="flex flex-row justify-between">
-                            <Text className="text-gray-200 text-[10px]">
-                                Dec 23, 2024
-                            </Text>
-                            <Text className="text-gray-200 text-[10px]">
-                                N3,000 this week
-                            </Text>
-                        </View>
+                        {/* Display the analysis of selected grant */}
+                        {
+                        isChart?
+                        <ShowChartInterface />: <ShowListInterface expenses={selectedBudgetExpenses} />
+                        }
                     </View>
-                    {/* Filter */}
-                    <View className="flex flex-row p-2 mt-2 bg-red-700 rounded-lg justify-between items-center">
-                        <TouchableHighlight
-                            onPress={()=>{
-                                toggleScreen()
-                            }}
-                        >
-                            {
-                            isChart? 
-                            <Icon color="white" name="chart-pie" size={20}/>: <Icon color="white" name="clipboard-list" size={20}/>
-                            }
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                            onPress={()=>{
-                                // console.log("Open date");
-                            }}>
-                            <Icon color="white" name="calendar-clock" 
-                            size={20} />
-                        </TouchableHighlight>
-                    </View>
-                    {/* Display the analysis of selected grant */}
-                    {
-                    isChart?
-                    <ShowChartInterface />: <ShowListInterface />
-                    }
+                    
                 </View>
-                
-            </View>
+            )}
+
+            </Formik>
         );
     }else{
         return (
@@ -220,9 +254,9 @@ function ShowChartInterface() {
     );
 }
 
-function ShowListInterface() {
+function ShowListInterface({expenses}) {
     return (
-        <GrantFeatureList />
+        <GrantFeatureList expensesList={expenses} />
     );
 }
 

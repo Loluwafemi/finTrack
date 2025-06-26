@@ -130,14 +130,32 @@ export class User {
     }
 
 
-    async find(userid:string){
+    async find(userid:string, all:boolean=false){
+        
         let transaction = await db.query.user.findFirst({
-            where: eq(userid, user.userid)
+            where: eq(userid, user.userid),
+            with: {
+                data: true
+            }
         })
 
         if(!transaction) return {status: false, message: "user does not exist"}
 
         return { status: true, message: "user found", data: transaction }
+    }
+
+    async budgets(userid:string|any){
+        
+        let transaction = await db.query.user_budget.findMany({
+            where: eq(userid, user.userid),
+            with: {
+                expense: true
+            }
+        })
+
+        if(!transaction) return {status: false, message: "budget does not exist"}
+
+        return { status: true, message: "budget found", data: transaction }
     }
 
 

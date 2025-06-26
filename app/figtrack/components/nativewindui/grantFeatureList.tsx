@@ -4,36 +4,41 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
 
-export function GrantFeatureList() {
+export function GrantFeatureList( {expensesList} ) {
 
-    const itemsDemo = [1,2,3,4,5,6,7,8]
+
+    const itemsDemo = expensesList
 
     return (
 
-     <ScrollView className="h-[70%] p-2 bg-red-300 mt-2 rounded-xl">
-            {itemsDemo.map((item)=>(
-                <GrantFeatureItem key={item} />
+     <ScrollView className="h-[70%] p-2 bg-gray-300 mt-2 shadow rounded-xl">
+            {itemsDemo.map((item, index)=>(
+                <GrantFeatureItem key={item.id} index={index} values={item} />
             ))}
     </ScrollView>
-
 
     );
 }
 
 
-function GrantFeatureItem(items:any) {
+function GrantFeatureItem({values, index}) {
+
+    const percentage = values.percentage !== isNaN || values.percentage > 1? 0: Number(values.percentage)
+    
+    
+
     return (
-        <View className='mb-[4px] p-2 border-b-[1px]'>
+        <View className='mb-[4px] p-2 border-b-[0.2px]'>
             <View className='flex flex-row justify-between'>
-                <Text className='font-bold'>Maintenance</Text>
-                <Text className='font-bold'>-N3,000</Text>
+                <Text className='font-bold'>{values.expenseCategory}</Text>
+                <Text className='font-bold'>N{values.cost}</Text>
             </View>
             <View className='flex flex-row justify-end'>
-                <Text className='text-gray-600 text-sm text-[13px]'>Spent</Text>
+                <Text className='text-gray-600 text-sm text-[13px]'>available</Text>
             </View>
 
             <View className='flex flex-row justify-between'>
-                <Progress.Bar color='black' className='flex mt-[1px] flex-1' progress={0.3} width={null} />
+                <Progress.Bar color='black' className='flex mt-[1px] flex-1' progress={percentage} width={null} />
             </View>
         </View>
     );

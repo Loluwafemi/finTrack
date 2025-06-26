@@ -10,7 +10,18 @@ export const load = (async (event) => {
     const user = await event.locals.user
     const session = await event.locals.session
     
-    let transaction:any = await Users.users()    
+    let transaction:any = await Users.users()
+
+
+
+    let extransaction:any = await Users.budgets(user?.userid)
+
+    console.log(extransaction.data[8]);
+    
+    
+    
+
+
 
 
     return {
