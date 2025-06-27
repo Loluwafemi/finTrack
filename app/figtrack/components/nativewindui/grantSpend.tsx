@@ -13,11 +13,7 @@ export default function GrantPendList({userGrantSpend, validation}) {
                 validation.setFieldValue('expense', val)
                 console.log(validation.values);
             }}
-            data={[
-                {key:'Design', value:'Design', disabled: false},
-                {key:'Enumerate', value:'Enumerate', disabled: false},
-                {key:'Publishing', value:'Publishing'},
-            ]} 
+            data={userGrantSpend} 
             save="key"
         />
             );

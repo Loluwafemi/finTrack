@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import { pgTable, serial, integer, text, timestamp, pgEnum, uuid, json } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, text, timestamp, pgEnum, uuid, json, boolean } from 'drizzle-orm/pg-core';
 
 export const USERSTATUS = pgEnum('user_status', ['pending', 'approved', 'disabled', 'deleted'])
 
@@ -9,6 +9,9 @@ export const ACCOUNTTYPE = pgEnum('accounttype', ['user', 'admin', 'superadmin',
 
 
 export const BANKSTATUS = pgEnum('bankstatus', ['approved', 'pending', 'disabled', 'deleted'])
+
+
+export const TRANSACTIONTYPE = pgEnum('transactiontype', ['receipt', 'notification', 'activity', 'message'])
 
 
 
@@ -79,9 +82,12 @@ export const budget_expense = pgTable('budget_expense', {
 
 // valid
 export const user_transactions = pgTable('user_transaction', {
-	id: text('user_id').notNull().references(()=> user.userid, {onDelete: 'cascade', onUpdate: 'cascade'}),
+	receiver: text('user_id').notNull().references(()=> user.userid, {onDelete: 'cascade', onUpdate: 'cascade'}),
 	message: json().notNull(),
-	sender: text('sender_id'),
+	type: TRANSACTIONTYPE().notNull(),
+	status: BUDGETSTATUS('status').notNull(),
+	author: text('author').notNull().references(()=> user.userid),
+	id: text('id').default(sql`gen_random_uuid()`).notNull(),
 	...timestamps
 })
 

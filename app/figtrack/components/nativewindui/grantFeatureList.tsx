@@ -12,16 +12,20 @@ export function GrantFeatureList( {expensesList} ) {
     return (
 
      <ScrollView className="h-[70%] p-2 bg-gray-300 mt-2 shadow rounded-xl">
-            {itemsDemo.map((item, index)=>(
-                <GrantFeatureItem key={item.id} index={index} values={item} />
-            ))}
+            {itemsDemo.map((item, index)=>{
+
+            return (
+                
+                <GrantFeatureItem key={index} values={item} />
+            )
+            })}
     </ScrollView>
 
     );
 }
 
 
-function GrantFeatureItem({values, index}) {
+function GrantFeatureItem({values}) {
 
     const percentage = values.percentage !== isNaN || values.percentage > 1? 0: Number(values.percentage)
     

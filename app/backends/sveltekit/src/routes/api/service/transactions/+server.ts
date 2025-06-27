@@ -10,16 +10,17 @@ export const POST: RequestHandler = async (event) => {
     // fetches all budgets with its expenses
 
     const { userid } = await event.request.json()
-    
+        
+
     if (!userid) return json({ status: false, message: "Request failed from your end. Try authenticate!" })
     
     const userObj = new User()
    let transaction;
-   transaction = await userObj.budgets(userid)
+   transaction = await userObj.transactions(userid)
+   
 
-   if (!transaction.status) return json({ status: false, message: "Budget could not be fetch. Try add budgets" }) 
-    // console.log(transaction);
+   if (!transaction.status) return json({ status: false, message: "Transactions could not be fetch. Try save some receipts" }) 
+
        
-
     return json(transaction);
 };

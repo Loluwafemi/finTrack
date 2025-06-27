@@ -1,0 +1,1 @@
+ALTER TABLE "user_transaction" ADD COLUMN "id" text DEFAULT gen_random_uuid() NOT NULL;

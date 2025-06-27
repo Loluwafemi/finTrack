@@ -57,7 +57,8 @@ export const receiptUploadingSchema = Yup.object().shape({
     budget: Yup.string().required('Budget Required before Upload'),
     expense: Yup.string().required('Expense Required before Upload'),
     description: Yup.string().required('Receipt Description Required before Upload'),
-    receipt: Yup.object().required("file receipt Required before Upload")
+    receipt: Yup.object().required("file receipt Required before Upload").optional(),
+    cost: Yup.number().required("cost spent is required before Upload"),
 })
 
 

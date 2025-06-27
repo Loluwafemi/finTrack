@@ -4,13 +4,15 @@ import { Text, View } from "react-native";
 
 
 export function TransactionList({ transactions }) {
-
+// restructure receipt message
     return (
 
         <View>
-            {transactions.map((item)=>{
+            {transactions.map((item, index)=>{
+                console.log(item);
+                
                 if (item) {
-                    return (<TransactionItem key={item} />);
+                    return (<TransactionItem key={index} items={item} />);
                 }
             })}
         </View>
@@ -19,6 +21,7 @@ export function TransactionList({ transactions }) {
 }
 
 function TransactionItem(items:any) {
+
     return (
         <View className='mb-[4px] p-1 border-b-[1px]'>
             <View className='flex flex-row justify-between'>

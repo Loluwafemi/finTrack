@@ -12,7 +12,7 @@ import { GrantFeatureGraph } from "./grantFeatureGraph";
 import { AcivityPage } from "./activitiesPage";
 import { useRouter } from "expo-router";
 import GrantDropList from "./grantList";
-import { Auth, balacesTemplate, budgetList, expensesTemplate } from "~/lib/func/tailored";
+import { Auth, balacesTemplate, budgetList, expensesTemplate, transactionTemplate } from "~/lib/func/tailored";
 import { signouREQUEST } from "~/lib/server/server";
 import { Formik } from "formik";
 import { recordProviderForBudgetSchema } from "~/lib/func/auth";
@@ -24,22 +24,19 @@ export function UserHome(){
     const navigation = useRouter()
 
     // useMemo
-    const [balance, setBalances] = useState('')
+    const [balance, setBalances] = useState<number | null>(null)
     const [transactions, setTransaction] = useState([])
-    const [spentInterval, setSpentInterval] = useState('')
-    const [user, setUser] = useState({})
 
     useEffect(()=>{
         const gettTransactions = async () => {
-        const userObject = await Auth.isAlive()
         const authObject = new Auth()
-        let transactions: { tranactions: [], balance: string, spentInterval: string } = await authObject.transactions() 
+        let transactions: transactionTemplate = await authObject.transactions() 
 
         // assign returned data to those useState
-        setUser(userObject.data)
         setBalances(transactions.balance)
-        setTransaction(transactions.tranactions)
-        setSpentInterval(transactions.spentInterval)
+        setTransaction(transactions.transactions)
+
+        
         };
         gettTransactions();
     }, [])
@@ -61,7 +58,7 @@ export function UserHome(){
                     <View className="bg-gray-600 p-[3px] px-[8px] rounded-lg">
                         <Text className="flex-row items-center">
                             <Icon color="red" size={15} name="cash" />
-                            <Text className="text-gray-300 text-xs">+N{spentInterval} spent this month</Text>
+                            <Text className="text-gray-300 text-xs">+N0.00 spent this month</Text>
                             </Text>
                     </View>
                 </View>
@@ -105,7 +102,7 @@ export function UserHome(){
                 </View>
 
                 <View className="p-3">
-                    {transactions.length > 0? <TransactionList transactions={transactions}  />: 
+                    {true? <TransactionList transactions={transactions}  />: 
                     <View className='m-auto p-1'>
                         <Text className="text-gray-400 text-sm">No Record Found</Text>
                     </View>
@@ -116,7 +113,6 @@ export function UserHome(){
         </ScrollView>
     );
 }
-
 
 export function UserRecord(){
 
@@ -159,7 +155,7 @@ export function UserRecord(){
                 selectedBuget: ''       // first element
             }}
             onSubmit={ async (selectedBudgetID)=>{
-                console.log('ready to parse');
+                // console.log('ready to parse');
                 let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records(selectedBudgetID.selectedBuget)
                 selectedBudget(transactions.expenses)
                 selectBudget(transactions.budgets)
@@ -247,7 +243,6 @@ export function UserRecord(){
     }
 }
 
-
 function ShowChartInterface() {
     return (                        
             <GrantFeatureGraph />
@@ -260,39 +255,70 @@ function ShowListInterface({expenses}) {
     );
 }
 
-
 export function Acivity(){
 
-    const [notification, setNotification] = useState([])
+    const [notification, setNotification] = useState<[]>([])
+    const [notificationType, toggleNotification] = useState<'notification' | 'activity' | 'message'| string>('activity')
+    const authObject = new Auth()
 
     useEffect(()=>{
         const gettTransactions = async () => {
-        const authObject = new Auth()
-        let transactions: {activities: []} = await authObject.activities() 
-
+        let transactions = await authObject.activities(notificationType) 
+            
         // assign returned data to the useState
-        setNotification(transactions.activities)
+        setNotification(transactions)
 
         };
         gettTransactions();
     }, [])
 
+    // console.log(notification);
+    
 
-    if (notification.length > 0) {
+    // let pointer = 0
         return (
-            <AcivityPage />
-        );
-    }else{
-        return (
+    <View>
+        <View className='px-2 flex flex-row justify-between items-center'>
+            <Text>
+                100+ unread
+            </Text>
+            <TouchableHighlight 
+            onPress={async ()=>{
+                //  to toggle around available notification
+                
+                // let setOfActivities = ['notification', 'activity', 'message']
+                
+                // if (pointer >= (setOfActivities.length)) {
+                //     pointer = 0
+                // }
+                // let selecetedNotify = setOfActivities[pointer].toString()    
+                
+                // toggleNotification(selecetedNotify)
+                
+                // let transactions = await authObject.activities(notificationType)
+                // // assign returned data to the useState
+                // // setNotification(transactions)
+                // // console.log(transactions);
+                
+                // pointer += 1
+            }}
+            >
+                <Icon name='format-list-checks' />
+            </TouchableHighlight>
+        </View>
+
+            {notification.length > 0? 
+            <AcivityPage transactions={notification} />: 
             <View className="m-auto">
-                    <Text className="text-gray-400 text-sm">No Activity Found</Text>
+                <Text className="text-gray-400 text-sm">No Activity Found</Text>
             </View>
-        )
-    }
+            }
+        
+    </View>
+);
+
 
 }
-
-
 
 export function Settings(){
     const navigation = useRouter()
@@ -344,4 +370,6 @@ export function Settings(){
 
 
 }
+
+
 

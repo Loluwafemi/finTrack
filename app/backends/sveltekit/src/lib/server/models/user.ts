@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import db from "../db";
 import { protection, user, user_bank, user_budget, user_data, user_transactions } from "../db/schema";
 import { Budget } from "./budget";
+import { Transactions } from "./transaction";
 
 export interface User {
     firstname: string | null,
@@ -158,7 +159,20 @@ export class User {
         return { status: true, message: "budget found", data: transaction }
     }
 
+    async transactions(userid:string|any){
+        let transaction;
 
+        transaction = new Transactions()
+        transaction = await transaction.find(userid)
+
+        
+        if(!transaction) return {status: false, message: "transactions does not exist"}
+        
+
+        return { status: true, message: "transactions found", data: transaction.data }
+
+
+    }
 
     async validate(email:string| any, password:string){
         let transaction;
@@ -192,15 +206,68 @@ export class User {
 
         return null
     }
-    
+
+    // provoke transaction
     async addBudget(budget: { title: string, type: string, expenses: [] }, auth: any){
         let transaction;
         const budgetObj = new Budget()
         transaction = await budgetObj.add(budget, auth)
 
+
+        try {
+            let invoking = new Transactions()
+            await invoking.invoke({
+                author: auth.userid,
+                receiver: auth.userid,
+                message: {
+                    text: "You added a new budget. wait while it's approved.",
+                    title: "Budget Request"
+                },
+                status: 'pending',
+                type: 'activity'
+            })
+        } catch (error) {
+            // record bug to another table. do this for the rest of the transactions to the database
+        }
+
+
+
+
         return transaction
     }
 
 
-    // the following methods will extract data as query. as many as possible
+    // provoke transaction
+    async uploadReceipt(data:any, auth:any){
+        let transaction;
+        const budgetObj = new Budget()
+
+        transaction = await budgetObj.update(data)
+
+        //  in the future. Get the budget name and use it in the message.
+        try {
+            let invoking = new Transactions()
+            await invoking.invoke({
+                author: auth.userid,
+                message: {
+                    title: "Receipt Upload",
+                    message: `You updated your budget expense record on [${data.expenseCategory}]`,
+                    budget: 'get budget tiltle',
+                    expense: data.expenseCategory,
+                    cost: data.cost,
+                    date: Date.now()
+                },
+                receiver: auth.userid,
+                status: 'approved',
+                type: 'receipt'
+            })
+        } catch (error) {
+            
+        }
+        
+        if (!transaction?.status) return transaction
+
+        return transaction
+    }
+
 }

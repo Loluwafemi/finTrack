@@ -43,6 +43,8 @@ async function hydrate() {
         return session
 }
 
+
+export type transactionTemplate = {transactions: [], balance: number}
 export class Auth {
     authAlive: any
     isActive: boolean = false
@@ -52,7 +54,16 @@ export class Auth {
     }
 
 
-    async transactions(): Promise<{ tranactions: [], balance: string, spentInterval: string }>{
+
+
+
+    async transactions(): Promise<transactionTemplate>{
+
+
+       let dashboard: transactionTemplate = {
+            transactions: [],
+            balance: 0.00
+       }
 
         /* 
         return user polished data such as:
@@ -60,10 +71,40 @@ export class Auth {
         cummulated price for accepted budget
         amount spent this [period]
 
-        Note: always convert number back to strings after completion
+        Note: always convert number back to strings [0.00] after completion
+
+        1. fetch user's data and budgets
+        2. the fetched user contains transactions. So no need for any more query.
+
+
         */
-       return {balance: '0', spentInterval: '0', tranactions: []}
+       const transactionsrequester = await requestHandler({url: '/api/service/transactions', data: await this.user()})
+
+       
+    // set transactions
+       if (!transactionsrequester.status) {
+            dashboard.transactions = []
+       }
+
+       dashboard.transactions = tailoredTransactionFordashboard(transactionsrequester, 'receipt')
+       
+
+    //    compile all budget for this user and summate every cost in expense composite
+
+       const budgetrequester = await requestHandler({url: '/api/service/records', data: await this.user()})
+
+       if (!budgetrequester.status) {
+            dashboard.balance = 0.00
+       }
+       
+       dashboard.balance = summationOfAllBudgets(budgetrequester)
+            
+ 
+
+
+       return dashboard
     }
+
 
     async records(budget_id?:any): Promise<{budgets:budgetList[], expenses: expensesTemplate[], balances: balacesTemplate}>{
         /* 
@@ -105,7 +146,7 @@ export class Auth {
             }
        }
        
-       const requester = await requestHandler({url: 'api/service/records', data: await this.user()})
+       const requester = await requestHandler({url: '/api/service/records', data: await this.user()})
     // set budgetlists
        if (!requester.status) {
             portfolio.budgets = []
@@ -155,13 +196,26 @@ export class Auth {
         return portfolio
     }
 
-    async activities(pagination:number=10): Promise<{activities: []}>{
-
+    async activities(find: 'receipt' | 'notification' | 'activity' | 'message'|string='activity', pagination:number=10): Promise<{activities: []}>{
+        let activities;
         /* 
             make a paginated request and return n(pagination)
             return list objects
         */
-       return {activities: []}
+
+       const transactionsrequester = await requestHandler({url: '/api/service/transactions', data: await this.user()})
+
+       
+    // set transactions
+       if (!transactionsrequester.status) {
+            activities = []
+       }
+       
+       activities = tailoredTransactionFordashboard(transactionsrequester, find)
+
+       
+
+       return activities
     }
 
     async user():Promise<credential>{
@@ -212,13 +266,91 @@ export class Auth {
     }
 
 
+    async upload(data: { bid: string, expenseCategory: string, cost: string, description: string }){
+
+
+        const sender = (await this.user())
+
+        const request = await requestHandler({ data: { auth: sender, data: data }, url: '/api/service/upload' })
+
+
+        // validate expense throught request.
+       if (!request.status) {
+            return { status: false, message: request.message }
+       }
+
+        return { status: true, message: request.message }   
+    }
+
+
 }
 
 
 
 
+function tailoredTransactionFordashboard(allTransaction: any, find: 'receipt' | 'notification' | 'activity' | 'message'| null) {
+
+    if (find === 'receipt') {
+            allTransaction = allTransaction.data
+            
+            let output = [];
+            allTransaction.forEach(transaction => {
+                if (transaction.type === find) {
+                    output.push(transaction)
+                }
+            });
+
+            return output;
+    }
 
 
+    if (find === 'activity') {
+        
+            allTransaction = allTransaction.data
+            
+            let output = [];
+            allTransaction.forEach(transaction => {
+                if (transaction.type === find) {
+                    output.push(transaction)
+                }
+            });
+
+            return output; 
+    }
+
+
+    if (find === 'message') {
+        
+            allTransaction = allTransaction.data
+            
+            let output = [];
+            allTransaction.forEach(transaction => {
+                if (transaction.type === find) {
+                    output.push(transaction)
+                }
+            });
+
+            return output; 
+    }
+
+    if (find === 'notification') {
+        
+            allTransaction = allTransaction.data
+            
+            let output = [];
+            allTransaction.forEach(transaction => {
+                if (transaction.type === find) {
+                    output.push(transaction)
+                }
+            });
+
+            return output; 
+    }
+    
+
+    return allTransaction.data; 
+
+}
 
 
 function makeBudgetList(budget: any) {
@@ -294,7 +426,7 @@ function expenseQuery(expenses: expensesTemplate[], id?:string|null) {
 }
 
 
-type unitExpenseTemplate = {
+export type unitExpenseTemplate = {
     cost: string | number,
     category: string,
     percentage: string
@@ -323,7 +455,6 @@ function balancesGenerator(expense_c: unitExpenseTemplate[], expense_o: unitExpe
 
     // for total spent: expense_c
     expense_c.forEach(expense => {
-        console.log("Spent for: ", expense.category, "is ", expense.cost);
         let cost:string|number = Number(expense.cost)
         let arith = Number(total_s) + cost
         total_s = arith.toFixed(2)
@@ -365,3 +496,34 @@ function expensePercentageGenerator(arr: unitExpenseTemplate[], arr2: unitExpens
 }
 
 
+function summationOfAllBudgets(budgets:any){
+    let score = 0
+    const budgetData = budgets.data
+    budgetData.forEach(budget => {
+        let expense = budget.expense
+
+        expense = expense.expense_composition
+        expense.forEach(expenseItem => {
+            score = score + Number(expenseItem.cost)
+        });
+
+    });
+    return score
+}
+
+
+
+/* 
+
+[
+{
+"approvedby": "none", "budgetid": "e9e33a94-f73a-4797-93af-e5c940e84aa6", "budgetname": "Tournament [Red Bull]", "budgettitle": "Zero Budget", "created_at": "2025-06-26T16:10:54.911Z", "deleted_at": null, "expense": {"expense_composition": [Array], "expense_object": [Array], "id": "e9e33a94-f73a-4797-93af-e5c940e84aa6"}, "id": 10, "status": "pending", "updated_at": null, "userid": "2e95df8a-5188-487f-b4cb-dbf90ebdbac9"}, 
+
+{
+"approvedby": "none", "budgetid": "8378d75f-7ac4-49e1-966b-56ea2849641f", "budgetname": "Wedding Anniversary", "budgettitle": "Couples Budget", "created_at": "2025-06-26T16:13:09.492Z", "deleted_at": null, 
+        "expense": 
+        {"expense_composition": [Array], 
+        "expense_object": [Array], "id": "8378d75f-7ac4-49e1-966b-56ea2849641f"}, "id": 11, "status": "pending", "updated_at": null, "userid": "2e95df8a-5188-487f-b4cb-dbf90ebdbac9"}]
+
+
+*/

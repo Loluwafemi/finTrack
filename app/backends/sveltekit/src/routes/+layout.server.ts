@@ -1,3 +1,4 @@
+import { Transactions } from "$lib/server/models/transaction";
 import { User } from "$lib/server/models/user";
 import type { LayoutServerLoad } from "./$types";
 
@@ -14,9 +15,10 @@ export const load = (async (event) => {
 
 
 
-    let extransaction:any = await Users.budgets(user?.userid)
+    // let extransaction:any = await Users.budgets(user?.userid)
 
-    console.log(extransaction.data[8]);
+    // // console.log(extransaction.data[8]);
+    
     
     
     

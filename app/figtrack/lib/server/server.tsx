@@ -309,7 +309,9 @@ export async function requestHandler(path:{
         }
     
 
-    const request = await fetch(`${backendORIGIN}/api/service/records`, {
+    console.log(path.url);    
+
+    const request = await fetch(`${backendORIGIN}${path.url}`, {
         headers: Object.fromEntries(apiHeaders.entries()),
         method: 'POST',
         body: JSON.stringify(path.data),
