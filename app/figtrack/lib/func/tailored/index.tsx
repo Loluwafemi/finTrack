@@ -196,7 +196,7 @@ export class Auth {
         return portfolio
     }
 
-    async activities(find: 'receipt' | 'notification' | 'activity' | 'message'|string='activity', pagination:number=10): Promise<{activities: []}>{
+    async activities(find: null|'receipt' | 'notification' | 'activity' | 'message'|string='activity', pagination:number=10): Promise<{activities: []}>{
         let activities;
         /* 
             make a paginated request and return n(pagination)
@@ -211,8 +211,7 @@ export class Auth {
             activities = []
        }
        
-       activities = tailoredTransactionFordashboard(transactionsrequester, find)
-
+       activities = tailoredTransactionFordashboard(transactionsrequester, null)
        
 
        return activities
@@ -290,6 +289,7 @@ export class Auth {
 
 function tailoredTransactionFordashboard(allTransaction: any, find: 'receipt' | 'notification' | 'activity' | 'message'| null) {
 
+    // done
     if (find === 'receipt') {
             allTransaction = allTransaction.data
             
@@ -304,51 +304,18 @@ function tailoredTransactionFordashboard(allTransaction: any, find: 'receipt' | 
     }
 
 
-    if (find === 'activity') {
-        
-            allTransaction = allTransaction.data
-            
-            let output = [];
-            allTransaction.forEach(transaction => {
-                if (transaction.type === find) {
-                    output.push(transaction)
-                }
-            });
+    let output = [];
 
-            return output; 
-    }
+    allTransaction = allTransaction.data
+    
+    allTransaction.forEach(transaction => {
+        output.push(transaction)
+    });
 
-
-    if (find === 'message') {
-        
-            allTransaction = allTransaction.data
-            
-            let output = [];
-            allTransaction.forEach(transaction => {
-                if (transaction.type === find) {
-                    output.push(transaction)
-                }
-            });
-
-            return output; 
-    }
-
-    if (find === 'notification') {
-        
-            allTransaction = allTransaction.data
-            
-            let output = [];
-            allTransaction.forEach(transaction => {
-                if (transaction.type === find) {
-                    output.push(transaction)
-                }
-            });
-
-            return output; 
-    }
+    return output; 
     
 
-    return allTransaction.data; 
+    // return output; 
 
 }
 

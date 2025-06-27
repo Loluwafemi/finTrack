@@ -16,19 +16,18 @@ export function AcivityPage({ transactions }) {
 
         <ScrollView className="h-[90%] p-2 mt-2 rounded-xl">
                 {
-                transactions.map((item)=>{
+                transactions.map((item, index)=>{
                     // use this to sort notification   
-                    
                     if (item.type === 'activity') {
                         if (item.status === 'pending') {
                             return (
-                            <NotificationOnNewBudget data={item} key={item.id} />
+                            <NotificationOnNewBudget data={item} key={index} />
                             );
                         }
                     
                         if (item.status === 'approved') {
                             return (
-                            <NotificationOnBudgetApproval key={item.id} />
+                            <NotificationOnBudgetApproval key={index} />
 
                             );
                         }
@@ -36,7 +35,7 @@ export function AcivityPage({ transactions }) {
 
                         if (item.status === 'declined') {
                             return (
-                            <NotificationOnDeclinedBudget data={item} key={item.id} />
+                            <NotificationOnDeclinedBudget data={item} key={index} />
 
                             );
                         }
@@ -44,13 +43,13 @@ export function AcivityPage({ transactions }) {
 
                     if (item.type === 'message') {
                         return (
-                            <MessageNotification key={item.id} />
+                            <MessageNotification key={index} />
                         );
                     }
 
                     if (item.type === 'notification') {
                         return (
-                            <NotificationItem key={item.id} />
+                            <NotificationItem key={index} />
                         );
                     }
 
@@ -59,11 +58,11 @@ export function AcivityPage({ transactions }) {
 
                     }
 
-                    // if (item.type === ''){
-                    //     return (
-                    //         <ActivityItem items={index} key={item.id} />
-                    //     );
-                    // } 
+                    if (item.type === 'receipt'){
+                        return (
+                            <Receipts items={item} key={index} />
+                        );
+                    } 
                 })
                 
                 }
@@ -73,14 +72,13 @@ export function AcivityPage({ transactions }) {
 }
 
 
-function ActivityItem({items}) {
-    // console.log("items: ", items);
-    
+function Receipts({items}) {
+
     return (
         <View className='mb-[6px] p-2 rounded-md bg-gray-400'>
             <View className='flex flex-row justify-between'>
-                <Text className='font-bold'>Uploaded</Text>
-                <Text className='font-bold'>+N3,000</Text>
+                <Text className='font-bold'>Withdraw</Text>
+                <Text className='font-bold'>N{items.message.text.cost}</Text>
             </View>
             <View className='flex flex-row justify-between items-center'>
                 <Text className='text-gray-600 text-xs mt-1 text-[13px]'>Status:

@@ -309,7 +309,7 @@ export async function requestHandler(path:{
         }
     
 
-    console.log(path.url);    
+    // console.log(path.url);    
 
     const request = await fetch(`${backendORIGIN}${path.url}`, {
         headers: Object.fromEntries(apiHeaders.entries()),

@@ -266,8 +266,7 @@ export function Acivity(){
         let transactions = await authObject.activities(notificationType) 
             
         // assign returned data to the useState
-        setNotification(transactions)
-
+        setNotification(transactions)                
         };
         gettTransactions();
     }, [])
