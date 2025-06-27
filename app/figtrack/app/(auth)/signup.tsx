@@ -1,8 +1,23 @@
 import * as React from 'react';
 import { Link, useRouter } from 'expo-router';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, StatusBar } from 'react-native';
+import { ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Icon } from '@roninoss/icons';
 import { FormNav } from '~/components/registration/forms';
+<<<<<<< HEAD
 import { Auth } from '~/lib/func/tailored';
+=======
+import { 
+  CUSTOM_BRAND_COLORS, 
+  globalStyles, 
+  textStyles, 
+  buttonStyles, 
+  inputStyles, 
+  layoutStyles, 
+  shadowStyles 
+} from '~/theme';
+>>>>>>> Admin
 
 export default function SignUpAuthentication() {
       const navigation = useRouter()
@@ -32,56 +47,47 @@ export default function SignUpAuthentication() {
         }, [])
   
         return (
-            <View style={styles.body}>
-            {/* tabs message */}
-            <View style={styles.message}>
-              <Text style={{ color: '#FEFCFD'}}>Display Message</Text>
+            <>
+            <StatusBar 
+              backgroundColor={CUSTOM_BRAND_COLORS.majorBackground} 
+              barStyle="light-content" 
+            />
+            <SafeAreaView style={[globalStyles.container, layoutStyles.center]}>
+            
+
+            
+            <ScrollView contentContainerStyle={layoutStyles.center}>
+            <View style={[globalStyles.card, shadowStyles.medium, styles.signupCard]}>
+                    <View style={[layoutStyles.center, { marginBottom: 24 }]}>
+                        <Text style={[textStyles.title, { fontSize: 28, textAlign: 'center' }]}>Create Account</Text>
+                        <Text style={[textStyles.bodySecondary, { textAlign: 'center', marginTop: 8 }]}>Join us to manage your financial aid journey</Text>
+                    </View>
+                    
+                    {/* Registration Form */}
+                    <View style={styles.formContainer}>
+                      <FormNav />
+                    </View>
+                    
+                    {/* Sign In Link */}
+                    <View style={[layoutStyles.row, layoutStyles.center, { marginTop: 24 }]}>
+                        <Text style={[textStyles.bodySecondary]}>Already have an account? </Text>
+                        <Link href="./index" style={[textStyles.body, { color: CUSTOM_BRAND_COLORS.accent }]}>Sign In</Link>
+                    </View>
             </View>
-  
-            {/* tabs */}
-            <View style={styles.form}>
-            <Link href={'../(dashboard)'}>continue</Link>
-              <Text style={styles.signup}>Sign Up</Text>
-              <FormNav />
-            </View>
-        </View>
+            </ScrollView>
+            </SafeAreaView>
+            </>
         );
 }
 
 const styles = StyleSheet.create({
-    body: {
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        height: '100%',
-        margin: 10,
-    },
-    
-    message: {
-      flex: 2,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#000000',
-      marginBottom: 4,
-      borderRadius: 3,
-      marginTop: 15
-    },
-    
-    form: {
-      flex: 4,
-      justifyContent: 'flex-start',
-      // alignItems: 'center',
-      backgroundColor: '#FEFCFD',
-      marginBottom: 4,
-      display: 'flex'
-    },
-    signup: {
-      fontSize: 25,
-      fontStyle: 'normal',
-      fontWeight: '300',
-      marginLeft: 5,
-      marginTop: 10,
-      marginBottom: 20
-    }
-    
+  signupCard: {
+    width: '90%',
+    maxWidth: 500,
+    padding: 32,
+  },
+  
+  formContainer: {
+    width: '100%',
+  },
 });
