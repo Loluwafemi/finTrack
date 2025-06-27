@@ -63,9 +63,6 @@ export class Budget{
         return { status: true, message: "Successful", data: transaction }
     }
 
-
-    
-
     async update(data){
         let transaction;
 
@@ -92,6 +89,17 @@ export class Budget{
 
         return { status: true, message: "upload successful", data: transaction }
 
+    }
+
+    async find(id: string){
+        let transaction;
+        transaction = await db.query.user_budget.findFirst({
+            where: eq(user_budget.budgetid, id)
+        })
+
+        if(!transaction) return { status: false, message: 'Not found' }
+
+        return { status: true, message: 'Not found', transaction }
     }
 }
 

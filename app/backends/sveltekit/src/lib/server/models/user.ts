@@ -243,18 +243,24 @@ export class User {
         const budgetObj = new Budget()
 
         transaction = await budgetObj.update(data)
-
         //  in the future. Get the budget name and use it in the message.
+        
         try {
             let invoking = new Transactions()
+            // get budget title with the id
+            let budgetInfo = budgetObj.find(data.bid) 
+            
             await invoking.invoke({
                 author: auth.userid,
                 message: {
                     title: "Receipt Upload",
-                    message: `You updated your budget expense record on [${data.expenseCategory}]`,
-                    budget: 'get budget tiltle',
-                    expense: data.expenseCategory,
-                    cost: data.cost,
+                    text: {
+                        title: (await budgetInfo).transaction?.budgettitle,
+                        name: (await budgetInfo).transaction?.budgetname,
+                        desc: data.description,
+                        expense: data.expenseCategory, 
+                        cost: data.cost,
+                    },
                     date: Date.now()
                 },
                 receiver: auth.userid,
@@ -265,6 +271,8 @@ export class User {
             
         }
         
+        
+
         if (!transaction?.status) return transaction
 
         return transaction
