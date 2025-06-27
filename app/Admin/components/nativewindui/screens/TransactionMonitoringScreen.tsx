@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import { SkeletonBase } from "../SkeletonBase";
 
 // Transaction Monitoring Screen
 export function TransactionMonitoringScreen() {
   return (
     <SkeletonBase
-      title="Transaction Monitoring"
-      description="Monitor and track all financial transactions in real-time"
+      title="Account Management"
+      description="Manage accounts within organization"
     >
       <View className="space-y-4">
         {/* Filter Section */}

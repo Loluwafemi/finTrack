@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
 import { SkeletonBase } from "../SkeletonBase";
@@ -11,8 +11,8 @@ export function UserAccountManagementScreen() {
 
   return (
     <SkeletonBase
-      title="User Account Management"
-      description="Manage user accounts, roles, and permissions"
+      title="Monitor Accounts"
+      description="Manage users, budgets, and records"
     >
       <View className="space-y-4">
         {/* Quick Actions */}

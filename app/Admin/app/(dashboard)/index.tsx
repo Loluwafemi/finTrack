@@ -1,8 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useColorScheme } from "../../lib/useColorScheme";
+import { SKELETON_SCREENS } from "@/components/custom/screenSelector";
+import UserInformationDisplayer from "@/components/custom/sections/detailer";
+import DashboardHeader from "@/components/custom/sections/heading";
+import { Icon } from "@roninoss/icons";
+import React, { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { useColorScheme } from "~/lib/useColorScheme";
 import { COLORS } from "../../theme/colors";
-
 /**
  * Dashboard Index Screen
  *
@@ -11,35 +15,185 @@ import { COLORS } from "../../theme/colors";
  *
  * The screen is fully responsive and adapts to both light and dark themes.
  */
+
+
 export default function DashboardIndex() {
   const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
+  const [selectedScreen, setSelectedScreen] = useState(SKELETON_SCREENS[0]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const SelectedComponent = selectedScreen.component;
+
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: currentColors.background }]}
+    // <View
+    //   style={[styles.container, { backgroundColor: currentColors.background }]}
+    // >
+    //   <View
+    //     style={[
+    //       styles.comingSoonContainer,
+    //       { backgroundColor: currentColors.background },
+    //     ]}
+    //   >
+    //     <Text
+    //       style={[styles.comingSoonTitle, { color: currentColors.foreground }]}
+    //     >
+    //       Coming Soon
+    //     </Text>
+    //     <Text
+    //       style={[
+    //         styles.comingSoonSubtitle,
+    //         { color: currentColors.textSecondary },
+    //       ]}
+    //     >
+    //       Admin Dashboard features are under development
+    //     </Text>
+    //   </View>
+    // </View>
+  <View
+      className="flex-1"
+      style={{ backgroundColor: currentColors.background }}
     >
-      <View
-        style={[
-          styles.comingSoonContainer,
-          { backgroundColor: currentColors.background },
-        ]}
-      >
-        <Text
-          style={[styles.comingSoonTitle, { color: currentColors.foreground }]}
+    <UserInformationDisplayer data={''} />
+    <DashboardHeader />
+  
+    <View className="flex-1 flex-row">
+      {/* Sidebar */}
+      {!sidebarCollapsed && (
+        <View
+          className="w-80 border-r"
+          style={{
+            borderRightColor: currentColors.border,
+            backgroundColor: currentColors.card,
+          }}
         >
-          Coming Soon
-        </Text>
-        <Text
-          style={[
-            styles.comingSoonSubtitle,
-            { color: currentColors.textSecondary },
-          ]}
+          <ScrollView
+            className="flex-1 p-4"
+            showsVerticalScrollIndicator={false}
+          >
+            <Text
+              className="text-sm font-semibold mb-4 uppercase tracking-wide"
+              style={{ color: currentColors.textSecondary }}
+            >
+              Pages
+            </Text>
+
+            {SKELETON_SCREENS.map((screen) => (
+              <TouchableOpacity
+                key={screen.id}
+                onPress={() => setSelectedScreen(screen)}
+                className={`p-3 mb-2 rounded-lg border ${
+                  selectedScreen.id === screen.id ? "border-blue-500" : ""
+                }`}
+                style={{
+                  backgroundColor:
+                    selectedScreen.id === screen.id
+                      ? currentColors.primary + "10"
+                      : currentColors.background,
+                  borderColor:
+                    selectedScreen.id === screen.id
+                      ? currentColors.primary
+                      : currentColors.border,
+                }}
+              >
+                <View className="flex-row items-center mb-2">
+                  <View className="mr-3">
+                    <Icon
+                      name={screen.icon as any}
+                      size={18}
+                      color={
+                        selectedScreen.id === screen.id
+                          ? currentColors.primary
+                          : currentColors.foreground
+                      }
+                    />
+                  </View>
+                  <Text
+                    className={`font-medium flex-1 ${
+                      selectedScreen.id === screen.id ? "text-blue-600" : ""
+                    }`}
+                    style={{
+                      color:
+                        selectedScreen.id === screen.id
+                          ? currentColors.primary
+                          : currentColors.foreground,
+                    }}
+                  >
+                    {screen.title}
+                  </Text>
+                </View>
+                <Text
+                  className="text-xs leading-4"
+                  style={{ color: currentColors.textSecondary }}
+                >
+                  {screen.description}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Main Content */}
+      <View className="flex-1">
+        {/* Current Screen Header */}
+        <View
+          className="px-6 py-4 border-b"
+          style={{
+            borderBottomColor: currentColors.border,
+            backgroundColor: currentColors.background,
+          }}
         >
-          Admin Dashboard features are under development
-        </Text>
+          <View className="flex-row items-center">
+            <View  className="mr-3"> 
+            <Icon
+              name={selectedScreen.icon as any}
+              size={24}
+              color={currentColors.primary}
+            />
+            </View>
+            <View className="flex-1">
+              <Text
+                className="text-lg font-semibold"
+                style={{ color: currentColors.foreground }}
+              >
+                {selectedScreen.title}
+              </Text>
+              <Text
+                className="text-sm mt-1"
+                style={{ color: currentColors.textSecondary }}
+              >
+                {selectedScreen.description}
+              </Text>
+            </View>
+            
+            {/* <View
+              className="px-3 py-1 rounded-full"
+              style={{ backgroundColor: currentColors.primary + "20" }}
+            >
+              <Text
+                className="text-xs font-medium"
+                style={{ color: currentColors.primary }}
+              >
+                Authorized
+              </Text>
+            </View> */}
+          </View>
+        </View>
+
+        {/* Component Content */}
+        <View className="flex-1">
+          <SelectedComponent />
+        </View>
       </View>
+
+
     </View>
+
+
+  </View>
+
   );
 }
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e9e8041a-853d-4f4e-9016-c1ba0d7286f9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/.env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/drizzle.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/drizzle.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/hooks.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/hooks.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/lib/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/lib/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/lib/server/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/lib/server/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/lib/server/db/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/lib/server/db/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/lib/server/db/schema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/lib/server/db/schema.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/routes/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/routes/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/routes/api/service/+server.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/src/routes/demo/lucia/login/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/src/routes/demo/lucia/login/+page.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/svelte.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/svelte.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backends/sveltekit/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backends/sveltekit/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(auth)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(dashboard)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(dashboard)/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2yseQ2C9TdQ11EgY0cta0O5egfa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Projects/fintracker/app/figtrack&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e9e8041a-853d-4f4e-9016-c1ba0d7286f9" name="Changes" comment="" />
+      <created>1750627688960</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1750627688960</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -3,7 +3,12 @@
  * This ensures consistency and type safety across all navigation calls
  */
 export const ROUTES = {
-  DASHBOARD: '/(dashboard)' as const,
+  DASHBOARD: '../(dashboard)' as const,
+  AUTH: '../(auth)' as const,
+  SIGNUP: '../(auth)/signup' as const,
+
+
+  
   // Add other routes as needed
   // USERS: '/users' as const,
   // SETTINGS: '/settings' as const,

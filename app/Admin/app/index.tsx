@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { ROUTES, getRoute } from "../src/constants/routes";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
+import { getRoute } from "../src/constants/routes";
 import { COLORS } from "../theme/colors";
 
 export default function Index() {
@@ -11,12 +11,15 @@ export default function Index() {
   const { isDarkColorScheme } = useColorScheme();
   const colors = isDarkColorScheme ? COLORS.dark : COLORS.light;
 
+
+  // use this to navigate about page on prompt request
+  // check if cookies / session is active
   useEffect(() => {
     let isMounted = true;
     const navigateToDashboard = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (isMounted) {
-        router.replace(getRoute("DASHBOARD"));
+        router.navigate(getRoute('AUTH'));
       }
     };
 

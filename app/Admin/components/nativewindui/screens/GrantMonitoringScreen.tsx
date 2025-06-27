@@ -1,19 +1,19 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import { SkeletonBase } from "../SkeletonBase";
 
 // Grant Monitoring Screen
 export function GrantMonitoringScreen() {
   return (
     <SkeletonBase
-      title="Grant Monitoring"
-      description="Track and manage grant applications and disbursements"
+      title="Budget Expense Monitoring"
+      description="Track and manage budget & expense applications and disbursements"
     >
       <View className="space-y-4">
         {/* Grant Status Overview */}
         <View className="mb-6">
           <Text className="text-lg font-semibold mb-3">
-            Grant Status Overview
+            Budget Status Overview
           </Text>
           <View className="flex-row flex-wrap gap-3">
             {["Pending", "Approved", "Disbursed", "Completed"].map((status) => (
@@ -31,13 +31,13 @@ export function GrantMonitoringScreen() {
 
         {/* Grant List */}
         <View className="mb-6">
-          <Text className="text-lg font-semibold mb-3">Active Grants</Text>
+          <Text className="text-lg font-semibold mb-3">Active Budget</Text>
           <View
             className="p-4 rounded-lg border"
             style={{ borderColor: "#e2e8f0" }}
           >
             <Text className="text-sm opacity-70">
-              Grant list will appear here
+              Budget list will appear here
             </Text>
           </View>
         </View>

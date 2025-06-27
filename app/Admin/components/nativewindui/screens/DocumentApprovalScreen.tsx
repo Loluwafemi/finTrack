@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SkeletonBase } from "../SkeletonBase";
 
 // Document Approval Screen
@@ -7,7 +7,9 @@ export function DocumentApprovalScreen() {
   return (
     <SkeletonBase
       title="Document Approval"
-      description="Review and approve pending documents and requests"
+      description="Review and approve pending documents and requests
+      Make this a modal || this is accessible through selected user from user account management. To preview user documents or request only 
+      "
     >
       <View className="space-y-4">
         {/* Approval Queue */}
