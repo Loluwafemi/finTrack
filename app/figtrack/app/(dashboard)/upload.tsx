@@ -169,7 +169,7 @@ export default function UsersUpload() {
 
 
 // define expected schema
-function ProcessedReceiptCard({response}) {
+function ProcessedReceiptCard({response}: {response: string}) {
   
   return (
     <View className='mt-4 bg-gray-200 rounded p-3'>

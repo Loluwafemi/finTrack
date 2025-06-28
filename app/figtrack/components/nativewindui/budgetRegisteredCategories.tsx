@@ -10,11 +10,19 @@ export default function BudgetCategoryDropList({ onSelect, validation }) {
     return (
         <SelectList
         placeholder="Select Budget Category" 
+<<<<<<< HEAD
         setSelected={(value)=>{
             onSelect(value)
             validation.setFieldTouched('category', true)
             validation.setFieldValue('category', value)
         }} 
+=======
+        setSelected={(val: string) => {
+            console.log(val);
+            
+        }
+        } 
+>>>>>>> Admin
         data={[
             {key:'Couples Budget', value:'Couples Budget', disabled: false},
             {key:'Grocery Budget', value:'Grocery Budget', disabled: false},

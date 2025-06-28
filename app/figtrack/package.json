@@ -20,8 +20,8 @@
     "@legendapp/list": "^1.0.7",
     "@react-native-community/cli": "^18.0.0",
     "@react-native-community/datetimepicker": "8.3.0",
-    "@react-navigation/bottom-tabs": "^7.3.10",
-    "@react-navigation/drawer": "^7.3.9",
+    "@react-navigation/bottom-tabs": "~7.3.10",
+    "@react-navigation/drawer": "~7.3.9",
     "@react-navigation/native": "^7.0.3",
     "@rn-primitives/slot": "^1.2.0",
     "@roninoss/icons": "^0.0.4",
@@ -45,7 +45,12 @@
     "nativewind": "latest",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+<<<<<<< HEAD
     "react-native": "0.79.4",
+=======
+    "react-native": "0.79.3",
+    "react-native-chart-kit": "^6.12.0",
+>>>>>>> Admin
     "react-native-dropdown-select-list": "^2.0.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-keyboard-controller": "^1.17.4",
