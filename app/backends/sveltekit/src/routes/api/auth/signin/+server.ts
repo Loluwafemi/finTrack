@@ -9,7 +9,6 @@ export const POST: RequestHandler = async (event) => {
     
     REQUESTAUTHENTICATOR(event)
 
-    
     console.log("event");
     
     const responseClone = event.request.clone()
