@@ -1,5 +1,3 @@
-// define all api requests here
-// dependencies for environment
 import * as SecureStore from 'expo-secure-store';
 
 
@@ -15,6 +13,7 @@ interface userDataType {
     password: string | null
 }
 
+// export const backendORIGIN = "http://127.0.0.1:8080"
 export const backendORIGIN = "http://127.0.0.1:8080"
 export const api_origin_address = "127.0.0.1"
 export const AUTH_ORIGIN = process.env.ALLOWED_ORIGIN?.split(',')
@@ -27,7 +26,6 @@ apiHeaders.set("content-type", "application/json")
 apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET, POST")
 apiHeaders.set("Access-Control-Allow-Headers", "content-type, Authorization")
-
 
 
 export const storeData = async (key:any, value:any) => {
@@ -47,8 +45,8 @@ export const storeData = async (key:any, value:any) => {
 export const getData = async (key:any) => {
     let result = await SecureStore.getItemAsync(key);
     if (result) {
-        return result;
         console.log("🔐 Here's your value 🔐 \n" + result);
+        return result;
       } else {
         console.log('No values stored under that key.');
       }
@@ -58,36 +56,119 @@ export const deleteCookie = async (key:any) => {
     await SecureStore.deleteItemAsync(key);
 };
 
+
+// use this to manage all request
+export async function PostrequestHandler(path:{ url: null|string,  data: any }) {
+
+                // check if cookie is set
+            const cookie = await getData(api_origin_address)
+
+            if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
+
+                apiHeaders.set('Cookie', cookie)
+
+            if (!path.url) return {
+                status: false,
+                message: "Path url to request not set",
+                data: null
+                }
+
+
+                // console.log(path.url);    
+
+            const request = await fetch(`${backendORIGIN}${path.url}`, {
+                headers: Object.fromEntries(apiHeaders.entries()),
+                method: 'POST',
+                body: JSON.stringify(path.data),
+                credentials: 'same-origin'
+                })
+
+
+            const responseClone = request.clone()
+            const sessionData = await responseClone.json()    
+
+            if (sessionData){
+                // redirect to dashboard.
+                return {
+                status: true,
+                message: "Valid Credential",
+                ...sessionData
+                }
+            }else{
+                return {
+                status: false,
+                message: "Invalid Credential",
+                data: null
+                }
+                }
+}
+
+
+export async function GetRequestHandler(path:{ url: null|string }) {
+    const cookie = await getData(api_origin_address)
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }  
+
+    apiHeaders.set('Cookie', cookie)
+
+    if (!path.url) return {
+        status: false,
+        message: "Path url to request not set",
+        data: null
+        }
+
+    const request = await fetch(`${backendORIGIN}${path.url}`, {
+        headers: Object.fromEntries(apiHeaders.entries()),
+        method: 'GET',
+        credentials: 'same-origin'
+    })
+
+
+    const responseClone = request.clone()
+    const session = await responseClone.json()   
+
+    if (session){
+        // redirect to dashboard.
+        return {
+            status: true,
+            message: "Valid Credential",
+            data: session
+        }
+    }else{
+        return {
+            status: false,
+            message: "Invalid Credential",
+            data: null
+        }
+    }
+}
+
 export async function signinREQUEST(data) {
     
-    console.log(data);
     try {
-
+        
         const request = await fetch(`${backendORIGIN}/api/auth/signin`, {
             headers: Object.fromEntries(apiHeaders.entries()),
             body: JSON.stringify(data),
             method: 'POST',
             credentials: 'same-origin'
         })
+
+        console.log(request);
+
         
         const responseClone = request.clone()
+        
 
         if (!responseClone.ok) {
-
-            // console.log(responseClone.ok);
-            
             return {
 
                 status: false,
-                message: "Invalid Credential",
+                message: "Invalid Credential. Response not ok",
                 cookies: null
         }
         }
         
         const {status, message } = await responseClone.json()
-        
-        
-        // console.log(status, message);
         
         if (status){
             
@@ -104,7 +185,7 @@ export async function signinREQUEST(data) {
         }else{
             return {
                 status: false,
-                message: "Invalid Credential",
+                message: "Invalid Credential, response okay. Something went wrong",
                 cookies: null
             }
         }
@@ -113,7 +194,7 @@ export async function signinREQUEST(data) {
         // console.log("error: ", error);
         return {
             status: false,
-            message: "Invalid Credential",
+            message: "Invalid Credential. Caught an error",
             cookies: null
         }
         
@@ -121,6 +202,43 @@ export async function signinREQUEST(data) {
 
     
 };
+
+
+export async function SessionUser() {
+    
+    // check if cookie is set
+    const cookie = await getData(api_origin_address)
+    
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
+
+    apiHeaders.set('Cookie', cookie)
+
+    const request = await fetch(`${backendORIGIN}/api`, {
+        headers: Object.fromEntries(apiHeaders.entries()),
+        method: 'GET',
+        credentials: 'same-origin'
+    })
+    
+    const responseClone = request.clone()
+    const session = await responseClone.json()    
+
+    if (session){
+        // redirect to dashboard.
+        return {
+            status: true,
+            message: "Valid Credential",
+            data: session
+        }
+    }else{
+        return {
+            status: false,
+            message: "Invalid Credential",
+            data: null
+        }
+    }
+}
+
+
 
 export async function signouREQUEST(data?:any) {
     // id is userid
@@ -216,40 +334,6 @@ export async function signupREQUEST(data:any) {
     
 }
 
-export async function SessionUser() {
-    
-    // check if cookie is set
-    const cookie = await getData(api_origin_address)
-    
-    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
-
-    apiHeaders.set('Cookie', cookie)
-
-    const request = await fetch(`${backendORIGIN}/api`, {
-        headers: Object.fromEntries(apiHeaders.entries()),
-        method: 'GET',
-        credentials: 'same-origin'
-    })
-    
-    const responseClone = request.clone()
-    const session = await responseClone.json()    
-
-    if (session){
-        // redirect to dashboard.
-        return {
-            status: true,
-            message: "Valid Credential",
-            data: session
-        }
-    }else{
-        return {
-            status: false,
-            message: "Invalid Credential",
-            data: null
-        }
-    }
-}
-
 
 export async function saveBudget(payload: {auth: any, data: any}) {
 
@@ -289,51 +373,3 @@ export async function saveBudget(payload: {auth: any, data: any}) {
 }
 
 
-
-export async function requestHandler(path:{ 
-                                        url: null|string, 
-                                        data: any
-                                    }) {
-    
-    // check if cookie is set
-    const cookie = await getData(api_origin_address)
-    
-    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
-
-    apiHeaders.set('Cookie', cookie)
-    
-    if (!path.url) return {
-            status: false,
-            message: "Path url to request not set",
-            data: null
-        }
-    
-
-    // console.log(path.url);    
-
-    const request = await fetch(`${backendORIGIN}${path.url}`, {
-        headers: Object.fromEntries(apiHeaders.entries()),
-        method: 'POST',
-        body: JSON.stringify(path.data),
-        credentials: 'same-origin'
-    })
-    
-
-    const responseClone = request.clone()
-    const sessionData = await responseClone.json()    
-
-    if (sessionData){
-        // redirect to dashboard.
-        return {
-            status: true,
-            message: "Valid Credential",
-            ...sessionData
-        }
-    }else{
-        return {
-            status: false,
-            message: "Invalid Credential",
-            data: null
-        }
-    }
-}

@@ -81,13 +81,13 @@ const sampleTransactions = [
 
 <<<<<<< HEAD
 export function TransactionList({ transactions }) {
-
+// restructure receipt message
     return (
 
         <View>
-            {transactions.map((item)=>{
+            {transactions.map((item, index)=>{                
                 if (item) {
-                    return (<TransactionItem key={item} />);
+                    return (<TransactionItem key={index} items={item} />);
                 }
             })}
         </View>
@@ -96,19 +96,21 @@ export function TransactionList({ transactions }) {
 }
 
 function TransactionItem(items:any) {
+    let data = items.items
+    let date = new Date(data?.message?.date).toLocaleString()
     return (
         <View className='mb-[4px] p-1 border-b-[1px]'>
             <View className='flex flex-row justify-between'>
-                <Text className='font-bold'>Maintenance</Text>
-                <Text className='font-bold'>-N3,000</Text>
+                <Text className='font-bold'>{data?.message?.text?.expense}</Text>
+                <Text className='font-bold'>-N{data?.message?.text?.cost}</Text>
             </View>
             <View className='flex flex-row justify-between'>
-                <Text className='text-gray-600 text-sm text-[13px]'>Books & Supplies</Text>
-                <Text className='text-gray-600 text-sm text-[13px]'>Enox Grant</Text>
+                <Text className='text-gray-600 text-sm text-[13px]'>{data?.message?.text?.desc}</Text>
+                <Text className='text-gray-600 text-sm text-[13px]'>{data?.message?.text?.name}</Text>
             </View>
 
             <View className='flex flex-row justify-between'>
-                <Text className='text-gray-600 text-[11px]'>Dec 23, 2030</Text>
+                <Text className='text-gray-600 text-[11px]'>{date}</Text>
             </View>
 =======
 export function TransactionList() {

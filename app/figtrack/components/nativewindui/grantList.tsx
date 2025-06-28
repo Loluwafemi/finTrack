@@ -1,9 +1,19 @@
+import { useEffect, useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
+import { budgetList } from "~/lib/func/tailored";
+// import { budgetList } from "~/lib/func/tailored";
 
 
 
-export default function GrantDropList({userGrant, validation = null}: {userGrant: any, validation: any|null}) {
-    
+export default function GrantDropList({innerEvent, userGrant, validation = null}: {userGrant:budgetList[], validation: any|null, innerEvent: Function}) {
+
+    const [userGrantList, setList] = useState([])
+
+    useEffect(()=>{
+        setList(userGrant)
+    })
+
+
     return (
         <SelectList
         placeholder="Select Budget" 
@@ -11,17 +21,19 @@ export default function GrantDropList({userGrant, validation = null}: {userGrant
             if (validation) {
                 validation.setFieldTouched('budget', true)
                 validation.setFieldValue('budget', val)
-                console.log(validation.values);
             }
-            console.log(val);
             
-            
+            userGrantList.forEach(budget => {
+                if (budget.key === val) {
+                    innerEvent(budget.bid)
+
+                }
+            });
+
+
+
         }} 
-        data={[
-            {key:'Enox Grant', value:'Enox Grant', disabled: false},
-            {key:'Green Pact', value:'Green Pact', disabled: false},
-            {key:'Konbil National Grant', value:'Konbil National Grant'},
-        ]} 
+        data={userGrantList} 
         save="key"
 />
     );

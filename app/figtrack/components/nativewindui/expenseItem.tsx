@@ -10,7 +10,7 @@ export default function ExpensListCard({expenses, parentAction}) {
         return (
                 <ScrollView className='m-2 px-2 flex flex-col h-[40vh]'>
                     {expenses.map((item, index) => (
-                        <ExpenseItem actionChild={parentAction} index={index} values={item} key={item.id} />
+                        <ExpenseItem actionChild={parentAction} index={index} values={item} key={index} />
                     ))}
 
                 </ScrollView>

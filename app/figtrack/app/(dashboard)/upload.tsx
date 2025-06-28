@@ -9,7 +9,8 @@ import GrantPendList from '~/components/nativewindui/grantSpend';
 import * as DocumentPicker from 'expo-document-picker';
 import { Formik } from 'formik';
 import { receiptUploadingSchema } from '~/lib/func/auth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Auth, balacesTemplate, budgetList, expensesTemplate, unitExpenseTemplate } from '~/lib/func/tailored';
 
 
 export default function UsersUpload() {
@@ -60,8 +61,26 @@ export default function UsersUpload() {
   }
 
 
+    const userObject = new Auth()
+
+    const [budget, selectBudget] = useState <budgetList[] | []>([])
+    const [ selectedBudgetExpenses, selectedBudget ] = useState<expensesTemplate[] | string[]>([])
 
 
+    useEffect(()=>{
+        const gettTransactions = async () => {
+        let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')         
+
+        selectBudget(transactions.budgets)
+
+        const expenses = generateOnlyExpenseFromObject(transactions.expenses)
+
+        selectedBudget(expenses)
+
+        };
+        gettTransactions();
+    }, [])
+    
   return (
       <SafeAreaView edges={['top']} className='m-4'>
         
@@ -77,19 +96,43 @@ export default function UsersUpload() {
               {/* Allow User to select grant and spending package */}
               <Formik
                 initialValues={{
-                  
+                  budget: '',
+                  expense: '',
+                  cost: '',
+                  description: '',
                 }}
 
-                onSubmit={(res)=>{
-                  console.log(res);
-                  processReceiptFromRawToJson(res)
-                }}
-                
+            onSubmit={ async (selectedBudgetID, {setErrors})=>{
+                  
+                    const userObject = new Auth()
+                    const response = await userObject.upload({bid: selectedBudgetID.budget, expenseCategory: selectedBudgetID.expense, cost: selectedBudgetID.cost, description: selectedBudgetID.description})
+
+                    if(!response.status) return await setErrors({expense: response.message})
+                    navigation.back()
+
+                    // verify if expense is found in budget
+
+            }}
+
+
                 validationSchema={receiptUploadingSchema}
               >{(formObject:any)=>(
                 <View>
                     <View className='mt-4 mb-3'>
-                        <GrantDropList validation={formObject} userGrant={''} />
+                        <GrantDropList validation={formObject} userGrant={budget} 
+                        innerEvent={async (selected)=>{                        
+                            formObject.setFieldTouched('budget', true)
+                            formObject.setFieldValue('budget', selected)
+
+                            let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records(selected)
+
+                            selectBudget(transactions.budgets)
+                            const expenses = generateOnlyExpenseFromObject(transactions.expenses)
+                            selectedBudget(expenses)
+
+                            // formObject.handleSubmit(selected)                            
+                        }}
+                        />
                         {formObject.errors.budget? <Text className='text-red-500 font-bold px-2'>
                           {formObject.errors.budget}
                         </Text>: ''}
@@ -97,14 +140,22 @@ export default function UsersUpload() {
 
                     {/* Allow User to select grant spending package */}
                     <View className='mt-4 mb-3'>
-                        <GrantPendList validation={formObject} userGrantSpend={''} />
+                        <GrantPendList validation={formObject} userGrantSpend={selectedBudgetExpenses} />
                         {formObject.errors.expense? <Text className='text-red-500 font-bold px-2'>
                           {formObject.errors.expense}
                             </Text>: ''}
                     </View>
 
+                    {/* Can be used later
+                      Plan is to use with a file processing API which scans receipt file and return:
+                      1. Amount on receipt
+                      2. Legitimacy of receipt
+                      3. Name and information on the receipt and etc
+                      Note: only the amount is need, but the rest is attached within the api and used by the transaction class to generate a message.
 
-                    <TouchableHighlight
+                    
+                    */}
+                     {/* <TouchableHighlight
                       onPress={()=>{
                         const receiptFile = _pickeDocument()
                         formObject.setFieldTouched('receipt', true)
@@ -116,9 +167,25 @@ export default function UsersUpload() {
                         Select Receipt
                       </Text>
                     </TouchableHighlight>
+
                     {formObject.errors.receipt? <Text className='text-red-500 font-bold px-2'>
                     {formObject.errors.receipt}
+                            </Text>: ''} */}
+
+                    {/* Form allows user to add more details */}
+                    <View className='mt-4'>
+                        <TextInput
+                          inputMode='numeric'
+                          className='border border-gray-500 p-3 rounded-xl'
+                          placeholder='Cost. e.g 100,000,000'
+                          onChangeText={formObject.handleChange('cost')}
+                          onBlur={formObject.handleBlur('cost')}
+                          value={formObject.values.cost}
+                        />
+                        {formObject.errors.cost? <Text className='text-red-500 font-bold px-2'>
+                        {formObject.errors.cost}
                             </Text>: ''}
+                    </View>
 
                     {/* Form allows user to add more details */}
                     <View className='mt-4'>
@@ -130,13 +197,11 @@ export default function UsersUpload() {
                           value={formObject.values.description}
                         />
                         {formObject.errors.description? <Text className='text-red-500 font-bold px-2'>
-                          {formObject.errors.description}
+                        {formObject.errors.description}
                             </Text>: ''}
                     </View>
                     <View className='flex flex-col mt-4'>
-                        <Button onPress={(e)=>{
-                        formObject.handleSubmit(e)
-                        }} color={'black'} title='Process' />
+                        <Button onPress={formObject.handleSubmit} color={'black'} title='Process' />
                     </View>
                 </View>
 
@@ -144,7 +209,7 @@ export default function UsersUpload() {
 
               </Formik>
               {/* Displays Processed Receipts */}
-              <Formik
+              {/* <Formik
                 initialValues={{
 
                 }}
@@ -161,12 +226,29 @@ export default function UsersUpload() {
                     </View>
                   </View>
                 )}
-              </Formik>
+              </Formik> */}
           </View>
       </SafeAreaView>
   );
 }
 
+
+type expenseList = {
+  key: string,
+  value: string
+}
+function generateOnlyExpenseFromObject(expenses) {
+    let output: expenseList[] = []
+
+    expenses.forEach(expense => {
+      output.push({
+        key: expense.expenseCategory, 
+        value: expense.expenseCategory, 
+      })
+    });
+
+    return output
+}
 
 // define expected schema
 function ProcessedReceiptCard({response}: {response: string}) {

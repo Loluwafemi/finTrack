@@ -15,7 +15,7 @@ export default defineConfig({
 		strictPort: true,
 		cors: true,
 		allowedHosts: ["http://192.168.43.107:8081"],
-		host: '172.20.112.1',
+		host: '172.18.208.1',
 
 	}
 });

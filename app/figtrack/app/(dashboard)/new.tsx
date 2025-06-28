@@ -189,6 +189,9 @@ const ExpenseForm = ({output, onSubmitCloseModal})=>{
     }}
 
     onSubmit={async (expenseData, {resetForm, setErrors})=>{
+
+        console.log(expenseData);
+        
         output(expenseData)
         // onSubmitCloseModal()      // not working fix
         
@@ -236,10 +239,7 @@ const ExpenseForm = ({output, onSubmitCloseModal})=>{
 
 
           <TouchableHighlight
-          onPress={()=>{
-            handleSubmit()
-            handleReset()
-          }}
+          onPress={handleSubmit}
             className='bg-black rounded-md my-2 p-2 flex flex-row justify-center'
             >
               <View className='flex flex-row justify-center items-center'>

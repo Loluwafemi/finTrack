@@ -1,5 +1,7 @@
 # FInTrack Admin Dashboard 🚀
 
+`adb reverse tcp:8081 tcp:8080` to reverse the network on development mode.
+
 > **Professional Financial Tracking System - Administrative Interface**
 
 A comprehensive React Native administrative dashboard built with Expo Router, designed for managing financial tracking operations, user accounts, and system-wide configurations. This application serves as the central control hub for the FInTrack ecosystem.
