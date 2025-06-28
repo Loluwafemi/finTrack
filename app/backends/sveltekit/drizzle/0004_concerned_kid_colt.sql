@@ -1,1 +1,0 @@
-ALTER TABLE "user_transaction" DROP COLUMN "sender_id";
