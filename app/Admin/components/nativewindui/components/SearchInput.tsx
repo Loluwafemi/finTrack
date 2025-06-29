@@ -18,7 +18,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChangeText,
   placeholder = "Search...",
-  className = "w-full px-4 py-3 border border-gray-200 rounded-md bg-gray-50 text-sm "
+  className = "w-full px-4 py-3 border border-gray-200 rounded-md bg-gray-50 text-sm ",
 }) => (
   <View className="flex-1">
     <TextInput
