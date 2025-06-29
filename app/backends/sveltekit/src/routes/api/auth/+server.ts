@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { REQUESTAUTHENTICATOR } from '$lib';
+import { REQUESTAUTHENTICATOR } from '$lib/index.server';
 
 export const GET: RequestHandler = async (event) => {
 
@@ -12,10 +12,7 @@ export const GET: RequestHandler = async (event) => {
     const user = event.locals.user
     const session = event.locals.session
 
-    const response = new Response("Auth root")
-
-    // console.log(response);
-    
+    const response = new Response("Auth root")    
 
     return response;
 };

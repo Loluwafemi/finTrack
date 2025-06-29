@@ -11,11 +11,11 @@ export default defineConfig({
 		strictPort: true
 	},
 	server: {
-		port: 8080, // Number(process.env.SERVER_PORT),
-		strictPort: true,
+		// port: 4044, // Number(process.env.SERVER_PORT),
+		// strictPort: true,
 		cors: true,
-		allowedHosts: ["http://192.168.43.107:8081"],
-		host: '172.18.208.1',
-
+		// allowedHosts: ["http://192.168.43.107:8081"],
+		host: '127.0.0.1',
+		
 	}
 });

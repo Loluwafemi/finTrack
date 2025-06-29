@@ -80,4 +80,6 @@ This command specifically deletes the IPv4 port proxy rule listening on port 808
 
 
 4. Then reverse the host to a secure one.
-netsh interface portproxy add v4tov4 listenport=8080 connectaddress=172.18.208.1 listenaddress=127.0.0.1 connectport=8080 protocol=tcp
+
+
+netsh interface portproxy add v4tov4 connectaddress=localhost connectport=8080 listenaddress=127.0.0.1 listenport=8080 protocol=tcp

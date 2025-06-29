@@ -1,7 +1,10 @@
 import { SKELETON_SCREENS } from "@/components/custom/screenSelector";
 import UserInformationDisplayer from "@/components/custom/sections/detailer";
 import DashboardHeader from "@/components/custom/sections/heading";
+import { User } from "@/lib/auth";
+import { getRoute } from "@/src/constants/routes";
 import { Icon } from "@roninoss/icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -22,9 +25,29 @@ export default function DashboardIndex() {
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const [selectedScreen, setSelectedScreen] = useState(SKELETON_SCREENS[0]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const userObject = new User()
+  const [status, setStatus] = React.useState(false)
 
   const SelectedComponent = selectedScreen.component;
+  React.useEffect(()=>{
+    const getSession = async () => {
+      try {
+        const response = await User.isAlive()
+        
+        if (response.status) {            
+            setStatus(true)
+            return router.navigate(getRoute('DASHBOARD'));
+        }else{
+          setStatus(false)
+          return router.navigate(getRoute('AUTH'));
 
+        }
+      } catch (error) {
+        setStatus(false)
+      }
+    };
+    getSession();
+  }, [])
 
   return (
     // <View
@@ -56,6 +79,7 @@ export default function DashboardIndex() {
       style={{ backgroundColor: currentColors.background }}
     >
     <UserInformationDisplayer data={''} />
+
     <DashboardHeader />
   
     <View className="flex-1 flex-row">
