@@ -1,13 +1,13 @@
 import { error } from "@sveltejs/kit"
 import type { RequestEvent } from "../routes/$types"
-
+import { ALLOWED_ORIGIN, API_AUTHORIZATION } from '$env/static/private'
 
 
 // keep only to the apis
 
-const ALLOWED_ORIGIN = "http://192.168.43.107:8081, "
+
+// export const ALLOWED_ORIGIN = "http://192.168.43.107:8081,http://localhost:8081"
 const AUTH_ORIGIN = ALLOWED_ORIGIN.split(',')
-const API_AUTHORIZATION = 'Bearer'
 
 
 // dependencies
@@ -26,9 +26,9 @@ export const REQUESTAUTHENTICATOR = (event:any)=> {
     
     if(!Authorization) throw error(401, 'Authorization Fail. Token Not Found.')
     if(Authorization != API_AUTHORIZATION!) throw error(401, 'Authorization Fail. Token Not Match.')
-    
 
     // origin validation
-    const origin = event.request.headers.get('access-control-allow-origin')
+    const origin = event.request.headers.get('origin')
+    
     if(!AUTH_ORIGIN?.includes(origin!)) throw error(401, 'Origin Not Recognize. Keep Off.')
 }

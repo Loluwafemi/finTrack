@@ -1,5 +1,6 @@
+import { User } from "@/lib/auth";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { getRoute } from "../src/constants/routes";
@@ -10,16 +11,27 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
   const { isDarkColorScheme } = useColorScheme();
   const colors = isDarkColorScheme ? COLORS.dark : COLORS.light;
-
+  const [status, setStatus] = useState(false)
 
   // use this to navigate about page on prompt request
   // check if cookies / session is active
   useEffect(() => {
     let isMounted = true;
     const navigateToDashboard = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (isMounted) {
+    
+      try {
+        const response = await User.isAlive()
+        
+        if (response.status) {            
+            setStatus(true)
+            return router.navigate(getRoute('DASHBOARD'));
+        }else{
+          router.navigate(getRoute('AUTH'));
+          setStatus(false)
+        }
+      } catch (error) {
         router.navigate(getRoute('AUTH'));
+        setStatus(false)
       }
     };
 

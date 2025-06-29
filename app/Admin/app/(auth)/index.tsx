@@ -20,6 +20,7 @@ import { COLORS } from "~/theme/colors";
  * The screen is fully responsive and adapts to both light and dark themes.
  */
 export default function AuthenticationIndex() {
+
   const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const userObject = new User()
@@ -31,10 +32,16 @@ export default function AuthenticationIndex() {
       }}
 
       onSubmit={async (value, {setErrors, resetForm})=>{
-        // setErrors({email: '', password: 'Invalid Credentials!'})
         let transaction = await userObject.login(value)
-        // resetForm()
-        // console.log(value);
+
+        console.log(transaction);
+        
+        if (!transaction.status) {
+          resetForm()
+          return setErrors({email: '', password: 'Invalid Credentials!'})
+        }
+        return router.navigate(getRoute('DASHBOARD'));
+
         
       }}
 
@@ -97,9 +104,6 @@ export default function AuthenticationIndex() {
                       Login
               </button>
 
-
-
-
               <View className="mt-4">
               <Text>
                 Do not have an account? Signup now.
@@ -118,14 +122,6 @@ export default function AuthenticationIndex() {
 
               {/* end here */}
             </View>
-
-            <button
-              className="bg-black p-2 text-white rounded mt-4"
-              onClick={()=>{
-                  router.navigate(getRoute('DASHBOARD'));
-              }}>
-                  Continue to dashboad
-              </button>
           </View>
       )}
 

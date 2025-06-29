@@ -1,13 +1,17 @@
+import { User } from "@/lib/auth";
 import { useColorScheme } from "@/lib/useColorScheme";
+import { getRoute } from "@/src/constants/routes";
 import { COLORS } from "@/theme/colors";
 import { Icon } from "@roninoss/icons";
-import { Text, View } from "react-native";
-
+import { router } from "expo-router";
+import { Formik } from "formik";
+import { Text, TouchableHighlight, View } from "react-native";
 
 export default function UserInformationDisplayer({ data }: any) {
-    const { isDarkColorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
-    
+  const userObject = new User()
+
     return (
 
         <View
@@ -27,15 +31,31 @@ export default function UserInformationDisplayer({ data }: any) {
             
             {/* <Text className="px-2 py-1 mx-4 bg-green-500 rounded text-white">super -admin</Text> */}
             {/* <Text className="px-2 py-1 mx-4 bg-red-500 rounded text-white">system</Text> */}
-            <View className="items-center bg-red-800 mx-2 flex flex-row py-1 px-4 rounded-xl">
-                <Text
-                className="text-xs mx-2 text-white"
-                // style={{ color: currentColors.textSecondary }}
+            <Formik 
+              onSubmit={async ()=>{
+                let transaction = await userObject.logout()
+                if(transaction.status) return router.navigate(getRoute('AUTH'));
+              }}
+              initialValues={{}}
+
+            >{({handleSubmit})=>(
+              <TouchableHighlight
+                onPress={(e)=>{handleSubmit(e)}}
                 >
-                Logout
-                </Text>
-                <Icon color="white" namingScheme="material" size={18} name="chevron-right-circle-outline" />
-            </View>
+                  <View className="items-center bg-red-800 mx-2 flex flex-row py-1 px-4 rounded-xl">
+                  <Text
+                  className="text-xs mx-2 text-white"
+                  // style={{ color: currentColors.textSecondary }}
+                  >
+                  Logout
+                  </Text>
+                  <Icon color="white" namingScheme="material" size={18} name="chevron-right-circle-outline" />
+              </View>
+              </TouchableHighlight>
+              )}
+
+
+            </Formik>
         </View>
     );
 }

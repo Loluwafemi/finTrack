@@ -14,10 +14,12 @@ export interface User {
 
 
 export interface userDataType {
-    organization: string,
+    organization: 'personal' | 'institution' | 'business',
+    organization_name: string,
     bank_name: string,
     bank_account_number: string,
-    bank_account_name: string
+    bank_account_name: string,
+    number: string
 }
 
 export interface UserCredential {
@@ -25,7 +27,9 @@ export interface UserCredential {
     lastname: string | null,
     username: string | null,
     email: string | null,
-    password: string | null
+    password: string | null,
+    accounttype: 'admin' | 'super-admin' | null,
+    invitation_key?: string
 }
 
 
@@ -71,14 +75,84 @@ export class User {
                 transaction = transaction.pop()
 
                 transaction = await db.insert(user_data).values({
-                    data: cred_data,
-                    id: transaction?.userid!
+                    data: {
+                        bank_name: cred_data.bank_name,
+                        bank_account_name: cred_data.bank_account_name,
+                        bank_account_number: cred_data.bank_account_number
+                    },
+                    id: transaction?.userid!,
+                    organization_name: 'personal',
+                    organization: 'personal'
                 }).returning()
             }else {
                 transaction = transaction.pop()
                 transaction = await db.insert(user_data).values({
                     data: {},
                     id: transaction?.userid!
+                }).returning()
+            }
+
+            transaction = transaction.pop()
+        
+        
+        return transaction
+
+    }
+
+
+    async create_admin(userdata: UserCredential | any, cred_data: userDataType|null = null) {
+        let transaction;
+
+        // check if already exist
+        transaction = await db.query.user.findFirst({
+            where: eq(userdata.email, user.email)
+        })
+
+
+        
+        if (transaction) return {status: false, message: "User already existed"}
+
+        transaction = (await db.insert(user).values({
+            email: userdata.email,
+            firstname: userdata.firstname,
+            lastname: userdata.lastname,
+            username: userdata.username,
+            accounttype: userdata.accounttype
+        }).returning()).pop()
+
+        if (!transaction) return { status: false, message: "Unable to save user data"}
+
+        transaction = await db.insert(protection).values({
+            password: userdata.password,
+            userid: transaction.userid
+        }).returning()
+
+            if (cred_data){
+                transaction = transaction.pop()
+
+                transaction = await db.insert(user_data).values({
+                    data: {
+                        bank_name: null,
+                        bank_account_name: null,
+                        bank_account_number: null,
+                        number: cred_data.number
+                    },
+                    organization: cred_data.organization,
+                    organization_name: cred_data.organization_name,
+                    id: transaction?.userid!
+                }).returning()
+            }else {
+                transaction = transaction.pop()
+                transaction = await db.insert(user_data).values({
+                    data: {
+                        bank_name: null,
+                        bank_account_name: null,
+                        bank_account_number: null,
+                        number: null
+                    },
+                    id: transaction?.userid!,
+                    organization: 'personal',
+                    organization_name: 'personal',
                 }).returning()
             }
 
@@ -188,16 +262,19 @@ export class User {
                     transactions: true
                 }
             }).then(async (response:any)=>{
-                // let found = response;
-                let transaction = await db.query.protection.findFirst({
-                where: eq(response.userid, protection.userid)
-                })
 
-                if (transaction?.password == password) {{
-                    return response
-                }}else{
-                    return null
+                if(response){
+                                    // let found = response;
+                let transaction = await db.query.protection.findFirst({
+                    where: eq(response.userid, protection.userid)
+                    })
+                    if (transaction?.password == password) {{
+                        return response
+                    }}else{
+                        return null
+                    }
                 }
+                return null
                 
             })
 

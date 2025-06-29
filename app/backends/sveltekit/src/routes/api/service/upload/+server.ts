@@ -1,4 +1,4 @@
-import { REQUESTAUTHENTICATOR } from '$lib';
+import { REQUESTAUTHENTICATOR } from '$lib/index.server';
 import { User } from '$lib/server/models/user';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';

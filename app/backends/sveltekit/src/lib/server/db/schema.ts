@@ -47,6 +47,8 @@ export const protection = pgTable('protection', {
 // valid
 export const user_data = pgTable('user_data', {
 	id: text('userid').notNull().references(()=> user.userid, {onDelete: 'cascade', onUpdate: 'cascade'}),
+	organization: text("organization").default('personal'),
+	organization_name: text("organization_name"),
 	data: json().notNull()
 })
 

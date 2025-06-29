@@ -2,6 +2,9 @@
 
 `adb reverse tcp:8081 tcp:8080` to reverse the network on development mode.
 
+## Run the server locally on 127.0.0.1:port/ make sure you reverse the connection. esle api-request-header will return undefined
+
+
 > **Professional Financial Tracking System - Administrative Interface**
 
 A comprehensive React Native administrative dashboard built with Expo Router, designed for managing financial tracking operations, user accounts, and system-wide configurations. This application serves as the central control hub for the FInTrack ecosystem.

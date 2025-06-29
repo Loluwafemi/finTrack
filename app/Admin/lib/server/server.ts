@@ -1,5 +1,6 @@
-import * as SecureStore from 'expo-secure-store';
-
+// import * as SecureStore from 'expo-secure-store';
+import { MMKV } from 'react-native-mmkv'
+import { userSignupDataTemplate } from '../auth'
 
 interface userDataType {
     organization: 'string',
@@ -14,7 +15,7 @@ interface userDataType {
 }
 
 // export const backendORIGIN = "http://127.0.0.1:8080"
-export const backendORIGIN = "http://127.0.0.1:8080"
+export const backendORIGIN = "http://127.0.0.1:5173"
 export const api_origin_address = "127.0.0.1"
 export const AUTH_ORIGIN = process.env.ALLOWED_ORIGIN?.split(',')
 
@@ -24,18 +25,24 @@ export const apiHeaders = new Map()
 apiHeaders.set("Authorization", "Bearer")
 apiHeaders.set("content-type", "application/json")
 apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
-apiHeaders.set("Access-Control-Allow-Methods", "GET, POST")
-apiHeaders.set("Access-Control-Allow-Headers", "content-type, Authorization")
+apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+apiHeaders.set("Access-Control-Allow-Headers", "Authorization,content-type")
+apiHeaders.set("Access-Control-Expose-Headers", "Authorization")
+apiHeaders.set('Access-Control-Allow-Credentials', true);
+apiHeaders.set('Accept', "*/*");
 
+
+
+const storage = new MMKV()
 
 export const storeData = async (key:any, value:any) => {
     try {
-        await SecureStore.setItemAsync(key, value);
+        storage.set(key, value)
+
         console.log("cookies has been set");
         
     } catch (e) {
-      // await CookieManager.setFromResponse(backendORIGIN, value);
-      console.log(e);
+    //   console.log("Error:", e);
       
       console.log("Couldnt save data");
       
@@ -43,17 +50,19 @@ export const storeData = async (key:any, value:any) => {
 };
 
 export const getData = async (key:any) => {
-    let result = await SecureStore.getItemAsync(key);
+    // let result = await SecureStore.getItemAsync(key);
+
+    let result = await storage.getString(key);
     if (result) {
-        console.log("🔐 Here's your value 🔐 \n" + result);
+        // console.log("🔐 Here's your value 🔐 \n" + result);
         return result;
       } else {
-        console.log('No values stored under that key.');
+        // console.log('No values stored under that key.');
       }
 };
 
 export const deleteCookie = async (key:any) => {
-    await SecureStore.deleteItemAsync(key);
+    await storage.delete(key);
 };
 
 
@@ -142,24 +151,35 @@ export async function GetRequestHandler(path:{ url: null|string }) {
     }
 }
 
+
+
 export async function signinREQUEST(data) {
+
+    console.log(Object.fromEntries(apiHeaders.entries()));
     
+    // check if cookie is set
+    const cookie = await getData(api_origin_address)
+    
+    if (cookie !== undefined) return { status: false, message: "cookie set. Try deauthenticate first" } 
+
     try {
         
-        const request = await fetch(`${backendORIGIN}/api/auth/signin`, {
+        const response = await fetch(`${backendORIGIN}/api/auth/signin`, {
             headers: Object.fromEntries(apiHeaders.entries()),
             body: JSON.stringify(data),
             method: 'POST',
             credentials: 'same-origin'
         })
-
-        console.log(request);
-
         
-        const responseClone = request.clone()
-        
+        const responseClone = response.clone()
 
-        if (!responseClone.ok) {
+
+        let output = responseClone
+
+    
+        
+        
+        if (!output.ok) {
             return {
 
                 status: false,
@@ -167,26 +187,32 @@ export async function signinREQUEST(data) {
                 cookies: null
         }
         }
+
         
-        const {status, message } = await responseClone.json()
+        const {status, message } = await output.json()    
         
+        console.log(output);
+            
+
         if (status){
             
-            const cookies = responseClone.headers.get('set-cookie')
-            // console.log(typeof cookies);
+            const cookies = output.headers.get('X-Custom-header')?.toString()
+                        
             
             await storeData(api_origin_address, cookies)
-            await getData(api_origin_address)   
+            // await getData(api_origin_address)   
             
             return {
                 status: true,
                 message: "Valid Credential " + message,
+                response: message
             }
         }else{
             return {
                 status: false,
                 message: "Invalid Credential, response okay. Something went wrong",
-                cookies: null
+                cookies: null,
+                response: message
             }
         }
     
@@ -195,7 +221,55 @@ export async function signinREQUEST(data) {
         return {
             status: false,
             message: "Invalid Credential. Caught an error",
+            cookies: null,
+            error
+        }
+        
+    }
+
+    
+};
+
+
+
+export async function optionREQUEST(data) {
+    
+    try {
+        apiHeaders.set("Status-Code", 200)
+        
+        const request = await fetch(`${backendORIGIN}/api/auth/options`, {
+            headers: Object.fromEntries(apiHeaders.entries()),
+            body: JSON.stringify(data),
+            method: 'OPTIONS',
+            credentials: 'same-origin',
+            
+        })
+
+        
+        const responseClone = request.clone()
+                
+
+        if (!responseClone.ok) return {
+
+            status: false,
+            message: "Invalid Credential. Response not ok",
             cookies: null
+        }
+
+        return {
+            status: true,
+            message: "Valid Credential, response okay.Ready for operation",
+            cookies: null
+        }
+        
+    
+    } catch (error) {
+        // console.log("error: ", error);
+        return {
+            status: false,
+            message: "Invalid Credential. Caught an error",
+            cookies: null,
+            error: error
         }
         
     }
@@ -249,7 +323,7 @@ export async function signouREQUEST(data?:any) {
     
     if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
 
-    apiHeaders.set('Cookie', cookie)
+    // apiHeaders.set('Cookie', cookie)
 
     if (session.data == null) return { status: false, message: "Session does not exist" }
 
@@ -270,8 +344,8 @@ export async function signouREQUEST(data?:any) {
     
     if (status){
         // redirect to dashboard.
-        // console.log("session has ended");
-        // console.log("session: ", session);
+        console.log("session has ended");
+        console.log("session: ", session);
         
         
         return {
@@ -287,36 +361,23 @@ export async function signouREQUEST(data?:any) {
     
 }
 
-export async function signupREQUEST(data:any) {
+export async function signupREQUEST(data:userSignupDataTemplate) {
     const cookie = await getData(api_origin_address)
     
     if (cookie !== undefined) return { status: false, message: "cookie already set. Try de-authenticate first" }
 
-
     // breaking incoming data
-
-
-    const tailoredData:userDataType|any = {
-        firstname: data.firstname,
-        lastname: data.lastname,
-        email: data.email,
-        password: data.password,
-        bank_account_name: data.accountname,
-        bank_account_number: data.accountnumber,
-        bank_name: data.bank,
-        organization: data.organization
-    }
-
-    
-    const request = await fetch(`${backendORIGIN}/api/auth/signup`, {
+    const request = await fetch(`${backendORIGIN}/api/secure/signup`, {
         headers: Object.fromEntries(apiHeaders.entries()),
-        body: JSON.stringify(tailoredData),
+        body: JSON.stringify(data),
         method: 'POST',
         credentials: 'same-origin'
     })
 
     const responseClone = request.clone()
-    const {status, message} = await responseClone.json()    
+
+
+    const {status, message} = await responseClone.json()  
 
     if (status){     
         
