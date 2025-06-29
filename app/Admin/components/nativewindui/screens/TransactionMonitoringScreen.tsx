@@ -4,7 +4,7 @@ import { SkeletonBase } from "../SkeletonBase";
 import { Pagination } from "./Pagination";
 import { SearchInput } from "../components/SearchInput";
 
-// Mock transaction data - replace with API call
+
 const mockTransactions = [
   {
     id: 1,
@@ -85,7 +85,7 @@ const mockTransactions = [
   },
 ];
 
-// Transaction Monitoring Screen
+
 export function TransactionMonitoringScreen() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +95,6 @@ export function TransactionMonitoringScreen() {
   const [showAccountTypeDropdown, setShowAccountTypeDropdown] = useState(false);
   const itemsPerPage = 5;
 
-  // Filter and search logic - O(n) time complexity
   const filteredTransactions = useMemo(() => {
     return mockTransactions.filter((transaction) => {
       const matchesSearch =
@@ -121,7 +120,6 @@ export function TransactionMonitoringScreen() {
     });
   }, [searchQuery, statusFilter, accountTypeFilter]);
 
-  // Pagination logic
   const totalItems = filteredTransactions.length;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedTransactions = filteredTransactions.slice(
@@ -129,7 +127,6 @@ export function TransactionMonitoringScreen() {
     startIndex + itemsPerPage
   );
 
-  // Calculate stats from filtered data
   const stats = useMemo(() => {
     const completed = filteredTransactions.filter(
       (t) => t.status === "Active"
@@ -143,10 +140,9 @@ export function TransactionMonitoringScreen() {
     return { completed, pending, failed };
   }, [filteredTransactions]);
 
-  // Event handlers
   const handleSearch = (text: string) => {
     setSearchQuery(text);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
   const handleStatusFilter = (status: string) => {
@@ -213,7 +209,7 @@ export function TransactionMonitoringScreen() {
           description="Manage accounts within organization"
         >
           <View className="flex-1 bg-gray-50 pb-6">
-            {/* Header Section */}
+
             <View className="bg-white shadow-sm mb-6">
               <View className="p-8">
                 <Text className="text-3xl font-light text-gray-800 mb-2">
@@ -223,7 +219,7 @@ export function TransactionMonitoringScreen() {
                   Track and monitor all transaction activities
                 </Text>
 
-                {/* Search and Filters */}
+
                 <View className="flex-row gap-4 mb-4">
                   <SearchInput
                     value={searchQuery}
@@ -314,7 +310,7 @@ export function TransactionMonitoringScreen() {
                   </View>
                 </View>
 
-                {/* Quick Stats */}
+
                 <View className="flex-row gap-6 mt-4">
                   <View className="bg-green-50 px-4 py-2 rounded-md border border-green-200">
                     <Text className="text-xs text-green-600 font-medium">
@@ -344,7 +340,7 @@ export function TransactionMonitoringScreen() {
               </View>
             </View>
 
-            {/* Transaction Table */}
+
             <View className="bg-white rounded-lg border border-gray-200">
               <View className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <View className="flex-row justify-between items-center mb-4">
@@ -357,7 +353,7 @@ export function TransactionMonitoringScreen() {
                   </Text>
                 </View>
               </View>
-              {/* Table Header */}
+
               <View className="flex-row bg-gray-50 p-4 border-b border-gray-200">
                 <Text className="flex-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
                   First Name
@@ -382,7 +378,7 @@ export function TransactionMonitoringScreen() {
                 </Text>
               </View>
 
-              {/* Table Rows */}
+
               <View className="divide-y divide-gray-200">
                 {paginatedTransactions.length === 0 ? (
                   <View className="p-8 text-center">
@@ -442,7 +438,7 @@ export function TransactionMonitoringScreen() {
                 )}
               </View>
             </View>
-            {/* Pagination */}
+
             <View className="mt-6 mb-4">
               <Pagination
                 currentPage={currentPage}
