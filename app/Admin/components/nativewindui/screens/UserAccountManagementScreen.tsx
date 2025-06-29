@@ -1,5 +1,5 @@
-import React from "react";
-import { Text, View, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { Text, View, ScrollView, Alert } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
 import { SkeletonBase } from "../SkeletonBase";
@@ -11,7 +11,59 @@ import {
   GridSection,
 } from "./components";
 
-export function UserAccountManagementScreen() {
+import { SKELETON_SCREENS } from "@/components/custom/screenSelector";
+
+export function UserAccountManagementScreen({ setSelectedScreen }: { setSelectedScreen?: (screen: any) => void; }) {
+  const [alerts, setAlerts] = useState([
+    {
+      id: 1,
+      title: "High Transaction Volume",
+      description: "Unusual activity detected - 45 transactions in 10 minutes.",
+      priority: "high" as const,
+      time: "2 min ago",
+    },
+    {
+      id: 2,
+      title: "Failed Login Attempts",
+      description: "Multiple failed attempts detected for user account.",
+      priority: "medium" as const,
+      time: "15 min ago",
+    },
+  ]);
+
+  const handleRefreshKPIs = () => {
+    Alert.alert("Refresh KPIs", "KPIs have been refreshed.");
+  };
+
+  const handleExportReport = () => {
+    Alert.alert("Export Report", "Report has been exported.");
+  };
+
+  const handleMarkAllRead = () => {
+    setAlerts([]);
+    Alert.alert("Mark All Read", "All alerts have been marked as read.");
+  };
+
+  const handleViewDetails = (alert: any) => {
+    Alert.alert("View Details", `Viewing details for: ${alert.title}`);
+  };
+
+  const handleDismissAlert = (alertId: number) => {
+    setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== alertId));
+  };
+
+  const handleViewAllActivities = () => {
+    if (setSelectedScreen) {
+      const transactionScreen = SKELETON_SCREENS.find(screen => screen.id === 'account-manager');
+      if (transactionScreen) {
+        setSelectedScreen(transactionScreen);
+      } else {
+        Alert.alert("Error", "Could not find the transaction monitoring screen.");
+      }
+    } else {
+      Alert.alert("View All Activities", "Viewing all activities.");
+    }
+  };
   const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
 
@@ -52,7 +104,7 @@ export function UserAccountManagementScreen() {
                 <SectionHeader
                   title="Key Performance Indicators"
                   actionLabel="Refresh"
-                  actionOnPress={() => console.log("Refresh KPIs")}
+                  actionOnPress={handleRefreshKPIs}
                 />
                 <View className="mb-4">
                   <GridSection columns={2} gap={16}>
@@ -103,7 +155,7 @@ export function UserAccountManagementScreen() {
                 <SectionHeader
                   title="User Statistics"
                   actionLabel="Export"
-                  actionOnPress={() => console.log("Export report")}
+                  actionOnPress={handleExportReport}
                 />
                 <GridSection columns={2} gap={16}>
                   <KPICard
@@ -144,26 +196,21 @@ export function UserAccountManagementScreen() {
                 <SectionHeader
                   title="Alerts & Notifications"
                   actionLabel="Mark All Read"
-                  actionOnPress={() => console.log("Mark all read")}
-                  badge={3}
+                  actionOnPress={handleMarkAllRead}
+                  badge={alerts.length}
                 />
                 <GridSection columns={1} gap={12}>
-                  <AlertCard
-                    title="High Transaction Volume"
-                    description="Unusual activity detected - 45 transactions in 10 minutes."
-                    priority="high"
-                    time="2 min ago"
-                    onView={() => console.log("View details")}
-                    onDismiss={() => console.log("Dismiss alert")}
-                  />
-                  <AlertCard
-                    title="Failed Login Attempts"
-                    description="Multiple failed attempts detected for user account."
-                    priority="medium"
-                    time="15 min ago"
-                    onView={() => console.log("View details")}
-                    onDismiss={() => console.log("Dismiss alert")}
-                  />
+                  {alerts.map((alert) => (
+                    <AlertCard
+                      key={alert.id}
+                      title={alert.title}
+                      description={alert.description}
+                      priority={alert.priority}
+                      time={alert.time}
+                      onView={() => handleViewDetails(alert)}
+                      onDismiss={() => handleDismissAlert(alert.id)}
+                    />
+                  ))}
                 </GridSection>
               </View>
 
@@ -186,7 +233,7 @@ export function UserAccountManagementScreen() {
                 <SectionHeader
                   title="Activity Feed"
                   actionLabel="View All"
-                  actionOnPress={() => console.log("View all activities")}
+                  actionOnPress={handleViewAllActivities}
                 />
                 <GridSection columns={1} gap={6}>
                   <ActivityItem
