@@ -2,7 +2,15 @@ import React from "react";
 import { View, Text } from "react-native";
 
 // SkeletonBase Component
-export function SkeletonBase({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+export function SkeletonBase({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
   return (
     <View className="flex-1 p-6 bg-gray-50">
       <View className="mb-6">

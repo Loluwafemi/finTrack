@@ -184,7 +184,7 @@ export default function DashboardIndex() {
 
         {/* Component Content */}
         <View className="flex-1">
-          <SelectedComponent />
+          <SelectedComponent setSelectedScreen={setSelectedScreen} />
         </View>
       </View>
 

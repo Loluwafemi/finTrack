@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { budgetList } from "~/lib/func/tailored";
-// import { budgetList } from "~/lib/func/tailored";
 
 
 
