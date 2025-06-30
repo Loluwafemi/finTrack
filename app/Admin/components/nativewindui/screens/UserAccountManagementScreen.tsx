@@ -11,9 +11,13 @@ import {
   GridSection,
 } from "./components";
 
-import { SKELETON_SCREENS } from "@/components/custom/screenSelector";
+import { SKELETON_SCREEN_META } from "@/components/custom/screenMeta";
 
-export function UserAccountManagementScreen({ setSelectedScreen }: { setSelectedScreen?: (screen: any) => void; }) {
+export function UserAccountManagementScreen({
+  setSelectedScreen,
+}: {
+  setSelectedScreen?: (screen: any) => void;
+}) {
   const [alerts, setAlerts] = useState([
     {
       id: 1,
@@ -49,16 +53,23 @@ export function UserAccountManagementScreen({ setSelectedScreen }: { setSelected
   };
 
   const handleDismissAlert = (alertId: number) => {
-    setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== alertId));
+    setAlerts((prevAlerts) =>
+      prevAlerts.filter((alert) => alert.id !== alertId)
+    );
   };
 
   const handleViewAllActivities = () => {
     if (setSelectedScreen) {
-      const transactionScreen = SKELETON_SCREENS.find(screen => screen.id === 'account-manager');
+      const transactionScreen = SKELETON_SCREEN_META.find(
+        (screen) => screen.id === "account-manager"
+      );
       if (transactionScreen) {
         setSelectedScreen(transactionScreen);
       } else {
-        Alert.alert("Error", "Could not find the transaction monitoring screen.");
+        Alert.alert(
+          "Error",
+          "Could not find the transaction monitoring screen."
+        );
       }
     } else {
       Alert.alert("View All Activities", "Viewing all activities.");
