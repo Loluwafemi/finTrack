@@ -18,10 +18,9 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   data,
   onPress,
 }) => {
-export const ActivityItem: React.FC<ActivityItemProps> = ({ action, user, time, type, data }) => {
 
   /* 
-  List type of activity and component declation
+  List type of activity and component declaration
   1. activity
   2. receipt
   3. signup
@@ -56,7 +55,7 @@ deleted_at: null
   */
  console.log(data);
 
- const currentuser = data.user_transaction
+ const currentUser = data.user_transaction;
  
   const getStatusColor = () => {
     switch (type) {
@@ -132,10 +131,6 @@ deleted_at: null
       </View>
     </TouchableOpacity>
   );
-  
-    default:
-      break;
-  }
 };
 
 export default ActivityItem;
