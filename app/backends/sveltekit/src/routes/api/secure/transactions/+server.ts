@@ -23,5 +23,5 @@ export const GET: RequestHandler = async (event) => {
     
     if (!transaction?.status) return responseOutput
     
-    return responseOutput;  
+    return responseOutput;
 };
