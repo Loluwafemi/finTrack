@@ -12,6 +12,8 @@ export default function UserInformationDisplayer({ data }: any) {
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const userObject = new User()
 
+  const user = data
+  
     return (
 
         <View
@@ -24,9 +26,9 @@ export default function UserInformationDisplayer({ data }: any) {
 
             <Text
             className="text-gray-700"
-            > Organization Name
+            > { user?.data?.organization } | { user?.data?.organization_name }
             
-            <Text className="py-1 px-4 mx-4 bg-blue-500 rounded-xl text-white">Admin</Text>
+            <Text className="py-1 px-4 mx-4 bg-blue-500 rounded-xl text-white">{ data.accounttype }</Text>
             </Text>
             
             {/* <Text className="px-2 py-1 mx-4 bg-green-500 rounded text-white">super -admin</Text> */}

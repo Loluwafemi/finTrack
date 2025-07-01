@@ -26,19 +26,43 @@ apiHeaders.set("Authorization", "Bearer")
 apiHeaders.set("content-type", "application/json")
 apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
-apiHeaders.set("Access-Control-Allow-Headers", "Authorization,content-type")
-apiHeaders.set("Access-Control-Expose-Headers", "Authorization")
-apiHeaders.set('Access-Control-Allow-Credentials', true);
+apiHeaders.set("Access-Control-Allow-Headers", "Authorization,X-PINGOTHER,X-Requested-With,Content-Type,Accept,X-Custom-header")
+apiHeaders.set("Access-Control-Expose-Headers", "Authorization, X-Custom-header")
+apiHeaders.set('Access-Control-Allow-Credentials', "true");
 apiHeaders.set('Accept', "*/*");
 
 
 
-const storage = new MMKV()
+const storage = new MMKV({
+    id: '',
+    // encryptionKey: '',           // not supported by web
+    // path: '',                        //same
+    readOnly: true
+})
 
 export const storeData = async (key:any, value:any) => {
-    try {
-        storage.set(key, value)
+    /* 
+    Generated: 
+    auth-session=Uk6pnst0TP9FY_1zokEweyKG; Path=/; Expires=Wed, 30 Jul 2025 05:13:54 GMT; HttpOnly; Secure; SameSite=Lax
+    
+    Needed: Uk6pnst0TP9FY_1zokEweyKG
+    */
 
+    function getCookie(name: string): string | undefined {
+        let output;
+        const ca = value.split(';');
+        for (let i = 0; i < 1; i++) {
+          let c = ca[i];
+          c = c.split('=')
+          output = c[1]
+          return output
+        }
+        return undefined;
+      }
+    let tailored:string|undefined = getCookie(value)
+    
+    try {
+        storage.set(key, tailored!)
         console.log("cookies has been set");
         
     } catch (e) {
@@ -117,8 +141,8 @@ export async function GetRequestHandler(path:{ url: null|string }) {
     const cookie = await getData(api_origin_address)
     if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }  
 
-    apiHeaders.set('Cookie', cookie)
-
+    console.log(path);
+    
     if (!path.url) return {
         status: false,
         message: "Path url to request not set",
@@ -128,19 +152,21 @@ export async function GetRequestHandler(path:{ url: null|string }) {
     const request = await fetch(`${backendORIGIN}${path.url}`, {
         headers: Object.fromEntries(apiHeaders.entries()),
         method: 'GET',
-        credentials: 'same-origin'
+        redirect: 'follow',
     })
 
 
     const responseClone = request.clone()
+
     const session = await responseClone.json()   
 
+    
     if (session){
         // redirect to dashboard.
         return {
             status: true,
             message: "Valid Credential",
-            data: session
+            ...session
         }
     }else{
         return {
@@ -153,7 +179,7 @@ export async function GetRequestHandler(path:{ url: null|string }) {
 
 
 
-export async function signinREQUEST(data) {
+export async function signinREQUEST(data:any) {
 
     console.log(Object.fromEntries(apiHeaders.entries()));
     
@@ -168,7 +194,8 @@ export async function signinREQUEST(data) {
             headers: Object.fromEntries(apiHeaders.entries()),
             body: JSON.stringify(data),
             method: 'POST',
-            credentials: 'same-origin'
+            // credentials: 'same-origin',
+            redirect: 'follow'
         })
         
         const responseClone = response.clone()
@@ -232,7 +259,7 @@ export async function signinREQUEST(data) {
 
 
 
-export async function optionREQUEST(data) {
+export async function optionREQUEST(data:any) {
     
     try {
         apiHeaders.set("Status-Code", 200)
@@ -242,6 +269,7 @@ export async function optionREQUEST(data) {
             body: JSON.stringify(data),
             method: 'OPTIONS',
             credentials: 'same-origin',
+            redirect: 'follow'
             
         })
 
@@ -283,14 +311,13 @@ export async function SessionUser() {
     // check if cookie is set
     const cookie = await getData(api_origin_address)
     
-    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
-
-    apiHeaders.set('Cookie', cookie)
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
 
     const request = await fetch(`${backendORIGIN}/api`, {
         headers: Object.fromEntries(apiHeaders.entries()),
         method: 'GET',
-        credentials: 'same-origin'
+        // credentials: 'same-origin'
+        redirect: 'follow'
     })
     
     const responseClone = request.clone()
@@ -396,41 +423,54 @@ export async function signupREQUEST(data:userSignupDataTemplate) {
 }
 
 
-export async function saveBudget(payload: {auth: any, data: any}) {
+// export async function saveBudget(payload: {auth: any, data: any}) {
 
-    const cookie = await getData(api_origin_address)
+//     const cookie = await getData(api_origin_address)
     
-    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
+//     if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
 
-    // breaking incoming data
-    const request = await fetch(`${backendORIGIN}/api/service/add`, {
-        headers: Object.fromEntries(apiHeaders.entries()),
-        body: JSON.stringify(payload),
-        method: 'POST',
-        credentials: 'same-origin'
-    })
+//     // breaking incoming data
+//     const request = await fetch(`${backendORIGIN}/api/service/add`, {
+//         headers: Object.fromEntries(apiHeaders.entries()),
+//         body: JSON.stringify(payload),
+//         method: 'POST',
+//         credentials: 'same-origin'
+//     })
     
-    const responseClone = request.clone()
+//     const responseClone = request.clone()
     
-    const {status, message} = await responseClone.json()    
+//     const {status, message} = await responseClone.json()    
 
-    // console.log(status, message);
+//     // console.log(status, message);
     
-    if (status){     
+//     if (status){     
         
-        return {
-            status: true,
-            message: "Transaction successful",
-        }
-    }else{
-        return {
-            status: false,
-            message: message,
-            cookies: null
-        }
-    }
+//         return {
+//             status: true,
+//             message: "Transaction successful",
+//         }
+//     }else{
+//         return {
+//             status: false,
+//             message: message,
+//             cookies: null
+//         }
+//     }
 
 
+// }
+
+
+export async function hydrate() {
+    const cookie = await getData(api_origin_address)
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
+
+    const request = await fetch(`${backendORIGIN}/api`, {
+        headers: Object.fromEntries(apiHeaders.entries()),
+        method: 'GET',
+        redirect: 'follow'
+    })
+    const session = await request.json()    
+        
+    return session
 }
-
-

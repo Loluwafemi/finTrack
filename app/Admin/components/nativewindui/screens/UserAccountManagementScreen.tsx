@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { Text, View, ScrollView, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, ScrollView, View } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
 import { SkeletonBase } from "../SkeletonBase";
 import {
-  KPICard,
-  AlertCard,
   ActivityItem,
-  SectionHeader,
   GridSection,
+  KPICard,
+  SectionHeader
 } from "./components";
 
 import { SKELETON_SCREEN_META } from "@/components/custom/screenMeta";
+import { unitUserType, User } from "@/lib/auth";
 
 export function UserAccountManagementScreen({
   setSelectedScreen,
@@ -34,7 +34,63 @@ export function UserAccountManagementScreen({
       time: "15 min ago",
     },
   ]);
+  
+  // const [ query, writeQuery ] = useState<null|{ row: string, keyword: string }>(null)
 
+  const [ members, setMembers  ] = useState<unitUserType[] | []>([])
+  const [ activities, setActivities  ] = useState<unitUserType[] | []>([])
+  const userObject = new User()
+
+  // reconstructing function
+  // function CONSTRUCTUSEROBJECT(UserData:[]) {
+  //   let output: unitUserType[] = []
+  //   if (UserData.length < 1) return output
+
+  //   UserData.forEach((user:{ user:any, organization: any })=>{
+  //     const currentUser = user.user
+  //     const currentUserOrg = user.organization
+      
+  //     const newUserObjct: unitUserType = { ...currentUser, ...currentUserOrg }
+      
+  //     output.push(newUserObjct)
+  //   })    
+  //   return output;
+  // }
+
+  
+  useEffect(()=>{
+
+    const creatingSpace = async ()=> {
+        /* Import and manage user's here */
+
+        try {
+            let transaction = await userObject.organizationMembers(null)
+            let activities = await userObject.organizationTransactions()
+            
+            if (transaction.status) {                
+              // const restructured = CONSTRUCTUSEROBJECT(transaction.data)
+                            
+              setMembers(transaction.data)
+              // construct them and send them to
+            }
+
+
+            if (activities.status) {                
+              // const restructured = CONSTRUCTUSEROBJECT(transaction.data)
+                            
+              setActivities(activities.data)
+              // construct them and send them to
+            }
+
+        } catch (error) {
+            console.log(error);
+            
+        }
+  }
+  creatingSpace()
+  }, [])
+  
+  
   const handleRefreshKPIs = () => {
     Alert.alert("Refresh KPIs", "KPIs have been refreshed.");
   };
@@ -98,7 +154,7 @@ export function UserAccountManagementScreen({
             className="w-full flex-col lg:flex-row space-x-0 lg:space-x-8"
           >
             <View style={{ flex: 2, minWidth: 0, marginRight: 16 }}>
-              <View
+              {/* <View
                 className="mb-8"
                 style={{
                   backgroundColor: "#ffffff",
@@ -147,7 +203,7 @@ export function UserAccountManagementScreen({
                     trend="+5%"
                   />
                 </GridSection>
-              </View>
+              </View> */}
 
               <View
                 className="mb-8"
@@ -171,13 +227,13 @@ export function UserAccountManagementScreen({
                 <GridSection columns={2} gap={16}>
                   <KPICard
                     title="Total Users"
-                    value="2,847"
+                    value={members.length.toString()}
                     isPositive={true}
                     trend="+8%"
                   />
                   <KPICard
                     title="Active Users"
-                    value="2,156"
+                    value="0"
                     isPositive={true}
                     trend="+15%"
                   />
@@ -188,7 +244,7 @@ export function UserAccountManagementScreen({
               style={{ flex: 1, minWidth: 0, marginLeft: 16 }}
               className="lg:pl-0"
             >
-              <View
+              {/* <View
                 className="mb-8"
                 style={{
                   backgroundColor: "#fff5f5",
@@ -223,12 +279,13 @@ export function UserAccountManagementScreen({
                     />
                   ))}
                 </GridSection>
-              </View>
+              </View> */}
 
-              <View
+              <ScrollView className="h-[50vh]">
+                <View
                 className="mb-8"
                 style={{
-                  backgroundColor: "#f0f9ff",
+                  // backgroundColor: "#f0f9ff", 
                   borderRadius: 16,
                   padding: 20,
                   shadowColor: "#3b82f6",
@@ -246,27 +303,27 @@ export function UserAccountManagementScreen({
                   actionLabel="View All"
                   actionOnPress={handleViewAllActivities}
                 />
+                {/* scrollable */}
                 <GridSection columns={1} gap={6}>
-                  <ActivityItem
-                    action="User registration"
-                    user="john.doe@email.com"
-                    time="2 min ago"
-                    type="success"
-                  />
-                  <ActivityItem
-                    action="Transaction approved"
-                    user="Admin Sarah"
-                    time="5 min ago"
-                    type="success"
-                  />
+
+                  {/* Iterate through user's transactions here */}
+                  {activities.map((activity, index)=>{
+
+                    return ( 
                   <ActivityItem
                     action="Budget updated"
                     user="Manager Mike"
                     time="8 min ago"
                     type="info"
-                  />
+                    key={index}
+                    data={activity}
+                  />  
+                    
+                     )
+                  })}
                 </GridSection>
               </View>
+              </ScrollView>
             </View>
           </View>
         </View>

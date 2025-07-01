@@ -7,7 +7,7 @@ import { COLORS } from "~/theme/colors";
 import { SKELETON_SCREENS } from "../screenSelector";
 
 
-export default function DashboardHeader({ data }: any) {
+export default function DashboardHeader({ data }) {
     const { isDarkColorScheme } = useColorScheme();
     const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
     const [selectedScreen, setSelectedScreen] = useState(SKELETON_SCREENS[0]);
@@ -43,7 +43,7 @@ export default function DashboardHeader({ data }: any) {
                     className="text-xl font-bold"
                     style={{ color: currentColors.foreground }}
                     >
-                    WELCOME [NAME]
+                    WELCOME {String(data.firstname).toUpperCase()}!
                     </Text>
                 </View>
                 <View className="flex-row items-center">

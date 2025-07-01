@@ -1,7 +1,7 @@
-import { SKELETON_SCREENS } from "@/components/custom/screenSelector";
+import { PAGEMIDDLEWARE, SKELETON_SCREENS } from "@/components/custom/screenSelector";
 import UserInformationDisplayer from "@/components/custom/sections/detailer";
 import DashboardHeader from "@/components/custom/sections/heading";
-import { User } from "@/lib/auth";
+import { unitUserType, User } from "@/lib/auth";
 import { getRoute } from "@/src/constants/routes";
 import { Icon } from "@roninoss/icons";
 import { router } from "expo-router";
@@ -27,15 +27,23 @@ export default function DashboardIndex() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const userObject = new User()
   const [status, setStatus] = React.useState(false)
+  const [ auth, setAuth ] = React.useState<unitUserType|{}>({})
 
   const SelectedComponent = selectedScreen.component;
   React.useEffect(()=>{
     const getSession = async () => {
       try {
         const response = await User.isAlive()
-        
+
         if (response.status) {            
             setStatus(true)
+
+            const user = await userObject.user()
+            
+            if (user.status) {
+                setAuth(user.data)
+            }
+
             return router.navigate(getRoute('DASHBOARD'));
         }else{
           setStatus(false)
@@ -47,40 +55,17 @@ export default function DashboardIndex() {
       }
     };
     getSession();
-  }, [])
+  }, [])  
+
 
   return (
-    // <View
-    //   style={[styles.container, { backgroundColor: currentColors.background }]}
-    // >
-    //   <View
-    //     style={[
-    //       styles.comingSoonContainer,
-    //       { backgroundColor: currentColors.background },
-    //     ]}
-    //   >
-    //     <Text
-    //       style={[styles.comingSoonTitle, { color: currentColors.foreground }]}
-    //     >
-    //       Coming Soon
-    //     </Text>
-    //     <Text
-    //       style={[
-    //         styles.comingSoonSubtitle,
-    //         { color: currentColors.textSecondary },
-    //       ]}
-    //     >
-    //       Admin Dashboard features are under development
-    //     </Text>
-    //   </View>
-    // </View>
   <View
       className="flex-1"
       style={{ backgroundColor: currentColors.background }}
     >
-    <UserInformationDisplayer data={''} />
+    <UserInformationDisplayer data={auth} />
 
-    <DashboardHeader />
+    <DashboardHeader data={auth} />
   
     <View className="flex-1 flex-row">
       {/* Sidebar */}
@@ -103,13 +88,24 @@ export default function DashboardIndex() {
               Pages
             </Text>
 
-            {SKELETON_SCREENS.map((screen) => (
-              <TouchableOpacity
+            {SKELETON_SCREENS.map((screen) => {
+            
+            /* 
+             define rules here
+             an object which checks each name and return true or false
+            */
+              const isAccessible = PAGEMIDDLEWARE(screen.id, auth?.accounttype)
+              
+
+              return (
+            <TouchableOpacity
                 key={screen.id}
                 onPress={() => setSelectedScreen(screen)}
                 className={`p-3 mb-2 rounded-lg border ${
                   selectedScreen.id === screen.id ? "border-blue-500" : ""
-                }`}
+                } 
+                ${isAccessible? '': 'hidden'}
+                `}
                 style={{
                   backgroundColor:
                     selectedScreen.id === screen.id
@@ -154,7 +150,8 @@ export default function DashboardIndex() {
                   {screen.description}
                 </Text>
               </TouchableOpacity>
-            ))}
+              )
+            })}
           </ScrollView>
         </View>
       )}

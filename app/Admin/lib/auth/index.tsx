@@ -1,4 +1,4 @@
-import { apiHeaders, api_origin_address, backendORIGIN, getData, signinREQUEST, signouREQUEST, signupREQUEST } from "../server/server";
+import { GetRequestHandler, apiHeaders, api_origin_address, backendORIGIN, getData, hydrate, signinREQUEST, signouREQUEST, signupREQUEST } from "../server/server";
 
 interface credential {
     organization: 'string' | null,
@@ -12,22 +12,6 @@ interface credential {
     userid: string | null
 }
 
-
-
-async function hydrate() {
-    const cookie = await getData(api_origin_address)
-    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
-    apiHeaders.set('Cookie', cookie)
-
-    const request = await fetch(`${backendORIGIN}/api`, {
-        headers: Object.fromEntries(apiHeaders.entries()),
-        method: 'GET',
-        credentials: 'same-origin'
-    })
-    const session = await request.json()    
-        
-    return session
-}
 
 export interface userFormDataTemplate {
     firstname: string | null,
@@ -53,7 +37,6 @@ export interface userSignupDataTemplate {
     organization_name: string,
     invitation_key: string
 }
-
 
 
 export class User {
@@ -86,16 +69,18 @@ export class User {
 
 
 
-    async user():Promise<credential>{
-        let output: credential = await hydrate()        
-        return output
+    async user(){
+        let output = await hydrate() 
+        
+        if (!output.status) return { status: false,  message: "Error retreiveing user"}
+        return { status: true,  data: output.response } 
     }
 
     static async isAlive(){
         
         const cookie = await getData(api_origin_address)
         if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
-        apiHeaders.set('Cookie', cookie)
+        apiHeaders.set('auth-session', cookie)
 
         const request = await fetch(`${backendORIGIN}/api`, {
             headers: Object.fromEntries(apiHeaders.entries()),
@@ -163,5 +148,48 @@ export class User {
 
         
     }
+
+    async organizationMembers(query?:null|{ row: string, keyword: string }){
+
+        let transaction;
+        
+        transaction = await GetRequestHandler({url: '/api/secure'})
+        
+        if (!transaction.status) return { status: false, message: "User collected is zero" }
+
+        return { status: true, data: transaction.data  } 
+    }
+
+
+    async organizationTransactions(){
+
+        let transaction;
+        
+        transaction = await GetRequestHandler({url: '/api/secure/transactions'})
+        
+        if (!transaction.status) return { status: false, message: "User collected is zero" }
+
+        return { status: true, data: transaction.data  } 
+
+    }
+
+
+}
+
+export type unitUserType = {
+
+  username: string,
+  userid: string,
+  updated_at: string,
+  status: 'approved' | 'pending' | 'disabled' | "deleted",
+  organization_name: string,
+  organization: string,
+  lastname: string,
+  id: string,
+  firstname: string,
+  created_at: string,
+  accounttype: string,
+  data: any,
+  email: string
 
 }

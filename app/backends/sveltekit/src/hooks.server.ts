@@ -27,10 +27,13 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		}
 
 
-		if(cloneResponse.method === 'POST') {
+		if(event.request.method === 'POST') {
 			const result = await resolve(event);
 
-			let resp = new Response(JSON.stringify(await result.json()), {
+			let cloneResponse = result.clone()
+			
+
+			let resp = new Response(result.body, {
 				headers: result.headers });
 			resp.headers.set("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-header, Set-Cookie, set-cookie")
 			resp.headers.set("Access-Control-Expose-Headers", "X-Custom-header")
@@ -43,10 +46,52 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		}
 
 		if(event.request.method === 'GET') {
+			// add information from the event to the request
+			// event.request.headers.set("Access-Control-Allow-Credentials", "true")			
+			
+			event.request.headers.set("Access-Control-Allow-Origin", theOrigin!)
+			
+			event.request.headers.set("Access-Control-Allow-Headers", `X-Custom-header, ${auth.sessionCookieName}`)
+
+			event.request.headers.set("Access-Control-Expose-Headers", `X-Custom-header, ${auth.sessionCookieName}`)
+
+			
+			// cookie control
+			if (!event.cookies.get(auth.sessionCookieName)) {
+				event.cookies.set(auth.sessionCookieName!, event.request.headers.get(auth.sessionCookieName)!, 
+				{ 
+					path: '/api', 
+					// httpOnly: true, 
+					// partitioned: true 
+				}
+				)	
+			}
+
+			const sessionToken = event.cookies.get(auth.sessionCookieName);
+			
+
+			if (!sessionToken) {
+				event.locals.user = null;
+				event.locals.session = null;
+				return  await resolve(event);
+			}
+			
+
+			const { session, user } = await auth.validateSessionToken(sessionToken);
+
+			if (session) {
+				auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+			} else {
+				auth.deleteSessionTokenCookie(event);
+			}
+
+			event.locals.user = user;
+			event.locals.session = session;
+			
 
 			const result = await resolve(event);
-
-			let resp = new Response(JSON.stringify(await result.json()), {
+			
+			let resp = new Response(result.body, {
 				headers: result.headers });
 
 			resp.headers.set("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-header, Set-Cookie, set-cookie")
@@ -54,6 +99,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 			resp.headers.set("content-type", "application/json")
 			resp.headers.set('Access-Control-Allow-Credentials', "true")
 			resp.headers.set('X-Custom-header', resp.headers.getSetCookie().toString())
+
 			return resp
 		}	
 	}
@@ -67,6 +113,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	}
 
 	const { session, user } = await auth.validateSessionToken(sessionToken);
+
 
 	if (session) {
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
