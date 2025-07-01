@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
+import { DynamicContent, DynamicModal, UserDetails } from "../../DynamicModal";
+import { UserAccountModal } from "../../UserAccountModal";
 import { SkeletonBase } from "../SkeletonBase";
 import {
   ActivityItem,
@@ -9,10 +11,7 @@ import {
   KPICard,
   SectionHeader,
 } from "./components";
-import { DynamicModal, UserDetails, DynamicContent } from "../../DynamicModal";
-import { UserAccountModal } from "../../UserAccountModal";
 
-import { SKELETON_SCREEN_META } from "@/components/custom/screenMeta";
 import { unitUserType, User } from "@/lib/auth";
 
 export function UserAccountManagementScreen({
