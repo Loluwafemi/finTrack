@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SearchInput } from "../components/SearchInput";
 import { Pagination } from "./Pagination";
+import UserAccountModal from "../../UserAccountModal";
 
 
 /* 
@@ -173,6 +174,10 @@ export function TransactionMonitoringScreen() {
   const [ members, setMembers  ] = useState<unitUserType[] | []>([])
   const userObject = new User()
 
+  // Modal state
+  const [selectedUser, setSelectedUser] = useState<unitUserType | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   // reconstructing function
   function CONSTRUCTUSEROBJECT(UserData:[]) {
     let output: unitUserType[] = []
@@ -319,6 +324,18 @@ export function TransactionMonitoringScreen() {
       "Edit Transaction",
       `Editing ${transaction.firstname} ${transaction.lastname}`
     );
+  };
+
+  // Handle user account click
+  const handleUserClick = (user: unitUserType) => {
+    setSelectedUser(user);
+    setIsModalVisible(true);
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedUser(null);
   };
 
   function dummyfunction() {
@@ -543,7 +560,12 @@ export function TransactionMonitoringScreen() {
                     };
 
                     return (
-                      <View key={transaction.id} className="flex-row p-4">
+                      <TouchableOpacity
+                        key={transaction.id}
+                        className="flex-row p-4 hover:bg-gray-50"
+                        onPress={() => handleUserClick(transaction)}
+                        activeOpacity={0.7}
+                      >
                         <Text className="flex-1 text-sm text-gray-900">
                           {transaction.firstname}
                         </Text>
@@ -571,7 +593,7 @@ export function TransactionMonitoringScreen() {
                         <Text className="flex-1 text-sm text-gray-500">
                           {transaction.updated_at}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     );
                   })
                 )}
@@ -587,6 +609,13 @@ export function TransactionMonitoringScreen() {
               />
             </View>
           </View>
+
+          {/* User Account Modal */}
+          <UserAccountModal
+            visible={isModalVisible}
+            onClose={handleCloseModal}
+            userAccount={selectedUser}
+          />
       </ScrollView>
     </TouchableOpacity>
   );
