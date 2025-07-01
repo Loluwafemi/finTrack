@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 interface ActivityItemProps {
   action: string;
   user: string;
   time: string;
   type: 'success' | 'info' | 'warning' | 'error';
+  data: any
 }
 
-export const ActivityItem: React.FC<ActivityItemProps> = ({ action, user, time, type }) => {
+export const ActivityItem: React.FC<ActivityItemProps> = ({ action, user, time, type, data }) => {
   const getStatusColor = () => {
     switch (type) {
       case 'success': return '#28a745';

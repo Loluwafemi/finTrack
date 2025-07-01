@@ -154,6 +154,12 @@ export const usertoDataRelation = relations(user, ({ one, many })=> ({
 
 
 
+// // user => user
+// export const dataToUserRelation = relations(user_data, ({})=> ({
+
+// }))
+
+
 
 // bank -> user
 export const bankToUsersRelation = relations(user_bank, ({ one })=>({

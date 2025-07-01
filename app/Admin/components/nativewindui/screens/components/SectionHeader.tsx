@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface SectionHeaderProps {
   title: string;
@@ -14,7 +14,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   actionLabel, 
   actionOnPress, 
   badge, 
-  subtitle 
+  subtitle
 }) => {
   return (
     <View className="flex-row justify-between items-center mb-4">

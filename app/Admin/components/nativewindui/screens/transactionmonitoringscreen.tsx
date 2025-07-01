@@ -1,9 +1,27 @@
-import React, { useState, useMemo } from "react";
-import { Text, View, ScrollView, TouchableOpacity, Alert } from "react-native";
-import { SkeletonBase } from "../SkeletonBase";
-import { Pagination } from "./Pagination";
+import { unitUserType, User } from "@/lib/auth";
+import React, { useEffect, useMemo, useState } from "react";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SearchInput } from "../components/SearchInput";
+import { Pagination } from "./Pagination";
 
+
+/* 
+
+Original:
+accounttype : "admin"
+created_at: "2025-06-29T21:10:49.752Z"
+deleted_at: null
+email: "danny@email.com"
+firstname: "fasus"
+id: 12 
+lastname: "daryl"
+status: "approved"
+updated_at: null
+userid: "f465a343-9b33-4c29-9f89-9aa55ba9efca"
+username: "f_daryl"
+*/
+
+// convert incoming data to this format
 
 const mockTransactions = [
   {
@@ -15,6 +33,7 @@ const mockTransactions = [
     accountType: "Admin",
     organization: "Acme Corp",
     lastUpdate: "2024-06-01",
+    data: [],           // contains other information on usrs
     amount: 150000,
   },
   {
@@ -26,6 +45,7 @@ const mockTransactions = [
     accountType: "User",
     organization: "Beta Ltd",
     lastUpdate: "2024-05-28",
+    data: [],
     amount: 75000,
   },
   {
@@ -37,6 +57,7 @@ const mockTransactions = [
     accountType: "Manager",
     organization: "Gamma LLC",
     lastUpdate: "2024-05-30",
+    data: [],
     amount: 200000,
   },
   {
@@ -48,6 +69,7 @@ const mockTransactions = [
     accountType: "User",
     organization: "Acme Corp",
     lastUpdate: "2024-06-02",
+    data: [],
     amount: 95000,
   },
   {
@@ -59,6 +81,7 @@ const mockTransactions = [
     accountType: "Admin",
     organization: "Beta Ltd",
     lastUpdate: "2024-05-25",
+    data: [],
     amount: 300000,
   },
   {
@@ -70,6 +93,7 @@ const mockTransactions = [
     accountType: "Manager",
     organization: "Delta Inc",
     lastUpdate: "2024-06-03",
+    data: [],
     amount: 125000,
   },
   {
@@ -81,9 +105,59 @@ const mockTransactions = [
     accountType: "User",
     organization: "Echo Corp",
     lastUpdate: "2024-05-29",
+    data: [],
     amount: 180000,
   },
 ];
+
+/* 
+      
+accounttype
+: 
+"admin"
+created_at
+: 
+"2025-06-29T21:11:51.367Z"
+data
+: 
+{bank_name: null, bank_account_name: null, bank_account_number: null, number: '38018281981'}
+deleted_at
+: 
+null
+email
+: 
+"cage@email.com"
+firstname
+: 
+"xander"
+id
+: 
+"596eac44-022c-418b-af01-505510416659"
+lastname
+: 
+"cage"
+organization
+: 
+"Institution"
+organization_name
+: 
+"Federal University Of Agriculture"
+status
+: 
+"approved"
+updated_at
+: 
+null
+userid
+: 
+"596eac44-022c-418b-af01-505510416659"
+username
+: 
+"x_cage"
+
+*/
+
+
 
 
 export function TransactionMonitoringScreen() {
@@ -94,19 +168,67 @@ export function TransactionMonitoringScreen() {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showAccountTypeDropdown, setShowAccountTypeDropdown] = useState(false);
   const itemsPerPage = 5;
+  const [ query, writeQuery ] = useState<null|{ row: string, keyword: string }>(null)
 
+  const [ members, setMembers  ] = useState<unitUserType[] | []>([])
+  const userObject = new User()
+
+  // reconstructing function
+  function CONSTRUCTUSEROBJECT(UserData:[]) {
+    let output: unitUserType[] = []
+    if (UserData.length < 1) return output
+
+    UserData.forEach((user:{ user:any, organization: any })=>{
+      const currentUser = user.user
+      const currentUserOrg = user.organization
+      
+      const newUserObjct: unitUserType = { ...currentUser, ...currentUserOrg }
+      
+      output.push(newUserObjct)
+    })    
+    return output;
+  }
+  
+  useEffect(()=>{
+
+    const creatingSpace = async ()=> {
+        /* Import and manage user's here */
+
+        try {
+            let transaction = await userObject.organizationMembers(null)
+            
+            if (transaction.status) {                
+              const restructured = CONSTRUCTUSEROBJECT(transaction.data)
+                            
+              setMembers(restructured)
+              // construct them and send them to
+            }
+        } catch (error) {
+            console.log(error);
+            
+        }
+  }
+  creatingSpace()
+  }, [])
+  
+
+
+  // search function
   const filteredTransactions = useMemo(() => {
-    return mockTransactions.filter((transaction) => {
+
+    return members.filter((transaction: unitUserType) => {
+      
+      
       const matchesSearch =
         searchQuery === "" ||
-        transaction.firstName
+        transaction.firstname
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        transaction.lastName
+        transaction.lastname
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
         transaction.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        transaction.organization
+        transaction.accounttype
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
 
@@ -114,14 +236,21 @@ export function TransactionMonitoringScreen() {
         statusFilter === "All" || transaction.status === statusFilter;
       const matchesAccountType =
         accountTypeFilter === "All" ||
-        transaction.accountType === accountTypeFilter;
+        transaction.accounttype === accountTypeFilter;
 
       return matchesSearch && matchesStatus && matchesAccountType;
     });
   }, [searchQuery, statusFilter, accountTypeFilter]);
 
+
+  
   const totalItems = filteredTransactions.length;
+
+  
   const startIndex = (currentPage - 1) * itemsPerPage;
+  
+
+
   const paginatedTransactions = filteredTransactions.slice(
     startIndex,
     startIndex + itemsPerPage
@@ -129,13 +258,13 @@ export function TransactionMonitoringScreen() {
 
   const stats = useMemo(() => {
     const completed = filteredTransactions.filter(
-      (t) => t.status === "Active"
+      (t) => t.status === "approved"
     ).length;
     const pending = filteredTransactions.filter(
-      (t) => t.status === "Pending"
+      (t) => t.status === "pending"
     ).length;
     const failed = filteredTransactions.filter(
-      (t) => t.status === "Suspended" || t.status === "Inactive"
+      (t) => t.status === "disabled" || t.status === "deleted"
     ).length;
     return { completed, pending, failed };
   }, [filteredTransactions]);
@@ -181,21 +310,24 @@ export function TransactionMonitoringScreen() {
   const handleView = (transaction: any) => {
     Alert.alert(
       "View Transaction",
-      `Viewing details for ${transaction.firstName} ${transaction.lastName}`
+      `Viewing details for ${transaction.firstname} ${transaction.lastname}`
     );
   };
 
   const handleEdit = (transaction: any) => {
     Alert.alert(
       "Edit Transaction",
-      `Editing ${transaction.firstName} ${transaction.lastName}`
+      `Editing ${transaction.firstname} ${transaction.lastname}`
     );
   };
 
+  function dummyfunction() {
+    
+  }
   return (
     <TouchableOpacity
       activeOpacity={1}
-      onPress={closeDropdowns}
+      // onPress={closeDropdowns}
       style={{ flex: 1 }}
     >
       <ScrollView
@@ -204,10 +336,13 @@ export function TransactionMonitoringScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <SkeletonBase
+        {/* <SkeletonBase
           title="Account Management"
           description="Manage accounts within organization"
         >
+
+        </SkeletonBase> */}
+  
           <View className="flex-1 bg-gray-50 pb-6">
 
             <View className="bg-white shadow-sm mb-6">
@@ -223,7 +358,7 @@ export function TransactionMonitoringScreen() {
                 <View className="flex-row gap-4 mb-4">
                   <SearchInput
                     value={searchQuery}
-                    onChangeText={handleSearch}
+                    onChangeText={dummyfunction}
                     placeholder="Search by name, email, or organization..."
                   />
                   <View className="flex-row gap-3">
@@ -289,7 +424,7 @@ export function TransactionMonitoringScreen() {
                     </View>
                     <TouchableOpacity
                       className="bg-green-600 rounded-md px-6 py-3"
-                      onPress={handleExport}
+                      // onPress={handleExport}
                     >
                       <Text className="text-sm font-medium text-white">
                         Export Data
@@ -300,7 +435,7 @@ export function TransactionMonitoringScreen() {
                       accountTypeFilter !== "All") && (
                       <TouchableOpacity
                         className="bg-gray-600 rounded-md px-6 py-3"
-                        onPress={clearFilters}
+                        // onPress={clearFilters}
                       >
                         <Text className="text-sm font-medium text-white">
                           Clear Filters
@@ -345,7 +480,7 @@ export function TransactionMonitoringScreen() {
               <View className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <View className="flex-row justify-between items-center mb-4">
                   <Text className="text-lg font-semibold text-gray-900">
-                    Transaction Monitoring
+                    Account
                   </Text>
                   <Text className="text-sm text-gray-600">
                     Showing {paginatedTransactions.length} of {totalItems}{" "}
@@ -380,14 +515,16 @@ export function TransactionMonitoringScreen() {
 
 
               <View className="divide-y divide-gray-200">
-                {paginatedTransactions.length === 0 ? (
+                {members.length === 0 ? (
                   <View className="p-8 text-center">
                     <Text className="text-gray-500">
                       No transactions found matching your criteria.
                     </Text>
                   </View>
                 ) : (
-                  paginatedTransactions.map((transaction) => {
+                  members.map((transaction:unitUserType) => {
+
+                    // function to generate color
                     const getStatusColor = (status: string) => {
                       switch (status) {
                         case "Active":
@@ -401,15 +538,17 @@ export function TransactionMonitoringScreen() {
                         default:
                           return "bg-gray-100 text-gray-800";
                       }
+
+
                     };
 
                     return (
                       <View key={transaction.id} className="flex-row p-4">
                         <Text className="flex-1 text-sm text-gray-900">
-                          {transaction.firstName}
+                          {transaction.firstname}
                         </Text>
                         <Text className="flex-1 text-sm text-gray-900">
-                          {transaction.lastName}
+                          {transaction.lastname}
                         </Text>
                         <Text className="flex-1 text-sm text-gray-500">
                           {transaction.email}
@@ -424,13 +563,13 @@ export function TransactionMonitoringScreen() {
                           </View>
                         </View>
                         <Text className="flex-1 text-sm text-gray-900">
-                          {transaction.accountType}
+                          {transaction.accounttype}
                         </Text>
                         <Text className="flex-1 text-sm text-gray-900">
                           {transaction.organization}
                         </Text>
                         <Text className="flex-1 text-sm text-gray-500">
-                          {transaction.lastUpdate}
+                          {transaction.updated_at}
                         </Text>
                       </View>
                     );
@@ -442,13 +581,12 @@ export function TransactionMonitoringScreen() {
             <View className="mt-6 mb-4">
               <Pagination
                 currentPage={currentPage}
-                totalItems={totalItems}
+                totalItems={10}
                 itemsPerPage={itemsPerPage}
                 onPageChange={setCurrentPage}
               />
             </View>
           </View>
-        </SkeletonBase>
       </ScrollView>
     </TouchableOpacity>
   );

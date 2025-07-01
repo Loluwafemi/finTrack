@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ViewStyle, StyleSheet, Dimensions, Platform } from "react-native";
+import { Dimensions, StyleSheet, View, ViewStyle } from "react-native";
 
 interface GridSectionProps {
   children: React.ReactNode;
@@ -128,9 +128,10 @@ const styles = StyleSheet.create({
   },
 });
 
-                      <View>
-export type GridAlignment = 'start' | 'center' | 'end' | 'stretch';
-                      </View>
+//                       <View>
+// export type GridAlignment = 'start' | 'center' | 'end' | 'stretch';
+//                       </View>
 
 export default GridSection;
 export type { GridSectionProps };
+
