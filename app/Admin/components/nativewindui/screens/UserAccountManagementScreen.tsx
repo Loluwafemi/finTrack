@@ -285,7 +285,7 @@ export function UserAccountManagementScreen({
                 <View
                 className="mb-8"
                 style={{
-                  // backgroundColor: "#f0f9ff", 
+                  backgroundColor: "#f0f9ff", 
                   borderRadius: 16,
                   padding: 20,
                   shadowColor: "#3b82f6",

@@ -5,7 +5,7 @@ import { user_transactions } from "../db/schema";
 
 
 type TransactionTypes = {
-    type: 'receipt' | 'notification' | 'activity' | 'message',
+    type: 'receipt' | 'notification' | 'activity' | 'message' | 'log',
     message: {},
     author: string,
     receiver: string,
