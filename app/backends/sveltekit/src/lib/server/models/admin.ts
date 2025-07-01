@@ -163,12 +163,6 @@ export class Admin{
 
         return transaction
     }
-
-    async manageAllSelectedBudget(status: 'pending'| 'approved'| 'declined'| 'deleted'){
-
-    }
-
-
     /* 
     Actions on budget and user: bulk actions
     */
@@ -183,9 +177,23 @@ export class Admin{
     }
 
 
-    async manageAllSelectedUser(status: 'pending'| 'approved'| 'disabled'| 'deleted'){
-        
-    }
+    // upgrade admin
+    async upgrade(userid: string, role: "admin"|"superadmin"|"system"){
+        let transaction;
 
+        try {
+            transaction = await db.update(user).set({
+                accounttype: role
+            }).where(eq(user.userid, userid))
+            
+            if (!transaction) return { status: false, message: "operation unsuccessful" }
+
+            
+            return { status: true, data: transaction }
+                
+        } catch (error) {
+            return { status: false, message: "operation failed", error }
+        }
+    }
 
 }

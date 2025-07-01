@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
 import { budget_expense, registered_budget_templates, user_budget } from "../db/schema";
+import { Transactions } from "./transaction";
 
 
 
@@ -63,12 +64,18 @@ export class Budget{
         return { status: true, message: "Successful", data: transaction }
     }
 
+    // invoke transaction
     async update(data){
         let transaction;
 
         transaction = await db.query.budget_expense.findFirst({
             where: eq(budget_expense.id, data.bid)
         })
+
+        let selected_budget = await db.query.user_budget.findFirst({
+            where: eq(user_budget.budgetid, data.bid)
+        })
+        let current_budget = selected_budget
 
         if (!transaction) return { status: false, message: "Expense not found, contact admin." }
 
@@ -87,6 +94,25 @@ export class Budget{
 
         if (!transaction) return { status: false, message: "upload failed", data: transaction }
 
+        try {
+            let invoking = new Transactions()
+            // get budget title with the id
+            
+            await invoking.invoke({
+                author: current_budget?.userid!,
+                message: {
+                    title: "Budget Updating",
+                    text: `The budget: ${current_budget?.budgettitle} was updated by user`,
+                    date: Date.now()
+                },
+                receiver: current_budget?.userid!,
+                status: 'approved',
+                type: 'log'
+            })
+        } catch (error) {
+            
+        }
+
         return { status: true, message: "upload successful", data: transaction }
 
     }
@@ -102,6 +128,7 @@ export class Budget{
         return { status: true, message: 'Not found', transaction }
     }
 
+    // invoke transaction
     async manage(budgetId: string, status: 'pending'| 'approved'| 'declined'| 'deleted'){
         let transaction;
 
@@ -110,7 +137,33 @@ export class Budget{
                 status: status
             }).where(eq(user_budget.id, budgetId))
             
+            let selected_budget = await db.query.user_budget.findFirst({
+                where: eq(user_budget.id, budgetId)
+            })
+
+            let current_budget = selected_budget
+
             if (!transaction) return { status: false, message: "No member found yet" }
+
+
+        try {
+            let invoking = new Transactions()
+            // get budget title with the id
+            
+            await invoking.invoke({
+                author: current_budget?.userid!,
+                message: {
+                    title: "Account Creation",
+                    text: `The budget: ${current_budget?.budgettitle} was managed by admin`,
+                    date: Date.now()
+                },
+                receiver: current_budget?.userid!,
+                status: 'approved',
+                type: 'log'
+            })
+        } catch (error) {
+            
+        }
 
             
             return { status: true, data: transaction }
@@ -120,6 +173,7 @@ export class Budget{
 
 
     }
+
 }
 
 
