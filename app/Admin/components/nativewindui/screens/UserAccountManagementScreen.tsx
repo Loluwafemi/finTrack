@@ -7,8 +7,9 @@ import {
   ActivityItem,
   GridSection,
   KPICard,
-  SectionHeader
+  SectionHeader,
 } from "./components";
+import { DynamicModal, UserDetails, DynamicContent } from "../../DynamicModal";
 
 import { SKELETON_SCREEN_META } from "@/components/custom/screenMeta";
 import { unitUserType, User } from "@/lib/auth";
@@ -34,12 +35,17 @@ export function UserAccountManagementScreen({
       time: "15 min ago",
     },
   ]);
-  
+
   // const [ query, writeQuery ] = useState<null|{ row: string, keyword: string }>(null)
 
-  const [ members, setMembers  ] = useState<unitUserType[] | []>([])
-  const [ activities, setActivities  ] = useState<unitUserType[] | []>([])
-  const userObject = new User()
+  const [members, setMembers] = useState<unitUserType[] | []>([]);
+  const [activities, setActivities] = useState<unitUserType[] | []>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedUserDetails, setSelectedUserDetails] =
+    useState<UserDetails | null>(null);
+  const [modalDynamicContent, setModalDynamicContent] =
+    useState<DynamicContent | null>(null);
+  const userObject = new User();
 
   // reconstructing function
   // function CONSTRUCTUSEROBJECT(UserData:[]) {
@@ -49,87 +55,131 @@ export function UserAccountManagementScreen({
   //   UserData.forEach((user:{ user:any, organization: any })=>{
   //     const currentUser = user.user
   //     const currentUserOrg = user.organization
-      
+
   //     const newUserObjct: unitUserType = { ...currentUser, ...currentUserOrg }
-      
+
   //     output.push(newUserObjct)
-  //   })    
+  //   })
   //   return output;
   // }
 
-  
-  useEffect(()=>{
+  useEffect(() => {
+    const creatingSpace = async () => {
+      /* Import and manage user's here */
 
-    const creatingSpace = async ()=> {
-        /* Import and manage user's here */
+      try {
+        let transaction = await userObject.organizationMembers(null);
+        let activities = await userObject.organizationTransactions();
 
-        try {
-            let transaction = await userObject.organizationMembers(null)
-            let activities = await userObject.organizationTransactions()
-            
-            if (transaction.status) {                
-              // const restructured = CONSTRUCTUSEROBJECT(transaction.data)
-                            
-              setMembers(transaction.data)
-              // construct them and send them to
-            }
+        if (transaction.status) {
+          // const restructured = CONSTRUCTUSEROBJECT(transaction.data)
 
-
-            if (activities.status) {                
-              // const restructured = CONSTRUCTUSEROBJECT(transaction.data)
-                            
-              setActivities(activities.data)
-              // construct them and send them to
-            }
-
-        } catch (error) {
-            console.log(error);
-            
+          setMembers(transaction.data);
+          // construct them and send them to
         }
-  }
-  creatingSpace()
-  }, [])
-  
-  
-  const handleRefreshKPIs = () => {
-    Alert.alert("Refresh KPIs", "KPIs have been refreshed.");
-  };
+
+        if (activities.status) {
+          // const restructured = CONSTRUCTUSEROBJECT(transaction.data)
+
+          setActivities(activities.data);
+          // construct them and send them to
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    creatingSpace();
+  }, []);
+
+  // const handleRefreshKPIs = () => {
+  //   Alert.alert("Refresh KPIs", "KPIs have been refreshed.");
+  // };
 
   const handleExportReport = () => {
     Alert.alert("Export Report", "Report has been exported.");
   };
 
-  const handleMarkAllRead = () => {
-    setAlerts([]);
-    Alert.alert("Mark All Read", "All alerts have been marked as read.");
+  // const handleMarkAllRead = () => {
+  //   setAlerts([]);
+  //   Alert.alert("Mark All Read", "All alerts have been marked as read.");
+  // };
+
+  // const handleViewDetails = (alert: any) => {
+  //   Alert.alert("View Details", `Viewing details for: ${alert.title}`);
+  // };
+
+  // const handleDismissAlert = (alertId: number) => {
+  //   setAlerts((prevAlerts) =>
+  //     prevAlerts.filter((alert) => alert.id !== alertId)
+  //   );
+  // };
+
+  // const handleViewAllActivities = () => {
+  //   if (setSelectedScreen) {
+  //     const transactionScreen = SKELETON_SCREEN_META.find(
+  //       (screen) => screen.id === "account-manager"
+  //     );
+  //     if (transactionScreen) {
+  //       setSelectedScreen(transactionScreen);
+  //     } else {
+  //       Alert.alert(
+  //         "Error",
+  //         "Could not find the transaction monitoring screen."
+  //       );
+  //     }
+  //   } else {
+  //     Alert.alert("View All Activities", "Viewing all activities.");
+  //   }
+  // };
+
+  // Handle activity item click to open modal
+  const handleActivityItemPress = (activity: any) => {
+    // Transform activity data to UserDetails format
+    const userDetails: UserDetails = {
+      id: activity.id || activity.user_id || "unknown",
+      name: activity.user?.name || activity.username || "Unknown User",
+      email: activity.user?.email || activity.email || "No email provided",
+      phone: activity.user?.phone || activity.phone,
+      role: activity.user?.role || activity.role || "Member",
+      status: activity.user?.status || activity.status || "active",
+      joinDate:
+        activity.user?.created_at ||
+        activity.created_at ||
+        new Date().toISOString(),
+      lastLogin: activity.user?.last_login || activity.last_login,
+      organization: activity.organization?.name || activity.organization_name,
+      department: activity.user?.department || activity.department,
+    };
+
+    // Create dynamic content based on activity type
+    const dynamicContent: DynamicContent = {
+      type: "activities",
+      title: "User Activity Details",
+      data: [
+        {
+          action: activity.action || "Activity performed",
+          description: activity.description || "No description available",
+          timestamp:
+            activity.created_at ||
+            activity.timestamp ||
+            new Date().toISOString(),
+          amount: activity.amount,
+          category: activity.category,
+          status: activity.status,
+        },
+      ],
+    };
+
+    setSelectedUserDetails(userDetails);
+    setModalDynamicContent(dynamicContent);
+    setModalVisible(true);
   };
 
-  const handleViewDetails = (alert: any) => {
-    Alert.alert("View Details", `Viewing details for: ${alert.title}`);
-  };
-
-  const handleDismissAlert = (alertId: number) => {
-    setAlerts((prevAlerts) =>
-      prevAlerts.filter((alert) => alert.id !== alertId)
-    );
-  };
-
-  const handleViewAllActivities = () => {
-    if (setSelectedScreen) {
-      const transactionScreen = SKELETON_SCREEN_META.find(
-        (screen) => screen.id === "account-manager"
-      );
-      if (transactionScreen) {
-        setSelectedScreen(transactionScreen);
-      } else {
-        Alert.alert(
-          "Error",
-          "Could not find the transaction monitoring screen."
-        );
-      }
-    } else {
-      Alert.alert("View All Activities", "Viewing all activities.");
-    }
+  // Handle modal close
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setSelectedUserDetails(null);
+    setModalDynamicContent(null);
   };
   const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
@@ -283,51 +333,168 @@ export function UserAccountManagementScreen({
 
               <ScrollView className="h-[50vh]">
                 <View
-                className="mb-8"
-                style={{
-                  // backgroundColor: "#f0f9ff", 
-                  borderRadius: 16,
-                  padding: 20,
-                  shadowColor: "#3b82f6",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.08,
-                  shadowRadius: 8,
-                  elevation: 3,
-                  marginBottom: 24,
-                  borderLeftWidth: 4,
-                  borderLeftColor: "#3b82f6",
-                }}
-              >
-                <SectionHeader
-                  title="Activity Feed"
-                  actionLabel="View All"
-                  actionOnPress={handleViewAllActivities}
-                />
-                {/* scrollable */}
-                <GridSection columns={1} gap={6}>
-
-                  {/* Iterate through user's transactions here */}
-                  {activities.map((activity, index)=>{
-
-                    return ( 
-                  <ActivityItem
-                    action="Budget updated"
-                    user="Manager Mike"
-                    time="8 min ago"
-                    type="info"
-                    key={index}
-                    data={activity}
-                  />  
-                    
-                     )
-                  })}
-                </GridSection>
-              </View>
+                  className="mb-8"
+                  style={{
+                    // backgroundColor: "#f0f9ff",
+                    borderRadius: 16,
+                    padding: 20,
+                    shadowColor: "#3b82f6",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 8,
+                    elevation: 3,
+                    marginBottom: 24,
+                    borderLeftWidth: 4,
+                    borderLeftColor: "#3b82f6",
+                  }}
+                >
+                  <SectionHeader
+                    title="Activity Feed"
+                    actionLabel="View All"
+                    actionOnPress={() => console.log("Clicked")}
+                  />
+                  {/* scrollable */}
+                  <GridSection columns={1} gap={6}>
+                    {/* Display real activities if available, otherwise show mock data */}
+                    {activities.length > 0
+                      ? activities.map((activity, index) => (
+                          <ActivityItem
+                            key={index}
+                            // action={activity.description || "Activity performed"}
+                            action={ "Activity performed"
+                            }
+                            user={activity.username || "Unknown User"}
+                            time={
+                              activity.created_at || new Date().toISOString()
+                            }
+                            type="info"
+                            data={activity}
+                            onPress={() => handleActivityItemPress(activity)}
+                          />
+                        ))
+                      : // Mock data for demonstration when no real activities are available
+                        [
+                          {
+                            id: "act_123",
+                            action: "Budget updated for Q2 2024",
+                            user: "Manager Mike",
+                            time: "8 min ago",
+                            type: "info" as const,
+                            data: {
+                              id: "act_123",
+                              description: "Budget updated for Q2 2024",
+                              username: "Manager Mike",
+                              created_at: new Date().toISOString(),
+                              amount: 50000,
+                              category: "Budget Update",
+                              status: "completed",
+                              user: {
+                                name: "Manager Mike",
+                                email: "mike@example.com",
+                                role: "Manager",
+                              },
+                            },
+                          },
+                          {
+                            id: "act_124",
+                            action: "New user registration",
+                            user: "Sarah Johnson",
+                            time: "15 min ago",
+                            type: "success" as const,
+                            data: {
+                              id: "act_124",
+                              description: "New user registration",
+                              username: "Sarah Johnson",
+                              created_at: new Date(
+                                Date.now() - 15 * 60 * 1000
+                              ).toISOString(),
+                              amount: 0,
+                              category: "User Management",
+                              status: "completed",
+                              user: {
+                                name: "Sarah Johnson",
+                                email: "sarah@example.com",
+                                role: "Member",
+                              },
+                            },
+                          },
+                          {
+                            id: "act_125",
+                            action: "Payment processed",
+                            user: "David Wilson",
+                            time: "32 min ago",
+                            type: "success" as const,
+                            data: {
+                              id: "act_125",
+                              description: "Payment processed",
+                              username: "David Wilson",
+                              created_at: new Date(
+                                Date.now() - 32 * 60 * 1000
+                              ).toISOString(),
+                              amount: 25000,
+                              category: "Payment",
+                              status: "completed",
+                              user: {
+                                name: "David Wilson",
+                                email: "david@example.com",
+                                role: "Member",
+                              },
+                            },
+                          },
+                          {
+                            id: "act_126",
+                            action: "Failed login attempt",
+                            user: "Unknown User",
+                            time: "1 hour ago",
+                            type: "error" as const,
+                            data: {
+                              id: "act_126",
+                              description: "Failed login attempt",
+                              username: "Unknown User",
+                              created_at: new Date(
+                                Date.now() - 60 * 60 * 1000
+                              ).toISOString(),
+                              amount: 0,
+                              category: "Security",
+                              status: "failed",
+                              user: {
+                                name: "Unknown User",
+                                email: "unknown@example.com",
+                                role: "Guest",
+                              },
+                            },
+                          },
+                        ].map((mockActivity, index) => (
+                          <ActivityItem
+                            key={mockActivity.id}
+                            action={mockActivity.action}
+                            user={mockActivity.user}
+                            time={mockActivity.time}
+                            type={mockActivity.type}
+                            data={mockActivity.data}
+                            onPress={() =>
+                              handleActivityItemPress(mockActivity.data)
+                            }
+                          />
+                        ))}
+                  </GridSection>
+                </View>
               </ScrollView>
             </View>
           </View>
         </View>
       </ScrollView>
+
+      {/* Dynamic Modal */}
+      {selectedUserDetails && modalDynamicContent && (
+        <DynamicModal
+          visible={modalVisible}
+          onClose={handleModalClose}
+          userDetails={selectedUserDetails}
+          dynamicContent={modalDynamicContent}
+          onDynamicContentChange={setModalDynamicContent}
+        />
+      )}
     </SkeletonBase>
   );
 }
