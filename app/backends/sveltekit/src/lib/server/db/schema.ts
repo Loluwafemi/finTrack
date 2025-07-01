@@ -147,7 +147,7 @@ export const usertoDataRelation = relations(user, ({ one, many })=> ({
         references: [user_data.id]
     }),
 	banks: many(user_bank),
-	// budgets: many(user_budget, { relationName: 'budgets' }),
+	budgets: many(user_budget, { relationName: 'budgets' }),
 	transactions: many(user_transactions, { relationName: 'transactions' })
 }))
 
@@ -218,6 +218,12 @@ export const expenseToBudgetRelation = relations(budget_expense, ({ one })=> ({
     })
 }))
 
+
+
+// // user -> allbudgets
+// export const allBudgetsToUserRelation = relations(user, ({many})=>({
+// 	budget: many(user_budget)
+// }))
 
 
 

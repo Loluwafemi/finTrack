@@ -32,7 +32,7 @@ export interface UserCredential {
     invitation_key?: string
 }
 
-
+export type transactionTypes = "receipt"|"activity"|"message"|"budget"
 
 export class User {
     constructor(){
@@ -353,6 +353,24 @@ export class User {
         if (!transaction?.status) return transaction
 
         return transaction
+    }
+
+    async manage(userid: string, status: 'pending'| 'approved'| 'disabled'| 'deleted') {
+        let transaction;
+
+        try {
+            transaction = await db.update(user).set({
+                status: status
+            }).where(eq(user.userid, userid))
+            
+            if (!transaction) return { status: false, message: "No member found yet" }
+
+            
+            return { status: true, data: transaction }
+        } catch (error) {
+            return { status: false, message: "No member found yet", error }
+        }
+
     }
 
 }

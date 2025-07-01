@@ -101,6 +101,25 @@ export class Budget{
 
         return { status: true, message: 'Not found', transaction }
     }
+
+    async manage(budgetId: string, status: 'pending'| 'approved'| 'declined'| 'deleted'){
+        let transaction;
+
+        try {
+            transaction = await db.update(user_budget).set({
+                status: status
+            }).where(eq(user_budget.id, budgetId))
+            
+            if (!transaction) return { status: false, message: "No member found yet" }
+
+            
+            return { status: true, data: transaction }
+        } catch (error) {
+            return { status: false, message: "No member found yet", error }
+        }
+
+
+    }
 }
 
 
