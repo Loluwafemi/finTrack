@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
-import {UserDetails } from "../../DynamicModal";
+import { UserDetails } from "../../DynamicModal";
 import { UserAccountModal } from "../../UserAccountModal";
 import { SkeletonBase } from "../SkeletonBase";
+import ActivityModal from "@/components/ActivityModal";
+
 import {
   ActivityItem,
   GridSection,
@@ -30,7 +32,8 @@ export function UserAccountManagementScreen({
     useState<UserDetails | null>(null);
   // State for UserAccountModal
   const [userAccountModalVisible, setUserAccountModalVisible] = useState(false);
-  const [selectedUserAccount, setSelectedUserAccount] = useState<unitUserType | null>(null);
+  const [selectedUserAccount, setSelectedUserAccount] =
+    useState<unitUserType | null>(null);
   const userObject = new User();
 
   // reconstructing function
@@ -81,8 +84,13 @@ export function UserAccountManagementScreen({
   //   Alert.alert("Refresh KPIs", "KPIs have been refreshed.");
   // };
 
+  const [isopen, setIsOpen] = useState(false);
+  const [toClose, closerModal] = useState("");
+
   const handleExportReport = () => {
     Alert.alert("Export Report", "Report has been exported.");
+    // call here
+    setIsOpen(true);
   };
 
   // const handleMarkAllRead = () => {
@@ -133,17 +141,19 @@ export function UserAccountManagementScreen({
         accounttype: activity.accounttype || activity.user?.role || "member",
         status: activity.status || activity.user?.status || "active",
         organization: activity.organization || activity.user?.organization,
-        organization_name: activity.organization_name || activity.user?.organization_name,
+        organization_name:
+          activity.organization_name || activity.user?.organization_name,
         created_at: activity.created_at || new Date().toISOString(),
         updated_at: activity.updated_at || activity.user?.updated_at,
-        data: activity.data || activity.user?.data || {
-          bank_name: "Not provided",
-          bank_account_name: "Not provided",
-          bank_account_number: "Not provided",
-          number: activity.phone || activity.user?.phone || "Not provided"
-        }
+        data: activity.data ||
+          activity.user?.data || {
+            bank_name: "Not provided",
+            bank_account_name: "Not provided",
+            bank_account_number: "Not provided",
+            number: activity.phone || activity.user?.phone || "Not provided",
+          },
       };
-      
+
       setSelectedUserAccount(userAccount);
       setUserAccountModalVisible(true);
       return;
@@ -163,7 +173,10 @@ export function UserAccountManagementScreen({
         activity.created_at ||
         new Date().toISOString(),
       lastLogin: activity.user?.last_login || activity.last_login,
-      organization: activity.user?.organization || activity.organization?.name || activity.organization_name,
+      organization:
+        activity.user?.organization ||
+        activity.organization?.name ||
+        activity.organization_name,
       department: activity.user?.department || activity.department,
     };
 
@@ -190,6 +203,23 @@ export function UserAccountManagementScreen({
       title="System Health Dashboard"
       description="Monitor system performance and user activities"
     >
+      <ActivityModal
+        visible={isopen}
+        onClose={() => setIsOpen(false)}
+        userDetails={{
+          email: "",
+          id: "",
+          joinDate: "",
+          name: "",
+          role: "",
+          status: "active",
+          department: "",
+          lastLogin: "",
+          organization: "",
+          phone: "",
+        }}
+      />
+
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -362,8 +392,7 @@ export function UserAccountManagementScreen({
                           <ActivityItem
                             key={index}
                             // action={activity.description || "Activity performed"}
-                            action={ "Activity performed"
-                            }
+                            action={"Activity performed"}
                             user={activity.username || "Unknown User"}
                             time={
                               activity.created_at || new Date().toISOString()
@@ -373,7 +402,7 @@ export function UserAccountManagementScreen({
                             onPress={() => handleActivityItemPress(activity)}
                           />
                         ))
-                      : null}                    
+                      : null}
                   </GridSection>
                 </View>
               </ScrollView>
