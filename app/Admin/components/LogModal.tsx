@@ -1,8 +1,9 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { COLORS } from "@/theme/colors";
 import { UserDetails } from "./DynamicModal";
-import { useColorScheme } from "../lib/useColorScheme";
-import { COLORS } from "../theme/colors";
+
 interface LogModalProps {
   visible: boolean;
   onClose: () => void;
@@ -10,7 +11,7 @@ interface LogModalProps {
 }
 
 const LogModal: React.FC<LogModalProps> = ({ visible, onClose, userDetails }) => {
-  const { isDarkColorScheme } = useColorScheme();
+    const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
 
   return (
