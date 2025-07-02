@@ -33,7 +33,7 @@ interface DynamicContent {
     | "settings"
     | "custom"
     | "user_creation"
-    | "budget_request"
+    | "budget"
     | "receipt_upload"
     | "expense_approval"
     | "payment_processing"
@@ -187,8 +187,6 @@ export const DynamicModal: React.FC<DynamicModalProps> = ({
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const [selectedTab, setSelectedTab] = useState<string>("overview");
 
-  console.log(userDetails);
-  
   // Format currency in Nigerian Naira
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat("en-NG", {
@@ -520,7 +518,7 @@ export const DynamicModal: React.FC<DynamicModalProps> = ({
           </ScrollView>
         );
 
-      case "budget_request":
+      case "budget":
         return (
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
             <View

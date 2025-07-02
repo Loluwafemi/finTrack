@@ -49,7 +49,6 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 			// add information from the event to the request
 			// event.request.headers.set("Access-Control-Allow-Credentials", "true")			
 			
-			console.log(event);
 			
 			event.request.headers.set("Access-Control-Allow-Origin", theOrigin!)
 			

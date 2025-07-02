@@ -104,308 +104,488 @@ export function UserAccountManagementScreen({
   // Handle activity item click to open modal
   const handleActivityItemPress = async (activity: any) => {    
     // Check if this is a user_creation activity and use UserAccountModal
-    if (activity.user_transaction.type === "activity") {
+    // if (activity.user_transaction.type === "activity") {
+    //       console.log("Activity: ");
+          
+    //   // call an async function that assign the selected user to this
+    //   const userid = activity.user_transaction.author
       
-      // call an async function that assign the selected user to this
-      const userid = activity.user_transaction.author
+    //   let currentUser = await userObject.findSelectedMember(userid)
+    //   let selecteduser = currentUser.data
+    //   if (!selecteduser.status){
+
+    //   }
       
-      let currentUser = await userObject.findSelectedMember(userid)
-      let selecteduser = currentUser.data
-      if (!selecteduser.status){
+    //   // For user_creation activities, the user data ✅
+    //   const userAccount: unitUserType = {
+    //     userid: selecteduser.userid || "unknown",
+    //     id: selecteduser.id || "unknown",
+    //     username: selecteduser.username || "Unknown User",
+    //     firstname: selecteduser.firstname || "Unknown",
+    //     lastname: selecteduser.lastname || "User",
+    //     email: selecteduser.email || "No email provided",
+    //     accounttype: selecteduser.accounttype || "member undefined",
+    //     status: selecteduser.status || "active",
+    //     organization: selecteduser.organization || "Not found",
+    //     organization_name: selecteduser.organization_name || "Not found",
+    //     created_at: selecteduser.created_at || "Not found",
+    //     updated_at: selecteduser.updated_at || "Not found",
+    //     data: selecteduser.bank || [
+    //     {
+    //       bank_name: "Not provided",
+    //       bank_account_name: "Not provided",
+    //       bank_account_number: "Not provided",
+    //       number: activity.phone || activity.user?.phone || "Not provided"
+    //     }
+    //     ]
+    //   };
 
-      }
+    //   const userAccountSummary:UserDetails  = {
+    //     email: userAccount.email,
+    //     id: userAccount.id,
+    //     joinDate: userAccount.created_at,
+    //     name: userAccount.firstname,
+    //     role: userAccount.accounttype,
+    //     status: userAccount.status,
+    //     department: '',
+    //     lastLogin: '',
+    //     organization: '',
+    //     phone: ''
+
+    //   }
+
+    //   // fetch user every transaction
+    //   const findSelectedMember = await userObject.findSelectedMember(userid)
+
+    //   console.log(findSelectedMember);
       
-      // For user_creation activities, the user data ✅
-      const userAccount: unitUserType = {
-        userid: selecteduser.userid || "unknown",
-        id: selecteduser.id || "unknown",
-        username: selecteduser.username || "Unknown User",
-        firstname: selecteduser.firstname || "Unknown",
-        lastname: selecteduser.lastname || "User",
-        email: selecteduser.email || "No email provided",
-        accounttype: selecteduser.accounttype || "member undefined",
-        status: selecteduser.status || "active",
-        organization: selecteduser.organization || "Not found",
-        organization_name: selecteduser.organization_name || "Not found",
-        created_at: selecteduser.created_at || "Not found",
-        updated_at: selecteduser.updated_at || "Not found",
-        data: selecteduser.bank || [
-        {
-          bank_name: "Not provided",
-          bank_account_name: "Not provided",
-          bank_account_number: "Not provided",
-          number: activity.phone || activity.user?.phone || "Not provided"
-        }
-        ]
-      };
+    //   const contents:DynamicContent = {
+
+
+
+    //   }
+
+    //   // a query that find the selected user's activits at whole
+
+    //   const activities:DynamicContent[]  = []
+
+
       
-      setSelectedUserAccount(userAccount);
-      setUserAccountModalVisible(true);
-      return;
-    }
+    //   setSelectedUserAccount(userAccount);
+    //   setUserAccountModalVisible(true);
+
+
+    //   setSelectedUserDetails(userAccountSummary);
+    //   setModalDynamicContent(contents);
+    //   setModalVisible(true);
+    //   return;
+    // }
 
 
 
+    // if (activity.user_transaction.type === "log") {
+      
+    //   console.log("found log");
+      
+    //   // call an async function that assign the selected user to this
+    //   const userid = activity.user_transaction.author
+    //   const transactions: [] = activity.user_transaction
+      
+    //   let currentUser = await userObject.findSelectedMember(userid)
+    //   let selecteduser = currentUser.data
+    //   if (!selecteduser.status){
+
+    //   }
+      
+    //   // For user_creation activities, the user data ✅
+    //   const userAccount: unitUserType = {
+    //     userid: selecteduser.userid || "unknown",
+    //     id: selecteduser.id || "unknown",
+    //     username: selecteduser.username || "Unknown User",
+    //     firstname: selecteduser.firstname || "Unknown",
+    //     lastname: selecteduser.lastname || "User",
+    //     email: selecteduser.email || "No email provided",
+    //     accounttype: selecteduser.accounttype || "member undefined",
+    //     status: selecteduser.status || "active",
+    //     organization: selecteduser.organization || "Not found",
+    //     organization_name: selecteduser.organization_name || "Not found",
+    //     created_at: selecteduser.created_at || "Not found",
+    //     updated_at: selecteduser.updated_at || "Not found",
+    //     data: selecteduser.bank || [
+    //     {
+    //       bank_name: "Not provided",
+    //       bank_account_name: "Not provided",
+    //       bank_account_number: "Not provided",
+    //       number: activity.phone || activity.user?.phone || "Not provided"
+    //     }
+    //     ]
+    //   };
+
+    //   const userAccountSummary:UserDetails  = {
+    //     email: userAccount.email,
+    //     id: userAccount.id,
+    //     joinDate: userAccount.created_at,
+    //     name: userAccount.firstname,
+    //     role: userAccount.accounttype,
+    //     status: userAccount.status,
+    //     department: '',
+    //     lastLogin: '',
+    //     organization: '',
+    //     phone: ''
+
+    //   }
+
+    //   // fetch user acitivity
+    //   const findSelectedMember = await userObject.findSelectedMember(userid)
+
+    //   console.log(findSelectedMember);
+    
+
+      
+      
+    //   setSelectedUserAccount(userAccount);
+    //   setUserAccountModalVisible(true);
+
+
+    //   setSelectedUserDetails(userAccountSummary);
+    //   setModalVisible(true);
+    //   return;
+    // }
+
+
+
+
+    // if (activity.user_transaction.type === "budget") {
+      
+    //   console.log("found bugdet");
+      
+    //   // call an async function that assign the selected user to this
+    //   const userid = activity.user_transaction.author
+      
+    //   let currentUser = await userObject.findSelectedMember(userid)
+    //   let selecteduser = currentUser.data
+    //   if (!selecteduser.status){
+
+    //   }
+      
+    //   // For user_creation activities, the user data ✅
+    //   const userAccount: unitUserType = {
+    //     userid: selecteduser.userid || "unknown",
+    //     id: selecteduser.id || "unknown",
+    //     username: selecteduser.username || "Unknown User",
+    //     firstname: selecteduser.firstname || "Unknown",
+    //     lastname: selecteduser.lastname || "User",
+    //     email: selecteduser.email || "No email provided",
+    //     accounttype: selecteduser.accounttype || "member undefined",
+    //     status: selecteduser.status || "active",
+    //     organization: selecteduser.organization || "Not found",
+    //     organization_name: selecteduser.organization_name || "Not found",
+    //     created_at: selecteduser.created_at || "Not found",
+    //     updated_at: selecteduser.updated_at || "Not found",
+    //     data: selecteduser.bank || [
+    //     {
+    //       bank_name: "Not provided",
+    //       bank_account_name: "Not provided",
+    //       bank_account_number: "Not provided",
+    //       number: activity.phone || activity.user?.phone || "Not provided"
+    //     }
+    //     ]
+    //   };
+  
+    //   const findSelectedMember = await userObject.findSelectedMember(userid)
+
+    //   console.log(findSelectedMember);
+      
+    //   const contents:DynamicContent = {
+    //     budgetDetails: {
+    //       amount: 0,
+    //       purpose: '',
+    //       requestDate: '', 
+    //       status: 'pending',
+    //     }
+    //   }
+    //   // a query that find the selected user's activits at whole
+
+    //   const activities:DynamicContent[]  = []
+
+
+    //   console.log(transactions);
+      
+      
+    //   setSelectedUserAccount(userAccount);
+    //   setUserAccountModalVisible(true);
+
+
+    //   setSelectedUserDetails(userAccountSummary);
+    //   setModalDynamicContent(contents);
+    //   setModalVisible(true);
+    //   return;
+    // }
+
+
+
+
+    // const userid = activity.user_transaction.author
+    // const user_transaction = activity.user_transaction
+
+    // console.log(activity);
+
+
+    // let currentUser = await userObject.findSelectedMember(userid)
+    // let selecteduser = currentUser.data
+    // if (!selecteduser.status){
+
+    // }
 
     // Transform activity data to UserDetails format for other activities
-    const userDetails: UserDetails = {
-      id: activity.id || activity.user_id || "unknown",
-      name: activity.user?.name || activity.username || "Unknown User",
-      email: activity.user?.email || activity.email || "No email provided",
-      phone: activity.user?.phone || activity.phone,
-      role: activity.user?.role || activity.role || "Member",
-      status: activity.user?.status || activity.status || "active",
-      joinDate:
-        activity.user?.joinDate ||
-        activity.user?.created_at ||
-        activity.created_at ||
-        new Date().toISOString(),
-      lastLogin: activity.user?.last_login || activity.last_login,
-      organization: activity.user?.organization || activity.organization?.name || activity.organization_name,
-      department: activity.user?.department || activity.department,
-    };
+
 
     // Create dynamic content based on activity category
-    let dynamicContent: DynamicContent;
+    // let dynamicContent: DynamicContent;
+
     
     
-    switch (activity.type) {
+    
+    // switch (activity.type) {
 
 
       
-      case "log":
+    //   case "log":
+    //     console.log("log: ", user_transaction);
+        
 
-        dynamicContent = {
-          type: "user_creation",
-          title: "Account Creation & Activities",
-          data: [
-            {
-              action: activity.action || "User account created",
-              description: activity.description || "New user account has been created",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-        };
-        break;
+    //     dynamicContent = {
+    //       type: "user_creation",
+    //       title: "Account Creation & Activities",
+    //       data: [
+    //         {
+    //           action: activity.action || "User account created",
+    //           description: activity.description || "New user account has been created",
+    //           timestamp: activity.created_at || new Date().toISOString(),
+    //           category: activity.category,
+    //           status: activity.status,
+    //         },
+    //       ],
+    //     };
+    //     break;
       
 
-      case "budgets":
-        dynamicContent = {
-          type: "budget_request",
-          title: "Budget Request Review",
-          data: [
-            {
-              action: activity.action || "Budget request submitted",
-              description: activity.description || "Budget request pending approval",
-              timestamp: activity.created_at || new Date().toISOString(),
-              amount: activity.amount,
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          budgetDetails: activity.budgetDetails || {
-            amount: activity.amount || 150000,
-            purpose: "Office supplies and equipment",
-            requestDate: activity.created_at || new Date().toISOString(),
-            status: "pending" as const
-          }
-        };
-        break;
+    //   case "budgets":
+    //     console.log("budget: ", user_transaction);
+
+    //     dynamicContent = {
+    //       type: "budget_request",
+    //       title: "Budget Request Review",
+    //       data: [
+    //         {
+    //           action: activity.action || "Budget request submitted",
+    //           description: activity.description || "Budget request pending approval",
+    //           timestamp: activity.created_at || new Date().toISOString(),
+    //           amount: activity.amount,
+    //           category: activity.category,
+    //           status: activity.status,
+    //         },
+    //       ],
+    //       budgetDetails: activity.budgetDetails || {
+    //         amount: activity.amount || 150000,
+    //         purpose: "Office supplies and equipment",
+    //         requestDate: activity.created_at || new Date().toISOString(),
+    //         status: "pending" as const
+    //       }
+    //     };
+    //     break;
         
-      case "receipt":
-        dynamicContent = {
-          type: "receipt_upload",
-          title: "Receipt Upload Summary",
-          data: [
-            {
-              action: activity.action || "Receipts uploaded",
-              description: activity.description || "Multiple receipts uploaded for processing",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          receiptDetails: activity.receiptDetails || {
-            totalReceipts: 5,
-            totalAmount: 75000,
-            uploadDate: activity.created_at || new Date().toISOString()
-          }
-        };
-        break;
+    //   case "receipt":
+    //     console.log("receipt: ", user_transaction);
+
+    //     dynamicContent = {
+    //       type: "receipt_upload",
+    //       title: "Receipt Upload Summary",
+    //       data: [
+    //         {
+    //           action: activity.action || "Receipts uploaded",
+    //           description: activity.description || "Multiple receipts uploaded for processing",
+    //           timestamp: activity.created_at || new Date().toISOString(),
+    //           category: activity.category,
+    //           status: activity.status,
+    //         },
+    //       ],
+    //       receiptDetails: activity.receiptDetails || {
+    //         totalReceipts: 5,
+    //         totalAmount: 75000,
+    //         uploadDate: activity.created_at || new Date().toISOString()
+    //       }
+    //     };
+    //     break;
         
-      case "activity":
-        console.log(activity);
+    //   case "activity":
+    //     console.log("activity: ", user_transaction);
         
-        dynamicContent = {
-          type: "expense_approval",
-          title: "Expense Approval Details",
-          data: [
-            {
-              action: activity.action || "Expense report processed",
-              description: activity.description || "Expense report approval status",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          expenseDetails: activity.expenseDetails || {
-            expenseId: "EXP-2024-001",
-            amount: 50000,
-            category: "Travel",
-            submissionDate: activity.created_at || new Date().toISOString(),
-            approvalDate: activity.created_at || new Date().toISOString(),
-            status: "pending" as const,
-            approver: "Finance Manager"
-          }
-        };
-        break;
+    //     dynamicContent = {
+    //       type: "expense_approval",
+    //       title: "Expense Approval Details",
+    //       data: [
+    //         {
+    //           action: activity.action || "Expense report processed",
+    //           description: activity.description || "Expense report approval status",
+    //           timestamp: activity.created_at || new Date().toISOString(),
+    //           category: activity.category,
+    //           status: activity.status,
+    //         },
+    //       ],
+    //       expenseDetails: activity.expenseDetails || {
+    //         expenseId: "EXP-2024-001",
+    //         amount: 50000,
+    //         category: "Travel",
+    //         submissionDate: activity.created_at || new Date().toISOString(),
+    //         approvalDate: activity.created_at || new Date().toISOString(),
+    //         status: "pending" as const,
+    //         approver: "Finance Manager"
+    //       }
+    //     };
+    //     break;
         
-      // case "payment_processing":
-      //   dynamicContent = {
-      //     type: "payment_processing",
-      //     title: "Payment Processing Details",
-      //     data: [
-      //       {
-      //         action: activity.action || "Payment processed",
-      //         description: activity.description || "Payment transaction details",
-      //         timestamp: activity.created_at || new Date().toISOString(),
-      //         category: activity.category,
-      //         status: activity.status,
-      //       },
-      //     ],
-      //     paymentDetails: activity.paymentDetails || {
-      //       paymentId: "PAY-2024-001",
-      //       amount: 100000,
-      //       vendor: "Service Provider",
-      //       method: "Bank Transfer",
-      //       processedDate: activity.created_at || new Date().toISOString(),
-      //       status: "completed" as const,
-      //       reference: "TXN-123456789"
-      //     }
-      //   };
-      //   break;
+    //   // case "payment_processing":
+    //   //   dynamicContent = {
+    //   //     type: "payment_processing",
+    //   //     title: "Payment Processing Details",
+    //   //     data: [
+    //   //       {
+    //   //         action: activity.action || "Payment processed",
+    //   //         description: activity.description || "Payment transaction details",
+    //   //         timestamp: activity.created_at || new Date().toISOString(),
+    //   //         category: activity.category,
+    //   //         status: activity.status,
+    //   //       },
+    //   //     ],
+    //   //     paymentDetails: activity.paymentDetails || {
+    //   //       paymentId: "PAY-2024-001",
+    //   //       amount: 100000,
+    //   //       vendor: "Service Provider",
+    //   //       method: "Bank Transfer",
+    //   //       processedDate: activity.created_at || new Date().toISOString(),
+    //   //       status: "completed" as const,
+    //   //       reference: "TXN-123456789"
+    //   //     }
+    //   //   };
+    //   //   break;
         
 
         
-      // case "role_change":
-      //   dynamicContent = {
-      //     type: "role_change",
-      //     title: "Role Change Details",
-      //     data: [
-      //       {
-      //         action: activity.action || "Role updated",
-      //         description: activity.description || "User role modification",
-      //         timestamp: activity.created_at || new Date().toISOString(),
-      //         category: activity.category,
-      //         status: activity.status,
-      //       },
-      //     ],
-      //     roleDetails: activity.roleDetails || {
-      //       previousRole: "Member",
-      //       newRole: "Manager",
-      //       changeDate: activity.created_at || new Date().toISOString(),
-      //       changedBy: "Administrator",
-      //       reason: "Role update",
-      //       effectiveDate: activity.created_at || new Date().toISOString()
-      //     }
-      //   };
-      //   break;
+    //   // case "role_change":
+    //   //   dynamicContent = {
+    //   //     type: "role_change",
+    //   //     title: "Role Change Details",
+    //   //     data: [
+    //   //       {
+    //   //         action: activity.action || "Role updated",
+    //   //         description: activity.description || "User role modification",
+    //   //         timestamp: activity.created_at || new Date().toISOString(),
+    //   //         category: activity.category,
+    //   //         status: activity.status,
+    //   //       },
+    //   //     ],
+    //   //     roleDetails: activity.roleDetails || {
+    //   //       previousRole: "Member",
+    //   //       newRole: "Manager",
+    //   //       changeDate: activity.created_at || new Date().toISOString(),
+    //   //       changedBy: "Administrator",
+    //   //       reason: "Role update",
+    //   //       effectiveDate: activity.created_at || new Date().toISOString()
+    //   //     }
+    //   //   };
+    //   //   break;
         
-      // case "document_verification":
-      //   dynamicContent = {
-      //     type: "document_verification",
-      //     title: "Document Verification Status",
-      //     data: [
-      //       {
-      //         action: activity.action || "Document verified",
-      //         description: activity.description || "Document verification process",
-      //         timestamp: activity.created_at || new Date().toISOString(),
-      //         category: activity.category,
-      //         status: activity.status,
-      //       },
-      //     ],
-      //     documentDetails: activity.documentDetails || {
-      //       documentId: "DOC-2024-001",
-      //       type: "Contract",
-      //       submissionDate: activity.created_at || new Date().toISOString(),
-      //       verificationDate: activity.created_at || new Date().toISOString(),
-      //       status: "pending" as const,
-      //       verifier: "Legal Department"
-      //     }
-      //   };
-      //   break;
+    //   // case "document_verification":
+    //   //   dynamicContent = {
+    //   //     type: "document_verification",
+    //   //     title: "Document Verification Status",
+    //   //     data: [
+    //   //       {
+    //   //         action: activity.action || "Document verified",
+    //   //         description: activity.description || "Document verification process",
+    //   //         timestamp: activity.created_at || new Date().toISOString(),
+    //   //         category: activity.category,
+    //   //         status: activity.status,
+    //   //       },
+    //   //     ],
+    //   //     documentDetails: activity.documentDetails || {
+    //   //       documentId: "DOC-2024-001",
+    //   //       type: "Contract",
+    //   //       submissionDate: activity.created_at || new Date().toISOString(),
+    //   //       verificationDate: activity.created_at || new Date().toISOString(),
+    //   //       status: "pending" as const,
+    //   //       verifier: "Legal Department"
+    //   //     }
+    //   //   };
+    //   //   break;
     
         
 
 
-      // case "budget_allocation":
-      //   dynamicContent = {
-      //     type: "budget_allocation",
-      //     title: "Budget Allocation Summary",
-      //     data: [
-      //       {
-      //         action: activity.action || "Budget allocated",
-      //         description: activity.description || "Budget distribution activity",
-      //         timestamp: activity.created_at || new Date().toISOString(),
-      //         category: activity.category,
-      //         status: activity.status,
-      //       },
-      //     ],
-      //     budgetAllocationDetails: activity.budgetAllocationDetails || {
-      //       allocationId: "ALLOC-2024-001",
-      //       totalAmount: 1000000,
-      //       period: "Q1 2024",
-      //       departments: 3,
-      //       allocationDate: activity.created_at || new Date().toISOString(),
-      //       status: "completed" as const
-      //     }
-      //   };
-      //   break;
+    //   // case "budget_allocation":
+    //   //   dynamicContent = {
+    //   //     type: "budget_allocation",
+    //   //     title: "Budget Allocation Summary",
+    //   //     data: [
+    //   //       {
+    //   //         action: activity.action || "Budget allocated",
+    //   //         description: activity.description || "Budget distribution activity",
+    //   //         timestamp: activity.created_at || new Date().toISOString(),
+    //   //         category: activity.category,
+    //   //         status: activity.status,
+    //   //       },
+    //   //     ],
+    //   //     budgetAllocationDetails: activity.budgetAllocationDetails || {
+    //   //       allocationId: "ALLOC-2024-001",
+    //   //       totalAmount: 1000000,
+    //   //       period: "Q1 2024",
+    //   //       departments: 3,
+    //   //       allocationDate: activity.created_at || new Date().toISOString(),
+    //   //       status: "completed" as const
+    //   //     }
+    //   //   };
+    //   //   break;
         
 
         
-      default:
-        // Fallback for legacy activities or unknown categories
-        dynamicContent = {
-          type: "activities",
-          title: "User Activity Details",
-          data: [
-            {
-              action: activity.action || "Activity performed",
-              description: activity.description || "No description available",
-              timestamp:
-                activity.created_at ||
-                activity.timestamp ||
-                new Date().toISOString(),
-              amount: activity.amount,
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-        };
-        break;
-    }
-
-    setSelectedUserDetails(userDetails);
-    setModalDynamicContent(dynamicContent);
-    setModalVisible(true);
+    //   default:
+    //     // Fallback for legacy activities or unknown categories
+    //     dynamicContent = {
+    //       type: "activities",
+    //       title: "User Activity Details",
+    //       data: [
+    //         {
+    //           action: activity.action || "Activity performed",
+    //           description: activity.description || "No description available",
+    //           timestamp:
+    //             activity.created_at ||
+    //             activity.timestamp ||
+    //             new Date().toISOString(),
+    //           amount: activity.amount,
+    //           category: activity.category,
+    //           status: activity.status,
+    //         },
+    //       ],
+    //     };
+    //     break;
+    // }
   };
 
   // Handle modal close
   const handleModalClose = () => {
     setModalVisible(false);
     setSelectedUserDetails(null);
-    setModalDynamicContent(null);
+    // setModalDynamicContent(null);
   };
 
   // Handle UserAccountModal close
   const handleUserAccountModalClose = () => {
     setUserAccountModalVisible(false);
-    setSelectedUserAccount(null);
+    // setSelectedUserAccount(null);
   };
   const { isDarkColorScheme } = useColorScheme();
+
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
 
   
@@ -497,7 +677,7 @@ export function UserAccountManagementScreen({
                   {/* scrollable */}
                   <GridSection columns={1} gap={6}>
                     {/* Display real activities if available, otherwise show mock data */}
-                    {true
+                    {activities? activities.length: false
                       ? activities.map((activity, index) => (
                           <ActivityItem
                             key={index}

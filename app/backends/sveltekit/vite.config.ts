@@ -7,7 +7,7 @@ export default defineConfig({
 		//  mkcert()
 		],
 	preview: {
-		port: 4041, // Number(process.env.PREVIEW_PORT),
+		port: 8080, // Number(process.env.PREVIEW_PORT),
 		strictPort: true
 	},
 	server: {
