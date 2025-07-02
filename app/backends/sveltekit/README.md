@@ -1,5 +1,19 @@
 # sveltekit
 
+> reverse the port on the backend to the port both the admin and android can listen to with:
+
+`netsh interface portproxy add v4tov4 connectaddress=localhost connectport=8080 listenaddress=127.0.0.1 listenport=8080 protocol=tcp`
+
+1. connector is the custom port: 8080
+2. listner is the initial port of the host: 5173
+
+e.g 8080 -> 5173
+
+every request 8080 get reversed to 5173
+
+Note: use 8088
+
+
 # structure
 This system to handle just the backend of an app through API.
 With this application, postgres is connected to manage the api transactions and Lucia Auth is integrated to handle Authentications and Authorizations.
@@ -81,5 +95,6 @@ This command specifically deletes the IPv4 port proxy rule listening on port 808
 
 4. Then reverse the host to a secure one.
 
+> map the backend[PORT:5173] to another port accessible to android and admin PORT:8080
 
-netsh interface portproxy add v4tov4 connectaddress=localhost connectport=8080 listenaddress=127.0.0.1 listenport=8080 protocol=tcp
+netnetsh interface portproxy add v4tov4 connectaddress=127.0.0.1 connectport=5173 listenaddress=127.0.0.1 listenport=8080 protocol=tcp

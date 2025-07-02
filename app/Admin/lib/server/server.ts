@@ -2,6 +2,14 @@
 import { MMKV } from 'react-native-mmkv'
 import { userSignupDataTemplate } from '../auth'
 
+
+const BACKEND_ORIGIN = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
+const ORIGIN_ADDRESS = process.env.EXPO_PUBLIC_ORIGIN
+const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
+const PUBLIC_HOST_ADDR = process.env.EXPO_PUBLIC_HOST_ADDR
+
+
+
 interface userDataType {
     organization: 'string',
     bank_name: string,
@@ -15,14 +23,15 @@ interface userDataType {
 }
 
 // export const backendORIGIN = "http://127.0.0.1:8080"
-export const backendORIGIN = "http://127.0.0.1:5173"
-export const api_origin_address = "127.0.0.1"
+
+export const backendORIGIN = BACKEND_ORIGIN
+export const api_origin_address = ORIGIN_ADDRESS
 export const AUTH_ORIGIN = process.env.ALLOWED_ORIGIN?.split(',')
 
 // api securities
 export const apiHeaders = new Map()
 
-apiHeaders.set("Authorization", "Bearer")
+apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
 apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
@@ -30,6 +39,7 @@ apiHeaders.set("Access-Control-Allow-Headers", "Authorization,X-PINGOTHER,X-Requ
 apiHeaders.set("Access-Control-Expose-Headers", "Authorization, X-Custom-header")
 apiHeaders.set('Access-Control-Allow-Credentials', "true");
 apiHeaders.set('Accept', "*/*");
+apiHeaders.set("Origin", PUBLIC_HOST_ADDR)
 
 
 
@@ -98,16 +108,13 @@ export async function PostrequestHandler(path:{ url: null|string,  data: any }) 
 
             if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
 
-                apiHeaders.set('Cookie', cookie)
+            apiHeaders.set('Cookie', cookie)
 
             if (!path.url) return {
                 status: false,
                 message: "Path url to request not set",
                 data: null
                 }
-
-
-                // console.log(path.url);    
 
             const request = await fetch(`${backendORIGIN}${path.url}`, {
                 headers: Object.fromEntries(apiHeaders.entries()),

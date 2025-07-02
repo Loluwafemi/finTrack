@@ -11,7 +11,7 @@ export const ACCOUNTTYPE = pgEnum('accounttype', ['user', 'admin', 'superadmin',
 export const BANKSTATUS = pgEnum('bankstatus', ['approved', 'pending', 'disabled', 'deleted'])
 
 
-export const TRANSACTIONTYPE = pgEnum('transactiontype', ['receipt', 'notification', 'activity', 'message'])
+export const TRANSACTIONTYPE = pgEnum('transactiontype', ['receipt', 'notification', 'activity', 'message', 'log'])
 
 
 

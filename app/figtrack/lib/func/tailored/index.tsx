@@ -107,6 +107,7 @@ export class Auth {
 
 
     async records(budget_id?:any): Promise<{budgets:budgetList[], expenses: expensesTemplate[], balances: balacesTemplate}>{
+
         /* 
             Run a fetch request to return all expense on the selected budget and then return the polished result in two phase: 
             [array object and chart data]
@@ -146,9 +147,13 @@ export class Auth {
             }
        }
        
-       const requester = await requestHandler({url: '/api/service/records', data: await this.user()})
+
+       const requester = await requestHandler({url: '/api/service/records', data: (await this.user())})
     // set budgetlists
+       
+
        if (!requester.status) {
+        
             portfolio.budgets = []
             portfolio.budgets = portfolio.budgets
        }else{
@@ -191,7 +196,7 @@ export class Auth {
     
 
     // create a generator to find the total available and total spent
-       portfolio.balances = balancesGenerator(expenseQuery(expenses, budget_id).expense_c, expenseQuery(expenses, budget_id).expense_o)
+    portfolio.balances = balancesGenerator(expenseQuery(expenses, budget_id).expense_c, expenseQuery(expenses, budget_id).expense_o)
        
         return portfolio
     }
@@ -217,9 +222,12 @@ export class Auth {
        return activities
     }
 
+
+
     async user():Promise<credential>{
-        let output: credential = await hydrate()        
-        return output
+        let output = await hydrate()  
+        const user: credential = output.response  
+        return user
     }
 
     static async isAlive(){
@@ -241,7 +249,7 @@ export class Auth {
             return { 
                 status: true,
                 message: "Valid Credential",
-                data: session 
+                data: session.response
             }
         }else{
             return {
@@ -257,6 +265,7 @@ export class Auth {
     async addBudget(expensedata: {title: string, type: string, expenses: []|any}){
         // send all user's session as a payload
         const sender = (await this.user())
+        
         
         // save budget using user session and return status
         const requestHandler = await saveBudget({auth: sender, data: expensedata})
@@ -311,6 +320,8 @@ function tailoredTransactionFordashboard(allTransaction: any, find: 'receipt' | 
     allTransaction.forEach(transaction => {
         output.push(transaction)
     });
+
+    output = output.reverse()
 
     return output; 
     

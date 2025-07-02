@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
   Dimensions,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { COLORS } from "../theme/colors";
@@ -188,6 +187,8 @@ export const DynamicModal: React.FC<DynamicModalProps> = ({
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const [selectedTab, setSelectedTab] = useState<string>("overview");
 
+  console.log(userDetails);
+  
   // Format currency in Nigerian Naira
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat("en-NG", {
@@ -1592,4 +1593,5 @@ export const DynamicModal: React.FC<DynamicModalProps> = ({
 };
 
 // Export types for external use
-export type { UserDetails, DynamicContent, DynamicModalProps };
+export type { DynamicContent, DynamicModalProps, UserDetails };
+

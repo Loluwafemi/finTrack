@@ -471,7 +471,8 @@ const formStyle = StyleSheet.create({
     },
     form: {
         margin: 0,
-        backgroundColor: 'pink',
+        backgroundColor: '',
+        padding: 8
       },
     formItem: {
         margin: 6

@@ -1,20 +1,12 @@
 import React from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface ActivityItemProps {
-  action: string;
-  user: string;
-  time: string;
-  type: "success" | "info" | "warning" | "error";
   data: any;
   onPress?: () => void;
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({
-  action,
-  user,
-  time,
-  type,
   data,
   onPress,
 }) => {
@@ -50,42 +42,60 @@ id: 'd0e46cb6-4a37-4807-ba10-03747890389d',
 updated_at: null,
 created_at: 2025-06-27T11:35:32.566Z,
 deleted_at: null
-
-
   */
- console.log(data);
 
- const currentUser = data.user_transaction;
- 
-  const getStatusColor = () => {
-    switch (type) {
-      case "success":
+// construct a custom object to hold the data
+
+ const activity = data.user_transaction;
+
+let mytemplate = {
+  userid: activity.author,
+  activityType: activity.type,
+  id: activity.id,
+  content: activity.message,
+  date: activity.created_at,
+  status: activity.status,
+  action: activity.type
+}
+
+
+    
+const action = activity.type
+
+
+
+  const getStatusColor = (typedata:string) => {
+    switch (typedata) {
+      case "approved":
         return "#28a745";
-      case "info":
+      case "pending":
         return "#17a2b8";
-      case "warning":
+      case "declined":
         return "#ffc107";
-      case "error":
+      case "deleted":
         return "#dc3545";
       default:
         return "#6c757d";
     }
   };
 
-  const getStatusIcon = () => {
-    switch (type) {
-      case "success":
+
+  const getStatusIcon = (typedata:string) => {
+    switch (typedata) {
+      case "approved":
         return "✓";
-      case "info":
+      case "pending":
         return "ℹ";
-      case "warning":
+      case "declined":
         return "⚠";
-      case "error":
+      case "deleted":
         return "✕";
       default:
         return "•";
     }
   };
+
+
   return (
     <TouchableOpacity
       className="flex-row items-start py-3 px-4 rounded-lg mb-2"
@@ -103,13 +113,13 @@ deleted_at: null
       <View
         className="w-6 h-6 rounded-full mr-3 mt-0.5 items-center justify-center"
         style={{
-          backgroundColor: getStatusColor(),
+          backgroundColor: getStatusColor(mytemplate.status),
           minWidth: 24,
           minHeight: 24,
         }}
       >
         <Text className="text-xs font-bold" style={{ color: "#ffffff" }}>
-          {getStatusIcon()}
+          {getStatusIcon(mytemplate.status)}
         </Text>
       </View>
 
@@ -121,11 +131,13 @@ deleted_at: null
 
         <View className="flex-row justify-between items-center">
           <Text className="text-xs" style={{ color: "#6c757d" }}>
-            by {user}
+            {mytemplate.content.title}
           </Text>
-
           <Text className="text-xs" style={{ color: "#6c757d" }}>
-            {time}
+           {String(">>>")} {mytemplate.date}
+          </Text>
+          <Text className="text-xs" style={{ color: "#6c757d" }}>
+            
           </Text>
         </View>
       </View>

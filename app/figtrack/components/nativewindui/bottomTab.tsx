@@ -132,7 +132,9 @@ export function UserRecord(){
 
     useEffect(()=>{
         const gettTransactions = async () => {
-        let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')         
+        let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')    
+        
+        
 
         selectBudget(transactions.budgets)
         setBalaces(transactions.balances)

@@ -8,3 +8,7 @@ const { withNativeWind } = require('nativewind/metro');
 const config = getDefaultConfig(__dirname);
 
 module.exports = withNativeWind(config, { input: './global.css', inlineRem: 16 });
+
+// module.exports = {
+//     presets: ['module:metro-react-native-babel-preset', 'module:react-native-dotenv'],
+// }

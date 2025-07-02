@@ -5,6 +5,7 @@ import { ALLOWED_ORIGIN, API_AUTHORIZATION } from '$env/static/private'
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 
+	
 	let allowed_origin = ALLOWED_ORIGIN.split(',')
 	let cloneResponse = event.request.clone()
 	let theOrigin = allowed_origin.find((value, index)=> value === cloneResponse.headers.get('origin')!)
@@ -28,10 +29,9 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 
 		if(event.request.method === 'POST') {
-			const result = await resolve(event);
 
-			let cloneResponse = result.clone()
 			
+			const result = await resolve(event);			
 
 			let resp = new Response(result.body, {
 				headers: result.headers });
@@ -48,6 +48,8 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		if(event.request.method === 'GET') {
 			// add information from the event to the request
 			// event.request.headers.set("Access-Control-Allow-Credentials", "true")			
+			
+			console.log(event);
 			
 			event.request.headers.set("Access-Control-Allow-Origin", theOrigin!)
 			

@@ -36,7 +36,9 @@ export class Admin{
     async OrganizationAccounts(organization_name:any){
         let transaction;
 
-        let organization = await db.select().from(user_data).where(eq(user_data.organization_name, organization_name)).as("organization");
+        let organization = await db.select().from(user_data)
+        // .where(eq(user_data.organization_name, organization_name))
+        .as("organization");
 
         let organization_members = await db.select().from(user).leftJoin(organization, eq(user.userid, organization.id)).then((members)=>{
             let validMembers: typeof members = []
@@ -52,7 +54,11 @@ export class Admin{
             return validMembers;
             
         })        
-        // let filter = db.select().from().where()
+
+
+        organization_members = organization_members.reverse()
+        
+
 
         if (organization_members.length < 1) return { status: false, message: "No member found yet" }
 
@@ -81,7 +87,7 @@ export class Admin{
 
                 })
 
-                return validMembers;
+                return validMembers.reverse();
             }
             return validMembers;
         })    
@@ -139,7 +145,8 @@ export class Admin{
             with:{
                 data: true,
                 transactions: true,
-                budgets: true
+                budgets: true,
+                banks: true
             }
         })
 
@@ -149,7 +156,6 @@ export class Admin{
         return { status: true, data: transaction }
 
     }
-
 
     /* 
     Actions on budget and user: unit actions

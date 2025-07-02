@@ -63,7 +63,7 @@ export default function UserAddGrant() {
               expenses: values.expenses
             })
 
-            if (!response.status) await setErrors({title: "error"})
+            if (!response.status) return await setErrors({title: "error"})
               navigation.navigate('/(dashboard)')
           }}
 
