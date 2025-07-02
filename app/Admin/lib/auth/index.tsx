@@ -1,4 +1,4 @@
-import { GetRequestHandler, apiHeaders, api_origin_address, backendORIGIN, getData, hydrate, signinREQUEST, signouREQUEST, signupREQUEST } from "../server/server";
+import { GetRequestHandler, PostrequestHandler, apiHeaders, api_origin_address, backendORIGIN, getData, hydrate, signinREQUEST, signouREQUEST, signupREQUEST } from "../server/server";
 
 interface credential {
     organization: 'string' | null,
@@ -173,6 +173,18 @@ export class User {
 
     }
 
+    async findSelectedMember(userid:string){
+        let transaction;
+        
+        transaction = await PostrequestHandler({url: '/api/secure/details', data: { userid: userid }})        
+        
+        if (!transaction.status) return { status: false, message: "User collected is zero" }
+
+        return { status: true, data: transaction.data  } 
+    }
+
+    
+
 
 }
 
@@ -190,6 +202,7 @@ export type unitUserType = {
   created_at: string,
   accounttype: string,
   data: any,
-  email: string
+  email: string,
+  banks?: []
 
 }

@@ -1,6 +1,6 @@
 # FInTrack Admin Dashboard 🚀
 
-`adb reverse tcp:8081 tcp:8080` to reverse the network on development mode.
+`npx expo start --port 8085` to run the admin on a working and registered port address.
 
 ## Run the server locally on 127.0.0.1:port/ make sure you reverse the connection. esle api-request-header will return undefined
 

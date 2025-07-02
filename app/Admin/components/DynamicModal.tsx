@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
   Dimensions,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { COLORS } from "../theme/colors";
@@ -34,7 +33,7 @@ interface DynamicContent {
     | "settings"
     | "custom"
     | "user_creation"
-    | "budget_request"
+    | "budget"
     | "receipt_upload"
     | "expense_approval"
     | "payment_processing"
@@ -519,7 +518,7 @@ export const DynamicModal: React.FC<DynamicModalProps> = ({
           </ScrollView>
         );
 
-      case "budget_request":
+      case "budget":
         return (
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
             <View
@@ -1592,4 +1591,5 @@ export const DynamicModal: React.FC<DynamicModalProps> = ({
 };
 
 // Export types for external use
-export type { UserDetails, DynamicContent, DynamicModalProps };
+export type { DynamicContent, DynamicModalProps, UserDetails };
+

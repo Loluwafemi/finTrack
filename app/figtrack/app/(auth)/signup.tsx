@@ -32,18 +32,11 @@ export default function SignUpAuthentication() {
         }, [])
   
         return (
-            <View style={styles.body}>
-            {/* tabs message */}
-            <View style={styles.message}>
-              <Text style={{ color: '#FEFCFD'}}>Display Message</Text>
-            </View>
-  
-            {/* tabs */}
-            <View style={styles.form}>
-            <Link href={'../(dashboard)'}>continue</Link>
-              <Text style={styles.signup}>Sign Up</Text>
-              <FormNav />
-            </View>
+          <View style={styles.body}>  
+              <View style={styles.form}>
+                <Text style={styles.signup}>Sign Up</Text>
+                <FormNav />
+              </View>
         </View>
         );
 }
@@ -61,7 +54,7 @@ const styles = StyleSheet.create({
       flex: 2,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#000000',
+      // backgroundColor: '#000000',
       marginBottom: 4,
       borderRadius: 3,
       marginTop: 15
@@ -71,7 +64,7 @@ const styles = StyleSheet.create({
       flex: 4,
       justifyContent: 'flex-start',
       // alignItems: 'center',
-      backgroundColor: '#FEFCFD',
+      // backgroundColor: '#FEFCFD',
       marginBottom: 4,
       display: 'flex'
     },

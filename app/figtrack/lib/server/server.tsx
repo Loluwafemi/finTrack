@@ -2,6 +2,12 @@
 // dependencies for environment
 import * as SecureStore from 'expo-secure-store';
 
+const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
+const ORIGIN = process.env.EXPO_PUBLIC_ORIGIN
+const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
+const HOST_ADDRESS = process.env.EXPO_PUBLIC_HOST_ADDR
+
+// process.env.
 
 interface userDataType {
     organization: 'string',
@@ -15,18 +21,24 @@ interface userDataType {
     password: string | null
 }
 
-export const backendORIGIN = "http://127.0.0.1:8080"
-export const api_origin_address = "127.0.0.1"
+export const backendORIGIN = BACKEND_ORIGIN_ADDR
+
+export const api_origin_address = ORIGIN
+
 export const AUTH_ORIGIN = process.env.ALLOWED_ORIGIN?.split(',')
+
+export const host_address = HOST_ADDRESS
 
 // api securities
 export const apiHeaders = new Map()
 
-apiHeaders.set("Authorization", "Bearer")
+apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
 apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET, POST")
 apiHeaders.set("Access-Control-Allow-Headers", "content-type, Authorization")
+
+apiHeaders.set("Origin", host_address)
 
 
 
@@ -59,9 +71,10 @@ export const deleteCookie = async (key:any) => {
 };
 
 export async function signinREQUEST(data) {
-    
-    console.log(data);
+
     try {
+
+            
 
         const request = await fetch(`${backendORIGIN}/api/auth/signin`, {
             headers: Object.fromEntries(apiHeaders.entries()),
@@ -70,32 +83,33 @@ export async function signinREQUEST(data) {
             credentials: 'same-origin'
         })
         
+        
         const responseClone = request.clone()
 
         if (!responseClone.ok) {
 
-            // console.log(responseClone.ok);
-            
             return {
 
                 status: false,
                 message: "Invalid Credential",
                 cookies: null
-        }
+        }        
+
         }
         
         const {status, message } = await responseClone.json()
         
         
-        // console.log(status, message);
         
         if (status){
             
             const cookies = responseClone.headers.get('set-cookie')
             // console.log(typeof cookies);
-            
-            await storeData(api_origin_address, cookies)
-            await getData(api_origin_address)   
+            if (cookies !== null && cookies !== undefined) {
+                await storeData(api_origin_address, cookies)
+                await getData(api_origin_address)   
+            }            
+
             
             return {
                 status: true,
@@ -110,7 +124,7 @@ export async function signinREQUEST(data) {
         }
     
     } catch (error) {
-        // console.log("error: ", error);
+        console.log("error: ", error);
         return {
             status: false,
             message: "Invalid Credential",
@@ -256,21 +270,19 @@ export async function saveBudget(payload: {auth: any, data: any}) {
     const cookie = await getData(api_origin_address)
     
     if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
-
+    
     // breaking incoming data
     const request = await fetch(`${backendORIGIN}/api/service/add`, {
         headers: Object.fromEntries(apiHeaders.entries()),
         body: JSON.stringify(payload),
         method: 'POST',
         credentials: 'same-origin'
-    })
+    })    
     
-    const responseClone = request.clone()
-    
-    const {status, message} = await responseClone.json()    
 
-    // console.log(status, message);
-    
+
+    const {status, message} = await request.json()    
+
     if (status){     
         
         return {
@@ -287,8 +299,6 @@ export async function saveBudget(payload: {auth: any, data: any}) {
 
 
 }
-
-
 
 export async function requestHandler(path:{ 
                                         url: null|string, 
@@ -307,9 +317,7 @@ export async function requestHandler(path:{
             message: "Path url to request not set",
             data: null
         }
-    
 
-    // console.log(path.url);    
 
     const request = await fetch(`${backendORIGIN}${path.url}`, {
         headers: Object.fromEntries(apiHeaders.entries()),

@@ -7,11 +7,11 @@ export default defineConfig({
 		//  mkcert()
 		],
 	preview: {
-		port: 4041, // Number(process.env.PREVIEW_PORT),
+		port: 8080, // Number(process.env.PREVIEW_PORT),
 		strictPort: true
 	},
 	server: {
-		// port: 4044, // Number(process.env.SERVER_PORT),
+		// port: 8088, // Number(process.env.SERVER_PORT),
 		// strictPort: true,
 		cors: true,
 		// allowedHosts: ["http://192.168.43.107:8081"],

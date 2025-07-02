@@ -22,6 +22,7 @@ export default function UsersDashboardIndex() {
 
     // middleware
     const [isAuth, setStatus] = React.useState(null)
+    
 
     React.useEffect(()=>{
         const getSession = async () => { 

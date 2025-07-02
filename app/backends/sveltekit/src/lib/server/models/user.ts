@@ -119,7 +119,6 @@ export class User {
 
     }
 
-
     async create_admin(userdata: UserCredential | any, cred_data: userDataType|null = null) {
         let transaction;
 
@@ -268,14 +267,17 @@ export class User {
 
     async find(userid:string, all:boolean=false){
         
+        
         let transaction = await db.query.user.findFirst({
-            where: eq(userid, user.userid),
+            where: eq(user.userid, userid),
             with: {
                 data: true
             }
         })
 
+
         if(!transaction) return {status: false, message: "user does not exist"}
+
 
         return { status: true, message: "user found", data: transaction }
     }
@@ -350,7 +352,6 @@ export class User {
         let transaction;
         const budgetObj = new Budget()
         transaction = await budgetObj.add(budget, auth)
-
 
         try {
             let invoking = new Transactions()

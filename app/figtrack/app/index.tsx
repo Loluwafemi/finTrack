@@ -7,7 +7,7 @@ import { Button } from '~/components/nativewindui/Button';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
 
-const ROOT_STYLE: ViewStyle = { flex: 1, backgroundColor: 'pink' };
+const ROOT_STYLE: ViewStyle = { flex: 1, backgroundColor: 'white' };
 
 export default function WelcomeConsentScreen() {
   const { colors } = useColorScheme();

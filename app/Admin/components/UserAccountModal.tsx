@@ -1,16 +1,15 @@
+import { unitUserType } from "@/lib/auth";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
   Dimensions,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { COLORS } from "../theme/colors";
-import { unitUserType } from "@/lib/auth";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -382,8 +381,9 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                   >
                     Banking Information
                   </Text>
+                  {true? userAccount.banks?.map((bank, index)=> (
 
-                  <View className="space-y-3">
+                  <View key={index} className="space-y-3">
                     <View className="flex-row justify-between items-center py-2">
                       <Text
                         className="text-sm font-medium"
@@ -395,7 +395,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                         className="text-sm font-semibold"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userAccount.data.bank_name || "Not provided"}
+                        {bank.bank_name || "Not provided"}
                       </Text>
                     </View>
 
@@ -410,7 +410,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                         className="text-sm font-semibold"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userAccount.data.bank_account_name || "Not provided"}
+                        {bank.bank_account_name || "Not provided"}
                       </Text>
                     </View>
 
@@ -425,7 +425,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                         className="text-sm font-semibold"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userAccount.data.bank_account_number || "Not provided"}
+                        {bank.bank_account_number || "Not provided"}
                       </Text>
                     </View>
 
@@ -440,10 +440,13 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                         className="text-sm font-semibold"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userAccount.data.number || "Not provided"}
+                        {bank.number || "Not provided"}
                       </Text>
                     </View>
                   </View>
+
+
+                  )): ''}
                 </View>
               )}
             </View>

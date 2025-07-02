@@ -9,6 +9,21 @@ import postgres from 'postgres';
 
 import * as schema from './schema';
 import { env } from '$env/dynamic/private';
+import { config } from 'dotenv';
+
+
+
+
+
+import { drizzle as vdrizzle } from 'drizzle-orm/vercel-postgres';
+config({ path: '.env.local' }); // or .env
+
+
+
+
+
+
+
 
 
 const localdbURL = process.env.DATABASE_URL! || env.DATABASE_URL
@@ -27,6 +42,12 @@ const client = postgres(localdbURL);
 const db = drizzle(client, {
   schema: schema
 })
+
+
+// export const db = drizzle(client, {
+//   schema: schema
+// });
+
 
 export default db;
 

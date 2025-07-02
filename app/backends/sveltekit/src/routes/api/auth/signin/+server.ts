@@ -9,15 +9,15 @@ export const POST: RequestHandler = async (event) => {
     
     // if (event.locals.session?.userId) {
     //     return json({status: true, message: "Authentication Already, Kindly signout first"});
-    // }
-
+    // }    
     
 
-    let output = REQUESTAUTHENTICATOR(event)
+    REQUESTAUTHENTICATOR(event)
+    
     
     const responseClone = event.request.clone()
     
-    const { email, password } = await responseClone.json()
+    const { email, password } = await responseClone.json()    
     
     // validate data
     if (!email && !password) return json({  status: false, message: "Missing Parameter"})    
@@ -26,8 +26,7 @@ export const POST: RequestHandler = async (event) => {
     // validat user
     const UserModel = new User()
     let transaction:any = await UserModel.validate(email, password)
-    
-
+        
     if (!transaction){
         // console.log("user not exist");
         return json({  status: false, message: "Authentication error \nAccount does not exist"})

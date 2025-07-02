@@ -62,6 +62,8 @@ export default function Authentication() {
                               if (response.status) {
                                 
                                 return navigation.navigate('/(dashboard)')
+                              }else{
+                                await setErrors({password: "Invalid Credentials!"})
                               }
                             } catch (error) {
                               console.log("Error: ", error);
@@ -158,15 +160,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         height: '100%',
-        backgroundColor: 'pink',
+        // backgroundColor: 'pink',
         margin: 5
       },
     login: {
       display: 'flex',
       alignItems: 'center',
       padding: 2,
-      borderWidth: 1,
-      borderRadius: 2,
+      // borderWidth: 1,
+      // borderRadius: 2,
       borderColor: '#6B6B6B',
       margin: 1,
       width: 'auto'
