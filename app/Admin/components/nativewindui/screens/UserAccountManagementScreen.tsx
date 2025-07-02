@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
-import { DynamicContent, DynamicModal, UserDetails } from "../../DynamicModal";
+import {UserDetails } from "../../DynamicModal";
 import { UserAccountModal } from "../../UserAccountModal";
 import { SkeletonBase } from "../SkeletonBase";
 import {
@@ -19,22 +19,7 @@ export function UserAccountManagementScreen({
 }: {
   setSelectedScreen?: (screen: any) => void;
 }) {
-  const [alerts, setAlerts] = useState([
-    {
-      id: 1,
-      title: "High Transaction Volume",
-      description: "Unusual activity detected - 45 transactions in 10 minutes.",
-      priority: "high" as const,
-      time: "2 min ago",
-    },
-    {
-      id: 2,
-      title: "Failed Login Attempts",
-      description: "Multiple failed attempts detected for user account.",
-      priority: "medium" as const,
-      time: "15 min ago",
-    },
-  ]);
+  const [alerts, setAlerts] = useState([]);
 
   // const [ query, writeQuery ] = useState<null|{ row: string, keyword: string }>(null)
 
@@ -43,8 +28,6 @@ export function UserAccountManagementScreen({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUserDetails, setSelectedUserDetails] =
     useState<UserDetails | null>(null);
-  const [modalDynamicContent, setModalDynamicContent] =
-    useState<DynamicContent | null>(null);
   // State for UserAccountModal
   const [userAccountModalVisible, setUserAccountModalVisible] = useState(false);
   const [selectedUserAccount, setSelectedUserAccount] = useState<unitUserType | null>(null);
@@ -184,220 +167,7 @@ export function UserAccountManagementScreen({
       department: activity.user?.department || activity.department,
     };
 
-    // Create dynamic content based on activity category
-    let dynamicContent: DynamicContent;
-    
-    switch (activity.category) {
-      case "user_creation":
-        dynamicContent = {
-          type: "user_creation",
-          title: "Account Creation & Activities",
-          data: [
-            {
-              action: activity.action || "User account created",
-              description: activity.description || "New user account has been created",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-        };
-        break;
-        
-      case "budget_request":
-        dynamicContent = {
-          type: "budget_request",
-          title: "Budget Request Review",
-          data: [
-            {
-              action: activity.action || "Budget request submitted",
-              description: activity.description || "Budget request pending approval",
-              timestamp: activity.created_at || new Date().toISOString(),
-              amount: activity.amount,
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          budgetDetails: activity.budgetDetails || {
-            amount: activity.amount || 150000,
-            purpose: "Office supplies and equipment",
-            requestDate: activity.created_at || new Date().toISOString(),
-            status: "pending" as const
-          }
-        };
-        break;
-        
-      case "receipt_upload":
-        dynamicContent = {
-          type: "receipt_upload",
-          title: "Receipt Upload Summary",
-          data: [
-            {
-              action: activity.action || "Receipts uploaded",
-              description: activity.description || "Multiple receipts uploaded for processing",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          receiptDetails: activity.receiptDetails || {
-            totalReceipts: 5,
-            totalAmount: 75000,
-            uploadDate: activity.created_at || new Date().toISOString()
-          }
-        };
-        break;
-        
-      case "expense_approval":
-        dynamicContent = {
-          type: "expense_approval",
-          title: "Expense Approval Details",
-          data: [
-            {
-              action: activity.action || "Expense report processed",
-              description: activity.description || "Expense report approval status",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          expenseDetails: activity.expenseDetails || {
-            expenseId: "EXP-2024-001",
-            amount: 50000,
-            category: "Travel",
-            submissionDate: activity.created_at || new Date().toISOString(),
-            approvalDate: activity.created_at || new Date().toISOString(),
-            status: "pending" as const,
-            approver: "Finance Manager"
-          }
-        };
-        break;
-        
-      case "payment_processing":
-        dynamicContent = {
-          type: "payment_processing",
-          title: "Payment Processing Details",
-          data: [
-            {
-              action: activity.action || "Payment processed",
-              description: activity.description || "Payment transaction details",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          paymentDetails: activity.paymentDetails || {
-            paymentId: "PAY-2024-001",
-            amount: 100000,
-            vendor: "Service Provider",
-            method: "Bank Transfer",
-            processedDate: activity.created_at || new Date().toISOString(),
-            status: "completed" as const,
-            reference: "TXN-123456789"
-          }
-        };
-        break;
-        
-
-        
-      case "role_change":
-        dynamicContent = {
-          type: "role_change",
-          title: "Role Change Details",
-          data: [
-            {
-              action: activity.action || "Role updated",
-              description: activity.description || "User role modification",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          roleDetails: activity.roleDetails || {
-            previousRole: "Member",
-            newRole: "Manager",
-            changeDate: activity.created_at || new Date().toISOString(),
-            changedBy: "Administrator",
-            reason: "Role update",
-            effectiveDate: activity.created_at || new Date().toISOString()
-          }
-        };
-        break;
-        
-      case "document_verification":
-        dynamicContent = {
-          type: "document_verification",
-          title: "Document Verification Status",
-          data: [
-            {
-              action: activity.action || "Document verified",
-              description: activity.description || "Document verification process",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          documentDetails: activity.documentDetails || {
-            documentId: "DOC-2024-001",
-            type: "Contract",
-            submissionDate: activity.created_at || new Date().toISOString(),
-            verificationDate: activity.created_at || new Date().toISOString(),
-            status: "pending" as const,
-            verifier: "Legal Department"
-          }
-        };
-        break;
-        
-      case "budget_allocation":
-        dynamicContent = {
-          type: "budget_allocation",
-          title: "Budget Allocation Summary",
-          data: [
-            {
-              action: activity.action || "Budget allocated",
-              description: activity.description || "Budget distribution activity",
-              timestamp: activity.created_at || new Date().toISOString(),
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-          budgetAllocationDetails: activity.budgetAllocationDetails || {
-            allocationId: "ALLOC-2024-001",
-            totalAmount: 1000000,
-            period: "Q1 2024",
-            departments: 3,
-            allocationDate: activity.created_at || new Date().toISOString(),
-            status: "completed" as const
-          }
-        };
-        break;
-        
-
-        
-      default:
-        // Fallback for legacy activities or unknown categories
-        dynamicContent = {
-          type: "activities",
-          title: "User Activity Details",
-          data: [
-            {
-              action: activity.action || "Activity performed",
-              description: activity.description || "No description available",
-              timestamp:
-                activity.created_at ||
-                activity.timestamp ||
-                new Date().toISOString(),
-              amount: activity.amount,
-              category: activity.category,
-              status: activity.status,
-            },
-          ],
-        };
-        break;
-    }
-
     setSelectedUserDetails(userDetails);
-    setModalDynamicContent(dynamicContent);
     setModalVisible(true);
   };
 
@@ -405,7 +175,6 @@ export function UserAccountManagementScreen({
   const handleModalClose = () => {
     setModalVisible(false);
     setSelectedUserDetails(null);
-    setModalDynamicContent(null);
   };
 
   // Handle UserAccountModal close
@@ -898,17 +667,6 @@ export function UserAccountManagementScreen({
           </View>
         </View>
       </ScrollView>
-
-      {/* Dynamic Modal */}
-      {selectedUserDetails && modalDynamicContent && (
-        <DynamicModal
-          visible={modalVisible}
-          onClose={handleModalClose}
-          userDetails={selectedUserDetails}
-          dynamicContent={modalDynamicContent}
-          onDynamicContentChange={setModalDynamicContent}
-        />
-      )}
 
       {/* User Account Modal for user_creation activities */}
       <UserAccountModal
