@@ -1,14 +1,14 @@
 import { PAGEMIDDLEWARE, SKELETON_SCREENS } from "@/components/custom/screenSelector";
 import UserInformationDisplayer from "@/components/custom/sections/detailer";
 import DashboardHeader from "@/components/custom/sections/heading";
-import { unitUserType, User } from "@/lib/auth";
+import { User, unitUserType } from "@/lib/auth";
 import { getRoute } from "@/src/constants/routes";
 import { Icon } from "@roninoss/icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useColorScheme } from "~/lib/useColorScheme";
+import { useColorScheme } from "../../lib/useColorScheme";
 import { COLORS } from "../../theme/colors";
 /**
  * Dashboard Index Screen
@@ -96,7 +96,6 @@ export default function DashboardIndex() {
             */
               const isAccessible = PAGEMIDDLEWARE(screen.id, auth?.accounttype)
               
-
               return (
             <TouchableOpacity
                 key={screen.id}

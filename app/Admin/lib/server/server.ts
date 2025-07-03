@@ -2,6 +2,13 @@
 import { MMKV } from 'react-native-mmkv'
 import { userSignupDataTemplate } from '../auth'
 
+const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
+const BACKEND_ORIGIN = process.env.EXPO_PUBLIC_ORIGIN
+const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
+
+
+
+
 interface userDataType {
     organization: 'string',
     bank_name: string,
@@ -15,14 +22,14 @@ interface userDataType {
 }
 
 // export const backendORIGIN = "http://127.0.0.1:8080"
-export const backendORIGIN = "http://127.0.0.1:5173"
-export const api_origin_address = "127.0.0.1"
+export const backendORIGIN = BACKEND_ORIGIN_ADDR
+export const api_origin_address = BACKEND_ORIGIN
 export const AUTH_ORIGIN = process.env.ALLOWED_ORIGIN?.split(',')
 
 // api securities
 export const apiHeaders = new Map()
 
-apiHeaders.set("Authorization", "Bearer")
+apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
 apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
@@ -107,7 +114,7 @@ export async function PostrequestHandler(path:{ url: null|string,  data: any }) 
                 }
 
 
-                // console.log(path.url);    
+                console.log(path.url);    
 
             const request = await fetch(`${backendORIGIN}${path.url}`, {
                 headers: Object.fromEntries(apiHeaders.entries()),
@@ -180,8 +187,9 @@ export async function GetRequestHandler(path:{ url: null|string }) {
 
 
 export async function signinREQUEST(data:any) {
-
-    console.log(Object.fromEntries(apiHeaders.entries()));
+    
+    console.log(BACKEND_ORIGIN, BACKEND_ORIGIN_ADDR, API_AUTHORIZATION);
+    
     
     // check if cookie is set
     const cookie = await getData(api_origin_address)
@@ -189,6 +197,7 @@ export async function signinREQUEST(data:any) {
     if (cookie !== undefined) return { status: false, message: "cookie set. Try deauthenticate first" } 
 
     try {
+        console.log(backendORIGIN);
         
         const response = await fetch(`${backendORIGIN}/api/auth/signin`, {
             headers: Object.fromEntries(apiHeaders.entries()),
@@ -197,6 +206,7 @@ export async function signinREQUEST(data:any) {
             // credentials: 'same-origin',
             redirect: 'follow'
         })
+    console.log(data);
         
         const responseClone = response.clone()
 
@@ -421,44 +431,6 @@ export async function signupREQUEST(data:userSignupDataTemplate) {
     }
     
 }
-
-
-// export async function saveBudget(payload: {auth: any, data: any}) {
-
-//     const cookie = await getData(api_origin_address)
-    
-//     if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }
-
-//     // breaking incoming data
-//     const request = await fetch(`${backendORIGIN}/api/service/add`, {
-//         headers: Object.fromEntries(apiHeaders.entries()),
-//         body: JSON.stringify(payload),
-//         method: 'POST',
-//         credentials: 'same-origin'
-//     })
-    
-//     const responseClone = request.clone()
-    
-//     const {status, message} = await responseClone.json()    
-
-//     // console.log(status, message);
-    
-//     if (status){     
-        
-//         return {
-//             status: true,
-//             message: "Transaction successful",
-//         }
-//     }else{
-//         return {
-//             status: false,
-//             message: message,
-//             cookies: null
-//         }
-//     }
-
-
-// }
 
 
 export async function hydrate() {

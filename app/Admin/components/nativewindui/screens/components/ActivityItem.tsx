@@ -1,23 +1,20 @@
 import React from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface ActivityItemProps {
   action: string;
   user: string;
   time: string;
-  type: "success" | "info" | "warning" | "error";
+  type: "approved" | "pending" | "declined" | "deleted";
   data: any;
   onPress?: () => void;
 }
 
-export const ActivityItem: React.FC<ActivityItemProps> = ({
-  action,
-  user,
-  time,
-  type,
+export const ActivityItem = ({
+  // action,
   data,
   onPress,
-}) => {
+}: { data: any, onPress:any })=> {
 
   /* 
   List type of activity and component declaration
@@ -53,39 +50,40 @@ deleted_at: null
 
 
   */
- console.log(data);
 
- const currentUser = data.user_transaction;
+ const currentUser = data;
  
-  const getStatusColor = () => {
-    switch (type) {
-      case "success":
+  const getStatusColor = (typeOfStatus:any) => {
+    switch (typeOfStatus) {
+      case "approved":
         return "#28a745";
-      case "info":
+      case "pending":
         return "#17a2b8";
-      case "warning":
+      case "declined":
         return "#ffc107";
-      case "error":
+      case "deleted":
         return "#dc3545";
       default:
         return "#6c757d";
     }
   };
 
-  const getStatusIcon = () => {
-    switch (type) {
-      case "success":
+  const getStatusIcon = (typeOfStatus:any) => {
+    switch (typeOfStatus) {
+      case "approved":
         return "✓";
-      case "info":
+      case "pending":
         return "ℹ";
-      case "warning":
+      case "declined":
         return "⚠";
-      case "error":
+      case "deleted":
         return "✕";
       default:
         return "•";
     }
   };
+
+
   return (
     <TouchableOpacity
       className="flex-row items-start py-3 px-4 rounded-lg mb-2"
@@ -97,35 +95,35 @@ deleted_at: null
       onPress={onPress}
       activeOpacity={0.7}
       accessibilityRole="button"
-      accessibilityLabel={`View details for ${action}`}
+      // accessibilityLabel={`View details for ${action}`}
     >
       {/* Status Indicator */}
       <View
         className="w-6 h-6 rounded-full mr-3 mt-0.5 items-center justify-center"
         style={{
-          backgroundColor: getStatusColor(),
+          backgroundColor: getStatusColor(currentUser.status),
           minWidth: 24,
           minHeight: 24,
         }}
       >
         <Text className="text-xs font-bold" style={{ color: "#ffffff" }}>
-          {getStatusIcon()}
+          {getStatusIcon(currentUser.status)}
         </Text>
       </View>
 
       {/* Content */}
       <View className="flex-1">
         <Text className="text-sm font-medium mb-1" style={{ color: "#000000" }}>
-          {action}
+          {currentUser.type}
         </Text>
 
         <View className="flex-row justify-between items-center">
           <Text className="text-xs" style={{ color: "#6c757d" }}>
-            by {user}
+            {currentUser.message.title}
           </Text>
 
           <Text className="text-xs" style={{ color: "#6c757d" }}>
-            {time}
+            {currentUser.created_at}
           </Text>
         </View>
       </View>

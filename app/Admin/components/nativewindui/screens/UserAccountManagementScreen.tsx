@@ -1,17 +1,16 @@
+import ActivityModal from "@/components/ActivityModal";
 import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { useColorScheme } from "../../../lib/useColorScheme";
 import { COLORS } from "../../../theme/colors";
 import { UserDetails } from "../../DynamicModal";
-import { UserAccountModal } from "../../UserAccountModal";
 import { SkeletonBase } from "../SkeletonBase";
-import ActivityModal from "@/components/ActivityModal";
 
 import {
   ActivityItem,
   GridSection,
   KPICard,
-  SectionHeader,
+  SectionHeader
 } from "./components";
 
 import { unitUserType, User } from "@/lib/auth";
@@ -31,10 +30,17 @@ export function UserAccountManagementScreen({
   const [selectedUserDetails, setSelectedUserDetails] =
     useState<UserDetails | null>(null);
   // State for UserAccountModal
+  const [ selectedUser, selectUser  ] = useState<any>(
+    // { email: '', id: '', joinDate: '', name: '', role: '', status: 'inactive'}
+  )
+  const [ isModalActive, changeModalState ] = useState(false)
+
+
   const [userAccountModalVisible, setUserAccountModalVisible] = useState(false);
   const [selectedUserAccount, setSelectedUserAccount] =
     useState<unitUserType | null>(null);
   const userObject = new User();
+
 
   // reconstructing function
   // function CONSTRUCTUSEROBJECT(UserData:[]) {
@@ -51,6 +57,8 @@ export function UserAccountManagementScreen({
   //   })
   //   return output;
   // }
+
+
 
   useEffect(() => {
     const creatingSpace = async () => {
@@ -130,28 +138,23 @@ export function UserAccountManagementScreen({
   const handleActivityItemPress = (activity: any) => {
     // Check if this is a user_creation activity and use UserAccountModal
     if (activity.category === "user_creation") {
+
       // For user_creation activities, open UserAccountModal with the user data
       const userAccount: unitUserType = {
-        userid: activity.userid || activity.id || "unknown",
-        id: activity.id || activity.userid || "unknown",
-        username: activity.username || "Unknown User",
-        firstname: activity.firstname || activity.user?.firstname || "Unknown",
-        lastname: activity.lastname || activity.user?.lastname || "User",
-        email: activity.email || activity.user?.email || "No email provided",
-        accounttype: activity.accounttype || activity.user?.role || "member",
-        status: activity.status || activity.user?.status || "active",
-        organization: activity.organization || activity.user?.organization,
-        organization_name:
-          activity.organization_name || activity.user?.organization_name,
-        created_at: activity.created_at || new Date().toISOString(),
-        updated_at: activity.updated_at || activity.user?.updated_at,
-        data: activity.data ||
-          activity.user?.data || {
-            bank_name: "Not provided",
-            bank_account_name: "Not provided",
-            bank_account_number: "Not provided",
-            number: activity.phone || activity.user?.phone || "Not provided",
-          },
+        username: activity.user_transaction.user_id || "unknown",
+        id: activity.user_transaction.user_id || "unknown",
+        userid: activity.user_transaction.user_id || "unknown",
+        firstname: activity.user_transaction.firstname || activity.user_transaction.lastname || "Unknown User",
+        email: activity.user_transaction?.email || "No email provided",
+        // number: activity.user_transaction?.number || "Not found",
+        accounttype: activity.user_transaction?.accounttype || "Member",
+        status: activity.user_transaction?.status || "active",
+        created_at: activity.user_transaction.created_at,
+        updated_at: activity.user?.last_login || activity.last_login,
+        organization: '',
+        organization_name: '',
+        lastname: '',
+        data: ''
       };
 
       setSelectedUserAccount(userAccount);
@@ -161,23 +164,20 @@ export function UserAccountManagementScreen({
 
     // Transform activity data to UserDetails format for other activities
     const userDetails: UserDetails = {
-      id: activity.id || activity.user_id || "unknown",
-      name: activity.user?.name || activity.username || "Unknown User",
-      email: activity.user?.email || activity.email || "No email provided",
-      phone: activity.user?.phone || activity.phone,
-      role: activity.user?.role || activity.role || "Member",
-      status: activity.user?.status || activity.status || "active",
-      joinDate:
-        activity.user?.joinDate ||
-        activity.user?.created_at ||
-        activity.created_at ||
-        new Date().toISOString(),
-      lastLogin: activity.user?.last_login || activity.last_login,
-      organization:
-        activity.user?.organization ||
-        activity.organization?.name ||
-        activity.organization_name,
-      department: activity.user?.department || activity.department,
+      id: activity.user_transaction.user_id || "unknown",
+      firstname: activity.user_transaction.firstname || activity.user_transaction.lastname || "Unknown User",
+      email: activity.user_transaction?.email || "No email provided",
+      number: activity.user_transaction?.number || "Not found",
+      accounttype: activity.user_transaction?.accounttype || "Member",
+      status: activity.user_transaction?.status || "active",
+      created_at: activity.user_transaction.created_at,
+      updated_at: activity.user?.last_login || activity.last_login,
+
+      data: {
+        organization: '',
+        organization_name: ''
+      },
+      lastname: ''
     };
 
     setSelectedUserDetails(userDetails);
@@ -206,18 +206,7 @@ export function UserAccountManagementScreen({
       <ActivityModal
         visible={isopen}
         onClose={() => setIsOpen(false)}
-        userDetails={{
-          email: "",
-          id: "",
-          joinDate: "",
-          name: "",
-          role: "",
-          status: "active",
-          department: "",
-          lastLogin: "",
-          organization: "",
-          phone: "",
-        }}
+        userDetails={selectedUser}
       />
 
       <ScrollView
@@ -308,7 +297,7 @@ export function UserAccountManagementScreen({
                 <GridSection columns={2} gap={16}>
                   <KPICard
                     title="Total Users"
-                    value={members.length.toString()}
+                    value={members? members.length.toString(): "refresh"}
                     isPositive={true}
                     trend="+8%"
                   />
@@ -388,18 +377,16 @@ export function UserAccountManagementScreen({
                   <GridSection columns={1} gap={6}>
                     {/* Display real activities if available, otherwise show mock data */}
                     {activities.length > 0
-                      ? activities.map((activity, index) => (
+                      ? activities.map((activity:any, index) => (
                           <ActivityItem
-                            key={index}
-                            // action={activity.description || "Activity performed"}
-                            action={"Activity performed"}
-                            user={activity.username || "Unknown User"}
-                            time={
-                              activity.created_at || new Date().toISOString()
-                            }
-                            type="info"
-                            data={activity}
-                            onPress={() => handleActivityItemPress(activity)}
+                              key={index}
+                              data={activity.user_transaction}
+                              onPress={async ()=>{
+                                changeModalState(true)
+                                
+                                const seekedAccount = await userObject.seekforAccount(activity.user_transaction.author)
+                                selectUser(seekedAccount)
+                              }}
                           />
                         ))
                       : null}
@@ -410,13 +397,22 @@ export function UserAccountManagementScreen({
           </View>
         </View>
       </ScrollView>
+      <ActivityModal
+        onClose={()=> {
+          selectUser({})
+          // unset user
+          changeModalState(false)
+        }}
+        userDetails={selectedUser}
+        visible={isModalActive}
+      />
 
       {/* User Account Modal for user_creation activities */}
-      <UserAccountModal
+      {/* <UserAccountModal
         visible={userAccountModalVisible}
         onClose={handleUserAccountModalClose}
         userAccount={selectedUserAccount}
-      />
+      /> */}
     </SkeletonBase>
   );
 }

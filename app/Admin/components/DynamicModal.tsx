@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
   Dimensions,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { COLORS } from "../theme/colors";
@@ -14,16 +12,24 @@ import { COLORS } from "../theme/colors";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 interface UserDetails {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  role: string;
-  status: "active" | "inactive" | "suspended";
-  joinDate: string;
-  lastLogin?: string;
-  organization?: string;
-  department?: string;
+  accounttype: string | null 
+  banks: object[] | [],
+  budgets: object[] | [],
+  created_at: string | null,
+  data: {
+    organization: string | null,
+    organization_name: string | null
+  } | null,
+  email: string | null,
+  firstname: string | null,
+  id: string | null,
+  lastname: string | null,
+  number: string | null,
+  status: string | null,
+  transactions: string | null,
+  updated_at: string | null,
+  userid: string | null,
+  username: string | null
 }
 
 interface BaseModalProps {
@@ -181,7 +187,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                         className="text-sm font-semibold"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userDetails.name}
+                        {/* {userDetails.name} */}
                       </Text>
                     </View>
 
@@ -196,11 +202,10 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                         className="text-sm"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userDetails.email}
+                        {/* {userDetails.email} */}
                       </Text>
                     </View>
 
-                    {userDetails.phone && (
                       <View>
                         <Text
                           className="text-xs font-medium mb-1"
@@ -212,10 +217,9 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                           className="text-sm"
                           style={{ color: currentColors.foreground }}
                         >
-                          {userDetails.phone}
+                          {/* {userDetails.phone} */}
                         </Text>
                       </View>
-                    )}
 
                     <View>
                       <Text
@@ -228,7 +232,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                         className="text-sm font-medium"
                         style={{ color: currentColors.foreground }}
                       >
-                        {userDetails.role}
+                        {/* {userDetails.role} */}
                       </Text>
                     </View>
 
@@ -243,14 +247,14 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                         <View
                           className="w-2 h-2 rounded-full mr-2"
                           style={{
-                            backgroundColor: getStatusColor(userDetails.status),
+                            // backgroundColor: getStatusColor(userDetails.status),
                           }}
                         />
                         <Text
                           className="text-sm font-medium capitalize"
-                          style={{ color: getStatusColor(userDetails.status) }}
+                          // style={{ color: getStatusColor(userDetails.status) }}
                         >
-                          {userDetails.status}
+                          {/* {userDetails.status} */}
                         </Text>
                       </View>
                     </View>
@@ -266,11 +270,10 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                         className="text-sm"
                         style={{ color: currentColors.foreground }}
                       >
-                        {formatDate(userDetails.joinDate)}
+                        {/* {formatDate(userDetails.joinDate)} */}
                       </Text>
                     </View>
 
-                    {userDetails.lastLogin && (
                       <View>
                         <Text
                           className="text-xs font-medium mb-1"
@@ -282,12 +285,10 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                           className="text-sm"
                           style={{ color: currentColors.foreground }}
                         >
-                          {formatDate(userDetails.lastLogin)}
+                          {/* {formatDate(userDetails.lastLogin)} */}
                         </Text>
                       </View>
-                    )}
 
-                    {userDetails.organization && (
                       <View>
                         <Text
                           className="text-xs font-medium mb-1"
@@ -299,12 +300,10 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                           className="text-sm"
                           style={{ color: currentColors.foreground }}
                         >
-                          {userDetails.organization}
+                          {/* {userDetails.organization} */}
                         </Text>
                       </View>
-                    )}
 
-                    {userDetails.department && (
                       <View>
                         <Text
                           className="text-xs font-medium mb-1"
@@ -316,10 +315,9 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                           className="text-sm"
                           style={{ color: currentColors.foreground }}
                         >
-                          {userDetails.department}
+                          {/* {userDetails.department} */}
                         </Text>
                       </View>
-                    )}
                   </View>
                 </View>
               </View>
@@ -340,3 +338,4 @@ export const BaseModal: React.FC<BaseModalProps> = ({
 
 // Export types for external use
 export type { UserDetails };
+

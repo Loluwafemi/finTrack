@@ -72,7 +72,9 @@ export class Admin{
         let transaction;
 
         // select members only
-        let organization_members = await db.select().from(user_data).where(eq(user_data.organization_name, organization_name)).as("organization");        
+        let organization_members = await db.select().from(user_data)
+        // .where(eq(user_data.organization_name, organization_name))
+        .as("organization");        
         
         // select members data
         let organization_transaction = await db.select().from(user_transactions).leftJoin(organization_members, eq(user_transactions.author, organization_members.id))
@@ -91,6 +93,9 @@ export class Admin{
             }
             return validMembers;
         })    
+
+        // console.log(organization_transaction);
+        
 
 
         if (organization_transaction.length < 1) return { status: false, message: "No member found yet" }

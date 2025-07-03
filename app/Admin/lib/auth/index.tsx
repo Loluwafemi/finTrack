@@ -1,4 +1,4 @@
-import { GetRequestHandler, apiHeaders, api_origin_address, backendORIGIN, getData, hydrate, signinREQUEST, signouREQUEST, signupREQUEST } from "../server/server";
+import { GetRequestHandler, PostrequestHandler, apiHeaders, api_origin_address, backendORIGIN, getData, hydrate, signinREQUEST, signouREQUEST, signupREQUEST } from "../server/server";
 
 interface credential {
     organization: 'string' | null,
@@ -43,6 +43,7 @@ export class User {
     // constructor() {
         
     // }
+
 
     static async isAuthenticated(){
         // return user sessioned data
@@ -171,6 +172,52 @@ export class User {
 
         return { status: true, data: transaction.data  } 
 
+    }
+
+    async seekforAccount(userid:string){
+        let transaction;
+        transaction = await PostrequestHandler({url: '/api/service/find', data: { userid: userid }})
+        
+        if (!transaction.status) return null
+        return transaction.data
+         
+    }
+
+    async getMembersExpensesFromBudget(budget_id:string|null){
+        if (!budget_id) return []
+
+        let transaction = await PostrequestHandler({url: '/api/service/budget', data: { budget_id: budget_id }})
+
+
+
+        if (!transaction.status) return []
+
+        return transaction.data
+
+    }
+
+
+    async getMemberActivity(userid:string|null){
+
+        console.log(userid);
+        
+        if (!userid) return []
+
+        let transaction = await PostrequestHandler({url: '/api/service/transactions', data: { userid: userid }})
+
+        if (!transaction.status) return []
+
+        return transaction.data
+    }
+
+    async ManageSelectedBudget(budget_id: string|null, status: "pending" | "approved" | "declined" | "deleted"){
+        if (!budget_id) return
+
+        let transaction = await PostrequestHandler({url: '/api/secure/actions/managebudget', data: { budget_id: budget_id, status: status }})
+
+        if (!transaction.status) return 
+
+        return transaction
     }
 
 

@@ -117,15 +117,25 @@ export class Budget{
 
     }
 
-    async find(id: string){
+    async find(id: string, withExpenses: boolean = false){
         let transaction;
-        transaction = await db.query.user_budget.findFirst({
-            where: eq(user_budget.budgetid, id)
-        })
+
+        if (withExpenses){
+            transaction = await db.query.user_budget.findFirst({
+                where: eq(user_budget.budgetid, id),
+                with: {
+                    expense: true
+                }
+            })
+        } else {
+            transaction = await db.query.user_budget.findFirst({
+                where: eq(user_budget.budgetid, id)
+            })
+        }
 
         if(!transaction) return { status: false, message: 'Not found' }
 
-        return { status: true, message: 'Not found', transaction }
+        return { status: true, data: transaction }
     }
 
     // invoke transaction
@@ -135,13 +145,13 @@ export class Budget{
         try {
             transaction = await db.update(user_budget).set({
                 status: status
-            }).where(eq(user_budget.id, budgetId))
+            }).where(eq(user_budget.budgetid, budgetId)).returning()
             
             let selected_budget = await db.query.user_budget.findFirst({
-                where: eq(user_budget.id, budgetId)
+                where: eq(user_budget.budgetid, budgetId)
             })
 
-            let current_budget = selected_budget
+            let current_budget = transaction.pop()
 
             if (!transaction) return { status: false, message: "No member found yet" }
 
@@ -153,12 +163,12 @@ export class Budget{
             await invoking.invoke({
                 author: current_budget?.userid!,
                 message: {
-                    title: "Account Creation",
-                    text: `The budget: ${current_budget?.budgettitle} was managed by admin`,
+                    title: "Budget Update",
+                    text: `The budget: ${current_budget?.budgettitle} was managed by admin to ${current_budget?.status}`,
                     date: Date.now()
                 },
                 receiver: current_budget?.userid!,
-                status: 'approved',
+                status: status,
                 type: 'log'
             })
         } catch (error) {
@@ -166,7 +176,7 @@ export class Budget{
         }
 
             
-            return { status: true, data: transaction }
+            return { status: true, data: current_budget }
         } catch (error) {
             return { status: false, message: "No member found yet", error }
         }
