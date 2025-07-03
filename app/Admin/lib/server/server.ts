@@ -188,16 +188,12 @@ export async function GetRequestHandler(path:{ url: null|string }) {
 
 export async function signinREQUEST(data:any) {
     
-    console.log(BACKEND_ORIGIN, BACKEND_ORIGIN_ADDR, API_AUTHORIZATION);
-    
-    
     // check if cookie is set
     const cookie = await getData(api_origin_address)
     
     if (cookie !== undefined) return { status: false, message: "cookie set. Try deauthenticate first" } 
 
     try {
-        console.log(backendORIGIN);
         
         const response = await fetch(`${backendORIGIN}/api/auth/signin`, {
             headers: Object.fromEntries(apiHeaders.entries()),

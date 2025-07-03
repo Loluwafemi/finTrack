@@ -221,6 +221,23 @@ export class User {
     }
 
 
+    async ManageSelectedAccount(status: 'pending'| 'approved'| 'disabled'| 'deleted'| null, userid:string){
+
+        if (!userid) return
+
+        let transaction = await PostrequestHandler({url: '/api/secure/actions/manageuser', data: { userid: userid, status: status }})
+
+
+        console.log(transaction);
+
+        if (!transaction.status) return 
+        
+
+        return transaction
+
+    }
+
+
 }
 
 export type unitUserType = {

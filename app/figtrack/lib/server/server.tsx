@@ -70,12 +70,11 @@ export const deleteCookie = async (key:any) => {
     await SecureStore.deleteItemAsync(key);
 };
 
-export async function signinREQUEST(data) {
+export async function signinREQUEST(data:any) {
+    console.log(API_AUTHORIZATION, ORIGIN, BACKEND_ORIGIN_ADDR);
 
     try {
-
-            
-
+        
         const request = await fetch(`${backendORIGIN}/api/auth/signin`, {
             headers: Object.fromEntries(apiHeaders.entries()),
             body: JSON.stringify(data),
@@ -184,13 +183,15 @@ export async function signouREQUEST(data?:any) {
 }
 
 export async function signupREQUEST(data:any) {
+
+    
     const cookie = await getData(api_origin_address)
     
     if (cookie !== undefined) return { status: false, message: "cookie already set. Try de-authenticate first" }
 
 
     // breaking incoming data
-
+    
 
     const tailoredData:userDataType|any = {
         firstname: data.firstname,
@@ -200,9 +201,12 @@ export async function signupREQUEST(data:any) {
         bank_account_name: data.accountname,
         bank_account_number: data.accountnumber,
         bank_name: data.bank,
-        organization: data.organization
+        organization: data.organization,
+        organizationname: data.organizationname || data.organization,
+        organizationid: data.organizationid || data.organization
     }
 
+    
     
     const request = await fetch(`${backendORIGIN}/api/auth/signup`, {
         headers: Object.fromEntries(apiHeaders.entries()),
@@ -210,6 +214,8 @@ export async function signupREQUEST(data:any) {
         method: 'POST',
         credentials: 'same-origin'
     })
+
+    
 
     const responseClone = request.clone()
     const {status, message} = await responseClone.json()    
@@ -323,6 +329,53 @@ export async function requestHandler(path:{
         headers: Object.fromEntries(apiHeaders.entries()),
         method: 'POST',
         body: JSON.stringify(path.data),
+        credentials: 'same-origin'
+    })
+    
+
+    const responseClone = request.clone()
+    const sessionData = await responseClone.json()    
+
+    if (sessionData){
+        // redirect to dashboard.
+        return {
+            status: true,
+            message: "Valid Credential",
+            ...sessionData
+        }
+    }else{
+        return {
+            status: false,
+            message: "Invalid Credential",
+            data: null
+        }
+    }
+}
+
+
+export async function GetrequestHandler(path:{ 
+                                        url: null|string, 
+                                    }): Promise<{ 
+                                        status:boolean,
+                                        message?: string,
+                                        data?: any }> {
+    
+    // check if cookie is set
+    const cookie = await getData(api_origin_address)
+    
+    if (cookie === undefined) return { status: false, message: "cookie not set. Try authenticate first" }    
+
+    apiHeaders.set('Cookie', cookie)
+    
+    if (!path.url) return {
+            status: false,
+            message: "Path url to request not set",
+        }
+
+
+    const request = await fetch(`${backendORIGIN}${path.url}`, {
+        headers: Object.fromEntries(apiHeaders.entries()),
+        method: 'GET',
         credentials: 'same-origin'
     })
     

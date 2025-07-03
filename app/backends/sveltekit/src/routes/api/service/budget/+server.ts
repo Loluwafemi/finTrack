@@ -1,8 +1,9 @@
 import { REQUESTAUTHENTICATOR } from '$lib/index.server';
 import { Admin } from '$lib/server/models/admin';
 import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './expense/$types';
+// import type { RequestHandler } from './expense/$types';
 import { Budget } from '$lib/server/models/budget';
+import type { RequestHandler } from '../$types';
 
 export const POST: RequestHandler = async (event) => {
 

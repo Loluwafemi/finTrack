@@ -1,6 +1,8 @@
 import { User } from "@/lib/auth";
+import { getRoute } from "@/src/constants/routes";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, TouchableHighlight, View } from "react-native";
+import { Button, Text, TouchableHighlight, View } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 
 
@@ -70,7 +72,7 @@ export const BudgetLists = ({budgetObject}: { budgetObject: budgetObjectType })=
                 status: null
             })
 
-            console.log(transaction);            
+            return transaction
         }
         // set notification after both
 
@@ -99,34 +101,39 @@ export const BudgetLists = ({budgetObject}: { budgetObject: budgetObjectType })=
                                 <Text className="text-md">
                                     created at: <Text className="bg-gray-300 p-1 rounded">{budgetObject.created_at}</Text>
                                 </Text>
-
-                                <Text className="text-md mx-4">
+                            </View>
+                            <View className="flex flex-row mt-2">
+                                <Text className="text-md">
                                     last modified at: <Text className="bg-gray-300 p-1 rounded">{budgetObject.updated_at}</Text>
                                 </Text>
                             </View>
+
                             </View>
                             <View>
-                                <Text className="text-lg font-bold">
-                                   Manage Budget
-                                </Text>
+                         <View>
+                        <Text className="text-lg font-bold">
+                        Manage Budget
+                        </Text>
+                        <SelectList
+                            
+                            onSelect={async () => {
 
-                                {/* 
-                                "pending" | "approved" | "declined" | "deleted"
-                                */}
-                                <SelectList
-                                    onSelect={async () => {
-                                        return await ManageSelectedBudget(budgetManageObj?.budget_id!, budgetManageObj?.status!)
-                                    }}
-                                    data={[
-                                        {key: "declined", value: "declined"},
-                                        {key: "approved", value: "approved"},
-                                        {key: "deleted", value: "deleted"},
-                                        {key: "pending", value: "pending"},
-                                    ]}
-                                    save="value"
+                                const output = await ManageSelectedBudget(budgetManageObj?.budget_id!, budgetManageObj?.status!)
 
-                                    setSelected={(value: "pending" | "approved" | "declined" | "deleted")=> setbudgetManageObj({budget_id: budgetObject.budgetid!, status: value})}
-                                    />
+                                if(output.status) return router.push(getRoute("DASHBOARD"));
+                                
+                            }}
+                            data={[
+                                {key: "declined", value: "declined"},
+                                {key: "approved", value: "approved"},
+                                {key: "deleted", value: "deleted"},
+                                {key: "pending", value: "pending"},
+                            ]}
+                            save="value"
+
+                            setSelected={(value: "pending" | "approved" | "declined" | "deleted")=> setbudgetManageObj({budget_id: budgetObject.budgetid!, status: value})}
+                            />
+                            </View>
                             </View>
                     </View>
                     {/* Display content */}
@@ -136,15 +143,17 @@ export const BudgetLists = ({budgetObject}: { budgetObject: budgetObjectType })=
                         <Text className="text-lg">Requested</Text>
                         <table>
                             <thead>
-                                <tr>
-                                    <th className="text-sm">Expense</th>
-                                    <th className="text-sm">Amount</th>
+                                <tr className="p-4">
+                                    <th className="text-sm p-4">Expense</th>
+                                    <th className="text-sm p-4">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {getbudgetExpenses.expense_object.map((expense, index)=> (
+                                {getbudgetExpenses.expense_object == undefined ? <Text>No Expense</Text>:
+                                getbudgetExpenses.expense_object.map((expense, index)=> (
                                     <ExpenseTableRow key={index} expense={expense} />
-                                ))}
+                                ))
+                                }
                             </tbody>
                         </table>
                         </View>
@@ -153,9 +162,9 @@ export const BudgetLists = ({budgetObject}: { budgetObject: budgetObjectType })=
                         <Text className="text-lg">Current</Text>
                         <table>
                             <thead>
-                                <tr>
-                                    <th className="text-sm">Expense</th>
-                                    <th className="text-sm">Amount</th>
+                                <tr className="p-4">
+                                    <th className="text-sm p-4">Expense</th>
+                                    <th className="text-sm p-4">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,6 +175,12 @@ export const BudgetLists = ({budgetObject}: { budgetObject: budgetObjectType })=
                         </table>
                         </View>
                     </View>
+                    <View>
+                        <Text className="text-lg font-bold">
+                        Generate Budget's Report
+                        </Text>
+                        <Button color={'gray'} title="Generate Report" />
+                        </View>
                 </View>
             </TouchableHighlight>
     );
@@ -175,9 +190,9 @@ export const BudgetLists = ({budgetObject}: { budgetObject: budgetObjectType })=
 const ExpenseTableRow = function ({expense}: { expense: {cost: string, expenseCategory: string} }) {
     
     return (
-    <tr>
-        <td className="border border-black" p-2>{expense.expenseCategory}</td>
-        <td className="border border-black" p-2>{expense.cost}</td>
+    <tr className="p-4">
+        <td className="border border-black rounded" p-2>{expense.expenseCategory}</td>
+        <td className="border border-black rounded" p-2>{expense.cost}</td>
     </tr>
     )
 }

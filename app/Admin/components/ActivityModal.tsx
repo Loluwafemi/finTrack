@@ -1,4 +1,5 @@
-import React from "react";
+import { User } from "@/lib/auth";
+import React, { useState } from "react";
 import { Modal, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import { ScrollView } from "react-native-gesture-handler";
@@ -11,9 +12,10 @@ import { PersonalizedActivity } from "./custom/modal-components/PersonalizedActi
 const ActivityModal = ({ visible, onClose, userDetails }: { visible: true | false, onClose: any, userDetails: any }) => {
   const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
-
+  const userObject = new User()
 
   const userDataObject = {...userDetails}
+
   
   const userData:UserDetails = {
     accounttype: userDataObject?.accounttype,
@@ -35,6 +37,17 @@ const ActivityModal = ({ visible, onClose, userDetails }: { visible: true | fals
     updated_at: userDataObject?.updated_at,
     userid: userDataObject?.userid,
     username: userDataObject?.username
+  }
+
+
+  const [ selectedStatus, selectStatus ] = useState<'pending'| 'approved'| 'disabled'| 'deleted' | null>(null)
+
+  async function manageSelectedAccount(status: 'pending'| 'approved'| 'disabled'| 'deleted'| null, userid:string) {
+
+    const transaction = await userObject.ManageSelectedAccount(status, userid)
+
+    return transaction
+
   }
 
   return (
@@ -180,7 +193,7 @@ const ActivityModal = ({ visible, onClose, userDetails }: { visible: true | fals
 
                         <View>
                           <Text className="text-xs font-medium mb-1" style={{ color: currentColors.textSecondary }}>
-                            Department
+                            Organization
                           </Text>
                           <Text className="text-sm" style={{ color: currentColors.foreground }}>
                             {userData?.data?.organization_name}
@@ -195,15 +208,26 @@ const ActivityModal = ({ visible, onClose, userDetails }: { visible: true | fals
                           Change Account status:
                         </Text>
                         {/* add select here */}
+
+                        {/* 'pending', 'approved', 'disabled', 'deleted' */}
                         <SelectList
                           data={[
-                            {key: "disable", value: "disabled", status: "disable"},
-                            {key: "approve", value: "approve", status: "approved"},
-                            {key: "delete", value: "delete", status: "deleted"},
-                            {key: "pending", value: "pending", status: "pending"},
+                            {key: "disable", value: "disabled"},
+                            {key: "approve", value: "approved"},
+                            {key: "delete", value: "deleted"},
+                            {key: "pending", value: "pending"},
                           ]}
                           save="value"
-                          setSelected={(value)=> console.log(value)}
+
+                          onSelect={async ()=> {
+                            const transaction = await manageSelectedAccount(selectedStatus, userData.userid!)
+
+                            // if (transaction.status) {
+                            //   return router.push(getRoute("DASHBOARD"));
+                            // }
+                          }}
+
+                          setSelected={(value)=> selectStatus(value)}
                         />
                       </View>
 

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from "../db";
 import { protection, user, user_bank, user_budget, user_data, user_transactions } from "../db/schema";
 import { Budget } from "./budget";
@@ -14,8 +14,9 @@ export interface User {
 
 
 export interface userDataType {
-    organization: 'personal' | 'institution' | 'business',
+    organization: 'personal' | 'institution',
     organization_name: string,
+    organizationid: string,
     bank_name: string,
     bank_account_number: string,
     bank_account_name: string,
@@ -62,7 +63,7 @@ export class User {
             firstname: userdata.firstname,
             lastname: userdata.lastname,
             username: userdata.username,
-            // accounttype: 'admin'
+            accounttype: 'user'
         }).returning()).pop()
 
         if (!transaction) return { status: false, message: "Unable to save user data"}
@@ -71,7 +72,6 @@ export class User {
             password: userdata.password,
             userid: transaction.userid
         }).returning()
-
             if (cred_data){
                 transaction = transaction.pop()
 
@@ -79,11 +79,12 @@ export class User {
                     data: {
                         bank_name: cred_data.bank_name,
                         bank_account_name: cred_data.bank_account_name,
-                        bank_account_number: cred_data.bank_account_number
+                        bank_account_number: cred_data.bank_account_number,
+                        organizationid: cred_data.organizationid
                     },
                     id: transaction?.userid!,
-                    organization_name: 'personal',
-                    organization: 'personal'
+                    organization_name: cred_data.organization_name,
+                    organization: cred_data.organization
                 }).returning()
             }else {
                 transaction = transaction.pop()
@@ -240,6 +241,76 @@ export class User {
    
     }
 
+    async get(userid: string, find: 'data'|'transaction'|'budget'|'bank'|null=null){
+
+        let transaction;
+
+        switch (find) {
+            case 'budget':
+                transaction = await db.query.user.findFirst({
+                    where: eq(user.userid, userid),
+                    with: {
+                        budgets: true,
+                    }
+                })
+                break;
+        
+                case 'data':
+
+                    transaction = await db.query.user.findFirst({
+                        where: eq(user.userid, userid),
+                        with: {
+                            data: true,
+                        }
+                    })
+
+                break;
+
+                case 'bank':
+
+                    transaction = await db.query.user.findFirst({
+                        where: eq(user.userid, userid),
+                        with: {
+                            banks: true,
+                        }
+                    })
+
+                break;
+
+
+                case 'transaction':
+
+                    transaction = await db.query.user.findFirst({
+                        where: eq(user.userid, userid),
+                        with: {
+                            transactions: true,
+                        }
+                    })
+
+                break;
+    
+            default:
+                transaction = await db.query.user.findFirst({
+                    where: eq(user.userid, userid),
+                    with: {
+                        data: true,
+                        banks: true,
+                        budgets: true,
+                        transactions: true
+                    }
+                })
+  
+
+                break;
+        }
+
+        if(!transaction) return {status: false, message: "user does not exist"}
+
+
+        return { status: true, message: "user found", data: transaction }
+
+    }
+
     async users(email?:string| any){
         let transaction;
 
@@ -267,7 +338,7 @@ export class User {
 
     async find(userid:string, all:boolean=false){
         let transaction;
-        
+
         if (all) {
             transaction = await db.query.user.findFirst({
                 where: eq(user.userid, userid),
@@ -298,7 +369,7 @@ export class User {
     async budgets(userid:string|any){
         
         let transaction = await db.query.user_budget.findMany({
-            where: eq(userid, user.userid),
+            where: and(eq(userid, user.userid), eq(user_budget.status, 'approved')),
             with: {
                 expense: true
             }
@@ -432,10 +503,11 @@ export class User {
     // provoke notification
     async manage(userid: string, status: 'pending'| 'approved'| 'disabled'| 'deleted') {
         let transaction;
+        
 
         try {
             transaction = await db.update(user).set({
-                status: status
+                status: status,
             }).where(eq(user.userid, userid))
             
             if (!transaction) return { status: false, message: "No member found yet" }
@@ -443,6 +515,11 @@ export class User {
         try {
             let invoking = new Transactions()
             // get budget title with the id
+
+                await db.update(user).set({
+                    updated_at: generateTimeStamp(),
+                }).where(eq(user.userid, userid))
+    
             
             await invoking.invoke({
                 author: userid,
@@ -467,4 +544,14 @@ export class User {
 
     }
 
+}
+
+
+
+export function generateTimeStamp():Date {
+    
+    let timewithTimezone = new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+
+
+    return timewithTimezone ? new Date(timewithTimezone) : new Date()
 }

@@ -12,24 +12,33 @@ export const POST: RequestHandler = async (event) => {
     //     return json({ status: false, message: "Session is active. Try log out to continue this transaction."})
     // }
 
-    const {firstname, lastname, email, password, organization, bank_name, bank_account_name, bank_account_number} = await event.request.json()
+    const {firstname, lastname, email, password, organization, organizationname, organizationid, bank_name, bank_account_name, bank_account_number} = await event.request.json()
 
     const username = `${firstname[0]}_${lastname}`
+    
 
     const userCredential: UserCredential = {
         firstname: firstname,
         lastname: lastname,
         email: email,
         password: password,
-        username: username
+        username: username,
+        
     }
     
     const userData: userDataType = {
         bank_account_name: bank_account_name,
         bank_account_number: bank_account_number,
         bank_name: bank_name,
-        organization: organization
+        organization: organization,
+        number: '',
+        organization_name: organizationname,
+        organizationid: organizationid
+
     }
+
+    console.log(userData);
+    
     
     const userObj = new User()
     let transaction = await userObj.create(userCredential, userData)

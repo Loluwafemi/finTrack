@@ -8,6 +8,7 @@ import { institutionList } from '../variables/institution';
 import { Formik } from 'formik';
 import { signupSchema } from '~/lib/func/auth';
 import { signupREQUEST } from '~/lib/server/server';
+import ExpoCheckbox from 'expo-checkbox/build/ExpoCheckbox';
 
 
 function Personal (
@@ -88,7 +89,6 @@ function Organization ({ validation }: any){
             switchOraganization(stateValue)
             validation.setFieldValue('organization', stateValue)
             validation.setFieldTouched('organization', true)
-            console.log("working", validation.values.organization);
         }
     }
 
@@ -102,9 +102,9 @@ function Organization ({ validation }: any){
                         }
                         } 
                         data={[
-                            {key:'Institution', value:'Institution', disabled: true},
-                            {key:'Individual', value:'Individual', disabled: false},
-                            {key:'Business', value:'Business', disabled: true},
+                            {key:'Institution', value:'Institution', disabled: false},
+                            {key:'Personal', value:'Personal', disabled: false},
+                            // {key:'Business', value:'Business', disabled: false},
                         ]} 
                         save="key"
                         
@@ -115,7 +115,7 @@ function Organization ({ validation }: any){
                 </View>
                 {
                     organizationSelected == 'Business' ? <Company validation={validation} /> :
-                    organizationSelected == 'Individual' ? <Individual validation={validation} /> :
+                    organizationSelected == 'Personal' ? <Individual validation={validation} /> :
                     organizationSelected == 'Institution'? <Institution validation={validation} />: 
                 ''
                 }
@@ -127,85 +127,90 @@ function Organization ({ validation }: any){
 
 // for organization
 function Institution ({ validation }: any) {
+
+        const [ selectedInstitution, selectInstitution ] = useState('')
         return (
             <View style={formStyle.form}>
                 <View style={formStyle.formItem}>
                     <Text>Institution</Text>
-                    <SelectList setSelected={(val) => {
-                        console.log("bank selected: ", val);
-                            
-                        }
-                        } 
+                    <SelectList 
+                        setSelected={(val) =>  selectInstitution(val)}
+                        onSelect={()=>{
+                            if (validation) {
+                                validation.setFieldTouched('organizationname', true)
+                                validation.setFieldValue('organizationname', selectedInstitution)
+                            }
+
+                        }}
                         data={institutionList.list()}
                         save="value">
 
                     </SelectList>
+                    {validation.errors.organizationname? <Text className='text-red-500 font-bold px-2'>
+                    {validation.errors.organizationname}
+                    </Text>: <Text></Text>}
+                </View>
+                <View style={formStyle.formItem}>
+                    <Text>Institution ID</Text>
+                    <TextInput 
+                    className='border border-black p-2 rounded-lg'
+                    onChangeText={validation.handleChange('organizationid')}
+                    onBlur={validation.handleBlur('organizationid')}
+                    value={validation.values.organizationid}
+
+                    />
+                    {validation.errors.organizationid? <Text className='text-red-500 font-bold px-2'>
+                    {validation.errors.organizationid}
+                    </Text>: <Text></Text>}
                 </View>
 
-                <View style={formStyle.formItem}>
-                    <Text>Department</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='Computer Science'
-                    />
-                </View>
 
-                <View style={formStyle.formItem}>
-                    <Text>Select Level</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='100 level'
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Matric Number</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='2020XXXX'
-                    />
-                </View>
-            </View>
-            
+            </View> 
           );
 }
 
-// for organization
+// for pernal
 function Individual ({ validation }: any) {
+
+    /* 
+    
+        if (validation) {
+        validation.setFieldTouched('organizationname', true)
+        validation.setFieldValue('organizationname', "Personal")
+
+
+        validation.setFieldTouched('organizationid', true)
+        validation.setFieldValue('organizationid', "Personal")
+    }
+    */
+        const [ isTouched, touch ] = useState(false)
+
+        
         return (
             <View style={formStyle.form}>
-                {/* <View style={formStyle.formItem}>
-                    <Text>Institution</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='Federal University'
+                <View className='flex flex-row justify-start items-center'>
+                    <ExpoCheckbox 
+                    onTouchStart={()=> {
+                        validation.setFieldTouched('organizationname', true)
+                        validation.setFieldValue('organizationname', "Personal")
+                
+                        validation.setFieldTouched('organizationid', true)
+                        validation.setFieldValue('organizationid', "Personal")
+                        
+                        touch(true)
+
+                    } }
+                    value={isTouched}
                     />
+                    <Text style={{'textAlign': 'center', padding: 4}}>
+                        Check the box twice then continue
+                    </Text>
                 </View>
 
-                <View style={formStyle.formItem}>
-                    <Text>Department</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='Computer Science'
-                    />
-                </View>
 
-                <View style={formStyle.formItem}>
-                    <Text>Select Level</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='100 level'
-                    />
-                </View>
-
-                <View style={formStyle.formItem}>
-                    <Text>Matric Number</Text>
-                    <TextInput 
-                    style={formStyle.formInput}
-                    placeholder='2020XXXX'
-                    />
-                </View> */}
-                <Text style={{'textAlign': 'center', padding: 4}}>Proceed to the next page</Text>
+                {validation.errors.organizationname || validation.errors.organizationid? <Text className='text-red-500 font-bold px-2'>
+                    Required!
+                 </Text>: <Text></Text>}
             </View>
             
         );
@@ -357,14 +362,14 @@ export class FormNav extends Component{
 
             <ScrollView>
             <Formik
-                initialValues={{ }}
+                initialValues={{ displayer: '' }}
                 onSubmit={async (res, {setErrors})=>{
                         const response = await signupREQUEST(res)
                         
                         if (!response.status) {
-                            await setErrors("error")
+                            return await setErrors({displayer: response.message})
                         }else{
-                            navigation.navigate('/(auth)')
+                           return navigation.navigate('/(auth)')
                         }
                         
                     }}
@@ -411,11 +416,17 @@ export class FormNav extends Component{
                         formObjects.handleSubmit(form)
                         
                     }}
-                    className=' bg-black flex flex-row justify-center rounded-md p-2 m-4'
+                    // disabled={formObjects.isValid}
+                    
+                    
+                    className={`flex ${formObjects.isValid? 'bg-green-800': 'bg-red-800'} flex-row justify-center rounded-md p-2 m-4`}
                     >
-                    <Text style={style.navigatorText}>Submit</Text>
+                    <Text style={style.navigatorText}>Submit </Text>
                     </TouchableOpacity>
-
+{/* 
+                    {!formObjects.isValid? <Text className='text-red-500 font-bold px-2'>
+                    Form incomplete, continue....
+                    </Text>: <Text>validating.....</Text>} */}
                 </ScrollView>
 
             )}

@@ -37,20 +37,20 @@ export const signupSchema = Yup.object().shape({
      .min(7, 'Too Short!')
      .max(50, 'Too Long!')
      .required('Required'),
+
+    displayer: Yup.string().optional(),
      
     // either this or others
     organization: Yup.string().required('Organization Required').optional(),
-    organizationname: Yup.string().required("Organization Name Required").optional(),
-    organizationaddress: Yup.string().required("Organization Address Required").optional(),
-    organizationphonenumber: Yup.string().required("Organization Phone Number Required").optional(),
-    organizationregistrationnumber: Yup.string().required("Organization Registration Number Required").optional(),
+    organizationname: Yup.string().required("Institution Name Required"),
+    organizationid: Yup.string().required("Your Institution ID Required").min(4),
 
     // must thiss
     bank: Yup.string().required("Bank Required"),
     accountnumber: Yup.string().required("Bank Account Number Required"),
     accountname: Yup.string().required("Bank Account Name Required"),
 
- });
+});
 
 
 export const receiptUploadingSchema = Yup.object().shape({

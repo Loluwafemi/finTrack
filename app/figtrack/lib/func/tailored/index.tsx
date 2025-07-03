@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { api_origin_address, apiHeaders, backendORIGIN, getData, requestHandler, saveBudget, SessionUser } from "~/lib/server/server";
+import { api_origin_address, apiHeaders, backendORIGIN, getData, GetrequestHandler, requestHandler, saveBudget, SessionUser } from "~/lib/server/server";
 
 
 
@@ -288,6 +288,18 @@ export class Auth {
        }
 
         return { status: true, message: request.message }   
+    }
+
+
+    async profile(){
+        let transaction;
+
+        transaction = await GetrequestHandler({url: '/api/auth/data'})
+        
+        if (transaction.status) {
+            return transaction.data
+        }
+        return {}
     }
 
 

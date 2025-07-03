@@ -1,7 +1,7 @@
 import { REQUESTAUTHENTICATOR } from '$lib/index.server';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { Admin } from '$lib/server/models/admin';
+import { User } from '$lib/server/models/user';
 
 export const POST: RequestHandler = async (event) => {
 
@@ -10,13 +10,16 @@ export const POST: RequestHandler = async (event) => {
 
     // fetches all transaction belonging to this user
 
-    const { budget_id, status } = await event.request.json()
+    const { userid, status } = await event.request.json()
         
-    if (!budget_id && !status) return json({ status: false, message: "Request failed from your end. Try again!" })
+    if (!userid && !status) return json({ status: false, message: "Request failed from your end. Try again!" })
     
-    const userObj = new Admin()
+    const userObj = new User()
    let transaction;
-   transaction = await userObj.manageSelectedBudget(budget_id, status)
+   transaction = await userObj.manage(userid, status)
+
+   console.log(transaction);
+   
     
    if (!transaction.status) return json({ status: false, message: "Transactions could not be fetch. Try save some receipts" }) 
 

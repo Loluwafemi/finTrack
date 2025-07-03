@@ -9,7 +9,7 @@ import {
   ReceiptProcessingScreen,
   SystemConfigurationScreen,
   TransactionMonitoringScreen,
-  UserAccountManagementScreen,
+  UserAccountManagementScreen
 } from "../../components/nativewindui/AdminSkeletonScreens";
 import { SKELETON_SCREEN_META } from "./screenMeta";
 
@@ -46,12 +46,12 @@ export const PAGEMIDDLEWARE = (pagename:string, user_accounttype: "admin" | "sup
 
   const user_accessible_page = []   // nothing
 
-  const admin_accessible_page = ['dashboard', 'account-manager', 'budget-monitoring', 'financial-reports', 'document-approval', "communication-support"]  
+  const admin_accessible_page = ['dashboard', 'account-manager', 'budget-monitoring', 'financial-reports', "communication-support"]  
 
   const super_admin_accessible_page = ["audit-trail", ].concat(admin_accessible_page)
 
 
-  const system_accessible_page = ["bulk-operations", "institution-management", "system-configuration", "communication-support"].concat(super_admin_accessible_page)
+  const system_accessible_page = ["bulk-operations", "institution-management", "system-configuration", "communication-support", "document-approval"].concat(super_admin_accessible_page)
 
   // rules responser
 

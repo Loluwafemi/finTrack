@@ -1,5 +1,5 @@
 import React, { Component, ReactNode, useEffect, useMemo, useState } from "react";
-import { Button, TouchableHighlight, View } from "react-native";
+import { Button, StyleSheet, TouchableHighlight, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import {  } from "react-native-safe-area-context";
 import { Text } from "./Text";
@@ -26,12 +26,15 @@ export function UserHome(){
     // useMemo
     const [balance, setBalances] = useState<number | null>(null)
     const [transactions, setTransaction] = useState([])
+    const [currentUser, selectUser] = useState<any>('')
 
     useEffect(()=>{
         const gettTransactions = async () => {
         const authObject = new Auth()
         let transactions: transactionTemplate = await authObject.transactions() 
-
+        const userObject = await authObject.profile()
+        
+        selectUser(userObject)
         // assign returned data to those useState
         setBalances(transactions.balance)
         setTransaction(transactions.transactions)
@@ -40,14 +43,14 @@ export function UserHome(){
         };
         gettTransactions();
     }, [])
-
+    
     return (
         <ScrollView className="p[4px]">
             {/* header */}
             <View className="flex flex-row p-[2px] justify-between items-center">
                 <Text className="font-bold text-2xl">Dashboard</Text>
                 <Text className="font-bold text-xs ">
-                    Account | Personal
+                    Account | { currentUser?.data?.organization }
                 </Text>
             </View>
 
@@ -337,7 +340,7 @@ export function Settings(){
     }, [])
 
     return (
-        <View className="m-3">
+        <View className="m-4">
             <View className="flex flex-row justify-between items-center mb-[10px]">
                 <Text className="font-bold">Settings</Text>
                 <TouchableHighlight className="bg-gray-800 p-1 rounded-sm"
@@ -353,24 +356,135 @@ export function Settings(){
                 </TouchableHighlight>
             </View>
 
-            <View className="bg-gray-200 flex flex-col justify-end h-[90%] mt-[10px]">
-                
-               <View className=" justify-self-end-safe outline-green-400 outline">
-                 <Button
-                 onPress={async ()=>{
-                    const responsee = await signouREQUEST()
+                {/* each row */}
+            <ScrollView style={style.scrollScreen} className="bg-gray-100 flex flex-col">
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Account</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="account-circle-outline" />
+                                        <Text className="mx-4">Profile</Text>
+                                    </View>
+                                </TouchableHighlight>
 
-                    if (responsee.status) return navigation.navigate('/(auth)')
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="account-key" />
+                                        <Text className="mx-4">Privacy & Security</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                        
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Budget & Expense Management</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="chart-box-outline" />
+                                        <Text className="mx-4">Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
 
-                 }}
-                 color={'red'} title="Logout" />
-               </View>
-            </View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="keyboard-settings" />
+                                        <Text className="mx-4">Manage Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="shield-lock-outline" />
+                                        <Text className="mx-4">Privacy & Security</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Reports and Sheets</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="chart-timeline-variant" />
+                                        <Text className="mx-4">Generate Reports</Text>
+                                    </View>
+                                </TouchableHighlight>
+
+                                <TouchableHighlight className="hidden">
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="keyboard-settings" />
+                                        <Text className="mx-4">Manage Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">App Preferences</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="weather-sunny" />
+                                        <Text className="mx-4">Dark Mood</Text>
+                                    </View>
+                                </TouchableHighlight>
+
+                                <TouchableHighlight className="hidden">
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="keyboard-settings" />
+                                        <Text className="mx-4">Manage Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Communication and Supports</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="account-question" />
+                                        <Text className="mx-4">Get Support</Text>
+                                    </View>
+                                </TouchableHighlight>
+
+                                <TouchableHighlight className="">
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="script-outline" />
+                                        <Text className="mx-4">Terms and Conditions</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        <View className=" justify-self-end-safe outline-green-400 outline">
+                            <Button
+                            onPress={async ()=>{
+                                const responsee = await signouREQUEST()
+
+                                if (responsee.status) return navigation.navigate('/(auth)')
+
+                            }}
+                            color={'red'} title="Logout" />
+                        </View>
+            </ScrollView>
         </View>
     );
 
 
 }
 
+
+const style = StyleSheet.create({
+    scrollScreen: {
+        height: '95%',
+        paddingBottom: 50
+    }
+})
 
 
