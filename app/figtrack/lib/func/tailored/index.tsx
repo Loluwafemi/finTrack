@@ -302,6 +302,26 @@ export class Auth {
         return {}
     }
 
+    async generateBudgetReport(data){
+        let transaction;
+        let auth = await this.user()
+
+        let outgoing = {
+            auth: auth,
+            data: data
+        }        
+
+        transaction = await requestHandler({ data: outgoing, url: '/api/service/report_generator' })
+
+        if (transaction) {
+            if (!transaction.status) return transaction
+
+            return transaction
+            
+        }
+        
+        
+    }
 
 }
 

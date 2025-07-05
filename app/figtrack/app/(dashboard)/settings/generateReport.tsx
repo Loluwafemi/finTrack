@@ -7,6 +7,12 @@ import { TextInput } from 'react-native';
 import { Icon } from '@roninoss/icons';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Checkbox from 'expo-checkbox';
+import GrantDropList from '~/components/nativewindui/grantList';
+import { Auth, balacesTemplate, budgetList, expensesTemplate } from '~/lib/func/tailored';
+import { useEffect, useState } from 'react';
+import { generateOnlyExpenseFromObject } from '../upload';
+import { generateReportSchema } from '~/lib/func/auth';
+import { date } from 'yup';
 
 /* 
 
@@ -29,6 +35,32 @@ Note all web pagemlink are defined in the google parse link. the button refers t
 export default function UsersSettings() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const userObject = new Auth()
+    const [budget, selectBudget] = useState <budgetList[] | []>([])
+  const [ selectedBudgetExpenses, selectedBudget ] = useState<expensesTemplate[] | string[]>([])
+
+  const [ accounttype, assignAccounttype ] = useState<"personal"|"institution"|"Institution"|null>(null)
+
+    useEffect(()=>{
+        const gettTransactions = async () => {
+        let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')  
+        
+        let profile = await userObject.profile()
+        
+        assignAccounttype(profile.data.organization)
+
+        selectBudget(transactions.budgets)
+
+        const expenses = generateOnlyExpenseFromObject(transactions.expenses)
+
+        selectedBudget(expenses)
+
+        };
+        gettTransactions();
+    }, [])
+
+    const [selectedFormat, selectFormat] = useState<"PDF"|"EXCEL">("EXCEL")
+    const [ reportMessage, setReportMessage ] = useState('')
 
   return (
           <SafeAreaView className='p-2'>
@@ -38,39 +70,50 @@ export default function UsersSettings() {
 
               <ScrollView>
                 <Formik
-                initialValues={{}}
-                onSubmit={()=> console.log()}
+                initialValues={{
+                  budget_id: null,
+                  format: 'EXCEL',
+                  foward: false,
+                  password: null,
+                }}
+                onSubmit={async (val, {setErrors})=> {
+                    let transaction = await userObject.generateBudgetReport(val)
+                    
+                    if (!transaction.status) {
+                      return await setErrors({password: transaction.message})
+                    }else(
+                      setReportMessage(transaction.message)
+                    )
+                    
+                    
+                }}
+                validationSchema={generateReportSchema}
                 >
-                  {({dirty, values, errors, handleBlur, handleChange, handleSubmit})=>(
+                  {({values, errors, handleBlur, handleChange, handleSubmit, setFieldTouched, setFieldValue, isValid})=>(
                     <View className='p-8 flex flex-col'>
                     <Text className='text-3xl text-gray-500'>Hello, Abel Levi</Text>
                     <Text className='text-lg text-gray-500'>Generate Report</Text>
 
                     {/* Design a layout to show a selection list for budget and for document type */}
                     <View className='mt-2'>
-                        <Text>Select date</Text>
-                        <TouchableHighlight
-                            onPress={()=> console.log()}
-                            className='p-4 bg-gray-800 rounded-xl my-1'
-                        >
-                            <View className='flex flex-row items-center justify-center'>
-                                <Text className='text-white text-center font-bold'>Pick a date </Text>
-                                <Icon color='white' name='calendar-plus' />
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                    <View className='mt-2'>
-                        <SelectList 
-                            data={[
-                                { key: "B1", value: "B1" },
-                                { key: "B2", value: "B2" },
-                                { key: "B3", value: "B3" },
-                            
-                            ]}
-                            save='value'
-                            setSelected={()=> console.log()}
-                            placeholder='Select Budget'
+                        <GrantDropList validation={{setFieldTouched, setFieldValue}} userGrant={budget} 
+                        
+                        innerEvent={async (selected)=>{                        
+                              setFieldTouched('budget_id', true)
+                              setFieldValue('budget_id', selected)
+
+                            let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records(selected)
+
+                            selectBudget(transactions.budgets)
+                            const expenses = generateOnlyExpenseFromObject(transactions.expenses)
+                            selectedBudget(expenses)
+
+                            // formObject.handleSubmit(selected)                            
+                        }}
                         />
+                          {errors.budget_id? <Text className='text-red-500 font-bold px-2'>
+                          {errors.budget_id}
+                        </Text>: <Text></Text>}
                     </View>
 
                     <View className='mt-4'>
@@ -81,30 +124,55 @@ export default function UsersSettings() {
                             
                             ]}
                             save='value'
-                            setSelected={()=> console.log()}
+                            setSelected={(val)=> selectFormat(val)}
+                            onSelect={()=>{
+                              setFieldTouched('format', true)
+                              setFieldValue('format', selectedFormat)
+                            }}
                             placeholder='Select Document Type'
                         />
+                          {errors.format? <Text className='text-red-500 font-bold px-2'>
+                          {errors.format}
+                        </Text>: <Text></Text>}
                     </View>
                     
                     {/* Hide if account not institution */}
-                    <View className='mt-8 flex flex-row items-center'>
-                        <Text className='mx-4'>Export To Institution</Text>
-                        <Checkbox />
+                    <View>
+                      { accounttype !== "personal"? 
+                      <View>
+                        <View className='mt-8 flex flex-row items-center'>
+                            <Text className='mx-4'>Export To Institution</Text>
+                            <Checkbox />
+                        </View>
+                        <Text className='text-gray-600 mt-1'>Report will be downloaded to your storage</Text>
+                      </View>
+                      : <Text className='text-gray-600 mt-1'>Report will be downloaded to your storage</Text>
+                      }
+                          {errors.foward? <Text className='text-red-500 font-bold px-2'>
+                          {errors.foward}
+                        </Text>: <Text></Text>}
                     </View>
+                    
                     <View className='mt-8'>
                       <Text>Enter password to continue: </Text>
                       <TextInput
-                      readOnly={true} 
+                      onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
+                      value={values.password}
                       className='border text-gray-500 py-2 px-2 my-1'
                       placeholder='******' />
+
+                      {errors.password? <Text className='text-red-500 font-bold px-2'>
+                      {errors.password}
+                        </Text>: <Text></Text>}
                     </View>
 
                     <View className='mt-2'>
                         <TouchableHighlight
-                        onPress={()=> console.log()}
-                        disabled={true}
+                        onPress={(e)=> handleSubmit(e)}
+                        disabled={!isValid}
                         >
-                          <View className='flex flex-row items-center justify-center p-2 bg-black rounded-lg'>
+                          <View className={`flex flex-row items-center justify-center p-2  rounded-lg ${isValid? "bg-black": "bg-red-500" }`}>
                             <Text className='text-gray-200 mx-1'>Generate Report</Text>
                             <Icon color='gray' name='shield-lock-outline' />
                           </View>
@@ -117,6 +185,9 @@ export default function UsersSettings() {
 
 
                 </Formik>
+                {reportMessage?                 
+                <Text className='p-4 rounded-xl bg-green-600 mx-3 text-bold text-white'>{reportMessage}</Text>: 
+                <Text></Text>}
               </ScrollView>
             </View>
           </SafeAreaView>

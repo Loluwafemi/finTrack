@@ -237,7 +237,7 @@ type expenseList = {
   key: string,
   value: string
 }
-function generateOnlyExpenseFromObject(expenses) {
+export function generateOnlyExpenseFromObject(expenses) {
     let output: expenseList[] = []
 
     expenses.forEach(expense => {

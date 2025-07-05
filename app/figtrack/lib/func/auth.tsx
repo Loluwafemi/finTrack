@@ -66,3 +66,10 @@ export const recordProviderForBudgetSchema = Yup.object({
     selectedBuget: Yup.string().required("Select a budget"),
     displayingBudget: Yup.array()
 })
+
+export const generateReportSchema = Yup.object().shape({
+    budget_id: Yup.string().required("Required"),
+    format: Yup.string().required("Required"),
+    forward: Yup.boolean().default(false),
+    password: Yup.string().required("Required")
+})

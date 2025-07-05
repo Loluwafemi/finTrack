@@ -544,6 +544,16 @@ export class User {
 
     }
 
+    async getAllBudgetData(budget_id: string){
+        let transaction;
+
+        
+        console.log('getting all budget');
+
+        return { status: true, data:  transaction}
+    }
+
+    
 }
 
 
