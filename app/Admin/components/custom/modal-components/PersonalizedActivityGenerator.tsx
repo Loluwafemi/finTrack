@@ -31,7 +31,11 @@ export const PersonalizedActivity = ({ userid, onPress }: {userid: string, onPre
 
     const GenerateUserActivities = async () => {
         const transaction = await userObject.getMemberActivity(userid)
-        setActivities(transaction)
+        if (transaction) {
+          let newTransaction = transaction.reverse()
+          setActivities(newTransaction)
+
+        }
    }
 
     // iterate through each and make it dynamic

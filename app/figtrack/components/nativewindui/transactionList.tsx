@@ -1,5 +1,6 @@
 import '~/global.css'
 import { Text, View } from "react-native";
+import numeral from 'numeral';
 
 
 
@@ -25,7 +26,7 @@ function TransactionItem(items:any) {
         <View className='mb-[4px] p-1 border-b-[1px]'>
             <View className='flex flex-row justify-between'>
                 <Text className='font-bold'>{data?.message?.text?.expense}</Text>
-                <Text className='font-bold'>-N{data?.message?.text?.cost}</Text>
+                <Text className='font-bold'>-N{numeral(data?.message?.text?.cost).format('0,0.00')}</Text>
             </View>
             <View className='flex flex-row justify-between'>
                 <Text className='text-gray-600 text-sm text-[13px]'>{data?.message?.text?.desc}</Text>

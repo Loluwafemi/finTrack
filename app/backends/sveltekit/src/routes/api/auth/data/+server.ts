@@ -29,4 +29,3 @@ export const GET: RequestHandler = async (event) => {
 
     return json({ status: true, ...response });
 };
-

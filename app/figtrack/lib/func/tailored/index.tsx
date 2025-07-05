@@ -86,7 +86,7 @@ export class Auth {
             dashboard.transactions = []
        }
 
-       dashboard.transactions = tailoredTransactionFordashboard(transactionsrequester, 'receipt')
+       dashboard.transactions = tailoredTransactionFordashboard(transactionsrequester, 'receipt').reverse()
        
 
     //    compile all budget for this user and summate every cost in expense composite
@@ -471,11 +471,13 @@ function expensePercentageGenerator(arr: unitExpenseTemplate[], arr2: unitExpens
     
     const output = arr.map((value, index)=>{
         let cost = Number(value.cost)
-        let spent = Number(arr2[index].cost)
-        let absAmB = cost - spent
-        absAmB = Math.abs(absAmB)
-        let addABavg = (cost + spent) / 2
-        let percentage = (absAmB / addABavg) * 100        
+        let remains = Number(arr2[index].cost)
+
+        
+        let absAmB = (remains * 1) / cost
+        
+        let percentage = 1 - absAmB
+              
         value.percentage = percentage.toString()
         
         return value

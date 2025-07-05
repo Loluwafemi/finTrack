@@ -2,6 +2,7 @@ import '~/global.css'
 import { Text, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
+import numeral from 'numeral';
 
 
 export function GrantFeatureList( {expensesList} ) {
@@ -27,15 +28,17 @@ export function GrantFeatureList( {expensesList} ) {
 
 function GrantFeatureItem({values}) {
 
-    const percentage = values.percentage !== isNaN || values.percentage > 1? 0: Number(values.percentage)
+    const percentage = values.percentage === isNaN || values.percentage > 1? 0: values.percentage
     
+
+    // console.log(Number(values.percentage).toFixed(10));
     
 
     return (
         <View className='mb-[4px] p-2 border-b-[0.2px]'>
             <View className='flex flex-row justify-between'>
                 <Text className='font-bold'>{values.expenseCategory}</Text>
-                <Text className='font-bold'>N{values.cost}</Text>
+                <Text className='font-bold'>N{numeral(values.cost).format('0,0.00')}</Text>
             </View>
             <View className='flex flex-row justify-end'>
                 <Text className='text-gray-600 text-sm text-[13px]'>available</Text>

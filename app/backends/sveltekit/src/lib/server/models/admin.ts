@@ -37,7 +37,7 @@ export class Admin{
         let transaction;
 
         let organization = await db.select().from(user_data)
-        // .where(eq(user_data.organization_name, organization_name))
+        .where(eq(user_data.organization_name, organization_name))
         .as("organization");
 
         let organization_members = await db.select().from(user).leftJoin(organization, eq(user.userid, organization.id)).then((members)=>{
