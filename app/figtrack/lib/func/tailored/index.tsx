@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { api_origin_address, apiHeaders, backendORIGIN, getData, requestHandler, saveBudget, SessionUser } from "~/lib/server/server";
+import { api_origin_address, apiHeaders, backendORIGIN, getData, GetrequestHandler, requestHandler, saveBudget, SessionUser } from "~/lib/server/server";
 
 
 
@@ -86,7 +86,7 @@ export class Auth {
             dashboard.transactions = []
        }
 
-       dashboard.transactions = tailoredTransactionFordashboard(transactionsrequester, 'receipt')
+       dashboard.transactions = tailoredTransactionFordashboard(transactionsrequester, 'receipt').reverse()
        
 
     //    compile all budget for this user and summate every cost in expense composite
@@ -291,6 +291,38 @@ export class Auth {
     }
 
 
+    async profile(){
+        let transaction;
+
+        transaction = await GetrequestHandler({url: '/api/auth/data'})
+        
+        if (transaction.status) {
+            return transaction.data
+        }
+        return {}
+    }
+
+    async generateBudgetReport(data){
+        let transaction;
+        let auth = await this.user()
+
+        let outgoing = {
+            auth: auth,
+            data: data
+        }        
+
+        transaction = await requestHandler({ data: outgoing, url: '/api/service/report_generator' })
+
+        if (transaction) {
+            if (!transaction.status) return transaction
+
+            return transaction
+            
+        }
+        
+        
+    }
+
 }
 
 
@@ -459,11 +491,13 @@ function expensePercentageGenerator(arr: unitExpenseTemplate[], arr2: unitExpens
     
     const output = arr.map((value, index)=>{
         let cost = Number(value.cost)
-        let spent = Number(arr2[index].cost)
-        let absAmB = cost - spent
-        absAmB = Math.abs(absAmB)
-        let addABavg = (cost + spent) / 2
-        let percentage = (absAmB / addABavg) * 100        
+        let remains = Number(arr2[index].cost)
+
+        
+        let absAmB = (remains * 1) / cost
+        
+        let percentage = 1 - absAmB
+              
         value.percentage = percentage.toString()
         
         return value

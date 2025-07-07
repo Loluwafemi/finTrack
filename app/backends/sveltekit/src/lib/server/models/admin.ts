@@ -37,7 +37,7 @@ export class Admin{
         let transaction;
 
         let organization = await db.select().from(user_data)
-        // .where(eq(user_data.organization_name, organization_name))
+        .where(eq(user_data.organization_name, organization_name))
         .as("organization");
 
         let organization_members = await db.select().from(user).leftJoin(organization, eq(user.userid, organization.id)).then((members)=>{
@@ -72,10 +72,12 @@ export class Admin{
         let transaction;
 
         // select members only
-        let organization_members = await db.select().from(user_data).where(eq(user_data.organization_name, organization_name)).as("organization");        
+        let organization_members = await db.select().from(user_data)
+        .where(eq(user_data.organization_name, organization_name))
+        .as("organization");        
         
         // select members data
-        let organization_transaction = await db.select().from(user_transactions).leftJoin(organization_members, eq(user_transactions.author, organization_members.id))
+        let organization_transaction = await db.select().from(user_transactions).leftJoin(organization_members, eq(user_transactions.author, organization_members.id)).orderBy(desc(user_transactions.created_at))
         // uncomment this later
         .then((members)=>{
             let validMembers: typeof members = []
@@ -87,10 +89,10 @@ export class Admin{
 
                 })
 
-                return validMembers.reverse();
+                return validMembers
             }
             return validMembers;
-        })    
+        })  
 
 
         if (organization_transaction.length < 1) return { status: false, message: "No member found yet" }
@@ -126,7 +128,7 @@ export class Admin{
         let pointedmember = await db.select().from(user).where(eq(user.userid, userid)).as("pointedmember")
 
         // select specific data
-        let selected_transaction = await db.select().from(user_transactions).leftJoin(pointedmember, eq(user_transactions.id, activityId))
+        let selected_transaction = await db.select().from(user_transactions).leftJoin(pointedmember, eq(user_transactions.id, activityId)).orderBy(desc(user_transactions.updated_at))
 
 
         if (selected_transaction.length < 1) return { status: false, message: "No member found yet" }
@@ -147,7 +149,8 @@ export class Admin{
                 transactions: true,
                 budgets: true,
                 banks: true
-            }
+            },
+            orderBy: desc(user.updated_at)
         })
 
         if (!transaction) return { status: false, message: "No member found yet" }

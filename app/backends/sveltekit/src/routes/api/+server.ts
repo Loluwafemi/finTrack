@@ -2,6 +2,7 @@ import { REQUESTAUTHENTICATOR } from '$lib/index.server';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Admin } from '$lib/server/models/admin';
+import { User } from '$lib/server/models/user';
 
 export const GET: RequestHandler = async (event) => {
     
@@ -15,6 +16,19 @@ export const GET: RequestHandler = async (event) => {
     response = {
         ...user
     }
+
+
+    // if(user?.accounttype === 'user'){        
+    //     let transaction = new User()
+    //     let operation = await transaction.get(user?.userid, 'data')
+
+    //     response = {
+    //         ...operation
+    //     }
+    // }
+    
+
+
 
     // change request if user is admin
     if(user?.accounttype !== 'user'){        

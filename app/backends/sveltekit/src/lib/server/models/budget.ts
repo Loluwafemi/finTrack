@@ -1,7 +1,8 @@
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import db from "../db";
 import { budget_expense, registered_budget_templates, user_budget } from "../db/schema";
 import { Transactions } from "./transaction";
+import { generateTimeStamp } from "./user";
 
 
 
@@ -26,7 +27,7 @@ export class Budget{
 
     async register(data: {budgetName: string, expenses: [] }, auth: any){
         let transaction;
-
+ 
         
         if(auth.accounttype != 'admin') return { status: false, message: 'Unauthorize call. You need privilege for this action'}
 
@@ -90,11 +91,17 @@ export class Budget{
             expense_composition: update
         }).where(eq(budget_expense.id, data.bid)).returning()
 
+
         transaction = transaction.pop()
 
         if (!transaction) return { status: false, message: "upload failed", data: transaction }
 
         try {
+            
+            await db.update(user_budget).set({
+                updated_at: generateTimeStamp(),
+            }).where(eq(budget_expense.id, data.bid)).returning()
+
             let invoking = new Transactions()
             // get budget title with the id
             
@@ -103,7 +110,7 @@ export class Budget{
                 message: {
                     title: "Budget Updating",
                     text: `The budget: ${current_budget?.budgettitle} was updated by user`,
-                    date: Date.now()
+                    date: generateTimeStamp()
                 },
                 receiver: current_budget?.userid!,
                 status: 'approved',
@@ -117,15 +124,29 @@ export class Budget{
 
     }
 
-    async find(id: string){
+    async find(id: string, withExpenses: boolean = false){
         let transaction;
-        transaction = await db.query.user_budget.findFirst({
-            where: eq(user_budget.budgetid, id)
-        })
+        
+
+        if (withExpenses){
+            transaction = await db.query.user_budget.findFirst({
+                where: eq(user_budget.budgetid, id),
+                with: {
+                    expense: true
+                },
+                orderBy: desc(user_budget.updated_at)
+            })
+        } else {
+            transaction = await db.query.user_budget.findFirst({
+                where: eq(user_budget.budgetid, id),
+                orderBy: desc(user_budget.updated_at)
+
+            })
+        }
 
         if(!transaction) return { status: false, message: 'Not found' }
 
-        return { status: true, message: 'Not found', transaction }
+        return { status: true, data: transaction }
     }
 
     // invoke transaction
@@ -134,14 +155,14 @@ export class Budget{
 
         try {
             transaction = await db.update(user_budget).set({
-                status: status
-            }).where(eq(user_budget.id, budgetId))
+                status: status,
+            }).where(eq(user_budget.budgetid, budgetId)).returning()
             
             let selected_budget = await db.query.user_budget.findFirst({
-                where: eq(user_budget.id, budgetId)
+                where: eq(user_budget.budgetid, budgetId)
             })
 
-            let current_budget = selected_budget
+            let current_budget = transaction.pop()
 
             if (!transaction) return { status: false, message: "No member found yet" }
 
@@ -149,24 +170,29 @@ export class Budget{
         try {
             let invoking = new Transactions()
             // get budget title with the id
-            
+            // update the budget status and notify the user
+            await db.update(user_budget).set({
+                updated_at: generateTimeStamp()
+            }).where(eq(user_budget.budgetid, budgetId)).returning()
+
+
             await invoking.invoke({
                 author: current_budget?.userid!,
                 message: {
-                    title: "Account Creation",
-                    text: `The budget: ${current_budget?.budgettitle} was managed by admin`,
+                    title: "Budget Update",
+                    text: `The budget: ${current_budget?.budgettitle} was managed by admin to ${current_budget?.status}`,
                     date: Date.now()
                 },
                 receiver: current_budget?.userid!,
-                status: 'approved',
-                type: 'log'
+                status: status,
+                type: 'activity'
             })
         } catch (error) {
             
         }
 
             
-            return { status: true, data: transaction }
+            return { status: true, data: current_budget }
         } catch (error) {
             return { status: false, message: "No member found yet", error }
         }

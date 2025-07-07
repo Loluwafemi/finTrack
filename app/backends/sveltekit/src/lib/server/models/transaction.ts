@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import db from "../db";
 import { user_transactions } from "../db/schema";
 
@@ -23,7 +23,7 @@ export class Transactions {
             message: data.message,
             receiver: data.receiver,
             status: data.status,
-            type: data.type
+            type: data.type,
         }).returning()
 
         transaction = transaction.pop()
@@ -40,7 +40,8 @@ export class Transactions {
         let transaction;
 
         transaction = await db.query.user_transactions.findMany({
-            where: eq(user_transactions.author, userid)
+            where: eq(user_transactions.author, userid),
+            orderBy: asc(user_transactions.created_at)
         })
 
         if (!transaction) return { status: false, message: "failed to retrive transaction activity" }

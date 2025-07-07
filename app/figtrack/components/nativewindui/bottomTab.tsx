@@ -1,5 +1,5 @@
 import React, { Component, ReactNode, useEffect, useMemo, useState } from "react";
-import { Button, TouchableHighlight, View } from "react-native";
+import { Button, StyleSheet, TouchableHighlight, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import {  } from "react-native-safe-area-context";
 import { Text } from "./Text";
@@ -16,7 +16,7 @@ import { Auth, balacesTemplate, budgetList, expensesTemplate, transactionTemplat
 import { signouREQUEST } from "~/lib/server/server";
 import { Formik } from "formik";
 import { recordProviderForBudgetSchema } from "~/lib/func/auth";
-
+import numeral from 'numeral'
 
 
 
@@ -26,28 +26,36 @@ export function UserHome(){
     // useMemo
     const [balance, setBalances] = useState<number | null>(null)
     const [transactions, setTransaction] = useState([])
+    const [currentUser, selectUser] = useState<any>('')
 
     useEffect(()=>{
         const gettTransactions = async () => {
         const authObject = new Auth()
         let transactions: transactionTemplate = await authObject.transactions() 
-
+        const userObject = await authObject.profile()
+        
+        selectUser(userObject)
         // assign returned data to those useState
-        setBalances(transactions.balance)
+        // format balance before setting
+        if(transactions.balance){
+            let newBalance = numeral(transactions.balance).format('0,0.00')
+            setBalances(newBalance)
+        }
+        
         setTransaction(transactions.transactions)
 
         
         };
         gettTransactions();
     }, [])
-
+    
     return (
         <ScrollView className="p[4px]">
             {/* header */}
             <View className="flex flex-row p-[2px] justify-between items-center">
                 <Text className="font-bold text-2xl">Dashboard</Text>
                 <Text className="font-bold text-xs ">
-                    Account | Personal
+                    Account | { String(currentUser?.data?.organization) }
                 </Text>
             </View>
 
@@ -59,7 +67,7 @@ export function UserHome(){
                         <Text className="flex-row items-center">
                             <Icon color="red" size={15} name="cash" />
                             <Text className="text-gray-300 text-xs">+N0.00 spent this month</Text>
-                            </Text>
+                        </Text>
                     </View>
                 </View>
 
@@ -70,7 +78,7 @@ export function UserHome(){
                 </View>
                 <View>
                     <Text className="text-gray-200 text-[10px]">
-                        last updated -- min -- sec ago
+                        Approved Budgets
                     </Text>
                 </View>
             </View>
@@ -93,8 +101,8 @@ export function UserHome(){
             </View> */}
 
             {/* Display Recent Transactions */}
-            <View>
-                <View className="flex flex-row justify-between mt-[4px] px-1">
+            <View className="px-3">
+                <View className="flex flex-row justify-between mt-[4px]">
                     <Text className="text-sm">Transactions</Text>
                     <TouchableHighlight>
                         <Text className="text-sm font-bold">View All</Text>
@@ -134,7 +142,8 @@ export function UserRecord(){
         const gettTransactions = async () => {
         let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')    
         
-        
+
+
 
         selectBudget(transactions.budgets)
         setBalaces(transactions.balances)
@@ -190,11 +199,11 @@ export function UserRecord(){
                             </View>
                             <View className="flex flex-row justify-between">
                                 <Text className="text-gray-200 text-2xl font-bold">
-                                    N{balances.total_a}
+                                    N{numeral(balances.total_a).format('0,0.00')}
                                 </Text>
 
                                 <Text className="text-gray-200 text-2xl font-bold">
-                                    N{balances.total_s}
+                                    N{numeral(balances.total_s).format('0,0.00')}
                                 </Text>
                             </View>
                             <View className="flex flex-row justify-between">
@@ -281,7 +290,7 @@ export function Acivity(){
     <View>
         <View className='px-2 flex flex-row justify-between items-center'>
             <Text>
-                100+ unread
+                Recent Activities
             </Text>
             <TouchableHighlight 
             onPress={async ()=>{
@@ -337,40 +346,150 @@ export function Settings(){
     }, [])
 
     return (
-        <View className="m-3">
+        <View className="m-4">
             <View className="flex flex-row justify-between items-center mb-[10px]">
-                <Text className="font-bold">Settings</Text>
-                <TouchableHighlight className="bg-gray-800 p-1 rounded-sm"
-                    onPress={()=>{
-                        navigation.navigate('/(dashboard)/new')
-
-                    }}
-                >
-                    <View className="flex flex-row items-center">
-                            <Text className="flex flex-row items-center text-xs text-white">New </Text>
-                            <Icon color="white" size={10} name="plus" />
-                    </View>
-                </TouchableHighlight>
+                <Text className="font-bold text-2xl">Settings</Text>
             </View>
 
-            <View className="bg-gray-200 flex flex-col justify-end h-[90%] mt-[10px]">
-                
-               <View className=" justify-self-end-safe outline-green-400 outline">
-                 <Button
-                 onPress={async ()=>{
-                    const responsee = await signouREQUEST()
+                {/* each row */}
+            <ScrollView style={style.scrollScreen} className="bg-gray-100 flex flex-col">
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Account</Text>
+                            <View>
+                                <TouchableHighlight
+                                onPress={()=> navigation.navigate('/(dashboard)/settings/profile')}
+                                >
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="account-circle-outline" />
+                                        <Text className="mx-4">Profile</Text>
+                                    </View>
+                                </TouchableHighlight>
 
-                    if (responsee.status) return navigation.navigate('/(auth)')
+                                <TouchableHighlight
+                                onPress={()=> navigation.navigate('/(dashboard)/settings/userPrivacy')}
+                                >
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="account-key" />
+                                        <Text className="mx-4">Privacy & Security</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                        
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Budget & Expense Management</Text>
+                            <View>
+                                <TouchableHighlight
+                                onPress={()=>{
+                                    navigation.navigate('/(dashboard)/new')
+                                }}
+                                >
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="folder-plus-outline" />
+                                        <Text className="mx-4"> Add Budget</Text>
+                                    </View>
+                                </TouchableHighlight>
 
-                 }}
-                 color={'red'} title="Logout" />
-               </View>
-            </View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="keyboard-settings" />
+                                        <Text className="mx-4">Manage Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="shield-lock-outline" />
+                                        <Text className="mx-4">Privacy & Security</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Reports and Sheets</Text>
+                            <View>
+                                <TouchableHighlight
+                                onPress={()=> navigation.navigate('/(dashboard)/settings/generateReport')}
+                                >
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="chart-timeline-variant" />
+                                        <Text className="mx-4">Generate Reports</Text>
+                                    </View>
+                                </TouchableHighlight>
+
+                                <TouchableHighlight className="hidden">
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="keyboard-settings" />
+                                        <Text className="mx-4">Manage Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">App Preferences</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="weather-sunny" />
+                                        <Text className="mx-4">Dark Mood</Text>
+                                    </View>
+                                </TouchableHighlight>
+
+                                <TouchableHighlight className="hidden">
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="keyboard-settings" />
+                                        <Text className="mx-4">Manage Budgets</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        <View>
+                            <Text className="text-lg text-gray-800 font-bold">Communication and Supports</Text>
+                            <View>
+                                <TouchableHighlight>
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="account-question" />
+                                        <Text className="mx-4">Get Support</Text>
+                                    </View>
+                                </TouchableHighlight>
+
+                                <TouchableHighlight className="">
+                                    <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
+                                        <Icon name="script-outline" />
+                                        <Text className="mx-4">Terms and Conditions</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        <View className=" justify-self-end-safe outline-green-400 outline">
+                            <Button
+                            onPress={async ()=>{
+                                const responsee = await signouREQUEST()
+
+                                if (responsee.status) return navigation.navigate('/(auth)')
+
+                            }}
+                            color={'red'} title="Logout" />
+                        </View>
+            </ScrollView>
         </View>
     );
 
 
 }
 
+
+const style = StyleSheet.create({
+    scrollScreen: {
+        height: '95%',
+        paddingBottom: 50
+    }
+})
 
 

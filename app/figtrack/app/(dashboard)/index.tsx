@@ -11,7 +11,7 @@ import { TopNav } from '~/components/nativewindui/TopNav';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { Auth } from '~/lib/func/tailored';
-import React, { useMemo }  from 'react';
+import React  from 'react';
 
 
 const Tab = createBottomTabNavigator();
@@ -47,8 +47,14 @@ export default function UsersDashboardIndex() {
                     firstname={isAuth?.firstname} username={isAuth?.username} navigation={navigation} />
                   },
                   drawerStyle: {
-                    backgroundColor: 'pink',
+                    backgroundColor: 'black',
+                    elevation: 7
                   },
+                  drawerLabelStyle: {
+                    color: 'white',
+                  },
+                  drawerActiveTintColor: 'gray',
+                  drawerActiveBackgroundColor: 'gray'
                   
                   
                 })}
@@ -60,21 +66,21 @@ export default function UsersDashboardIndex() {
                   drawerLabel: 'Home'
                 }}/>
 
-                <Drawer.Screen name='App Settings' component={AppSettings} options={{
+                <Drawer.Screen name='About App' component={AboutApp} options={{
                   title: '',
-                  drawerLabel: 'App Settings'
+                  drawerLabel: 'About App',
                 }}/>
 
-                <Drawer.Screen name='Profile Settings' component={ProfileSettings} options={{
+                <Drawer.Screen name='Check for Update' component={CheckingAppUpdate} options={{
                   title: '',
-                  drawerLabel: 'Profile Settings'
+                  drawerLabel: 'Check for Update'
                 }}/>
-                <Drawer.Screen name='About' component={AboutPage} 
+                {/* <Drawer.Screen name='About' component={AboutPage} 
                 options={{
                   title: '',
                   drawerLabel: 'About'
                 }}
-                />
+                /> */}
               </Drawer.Navigator>
             </NavigationContainer>
         </NavigationIndependentTree>
@@ -83,43 +89,30 @@ export default function UsersDashboardIndex() {
 }
 
 
-function AboutPage() {
+// function AboutPage() {
+//   return (
+//     <View>
+//       <Text>
+//         About Page
+//       </Text>
+//     </View>
+//   )
+// }
+
+
+function CheckingAppUpdate() {
   return (
-    <View>
-      <Text>
-        About Page
-      </Text>
+    <View className='m-auto'>
+      <Text>Coming soon....</Text>
     </View>
   )
 }
 
 
-function ProfileSettings() {
+function AboutApp() {
   return (
     <View className='m-auto'>
-      <Text>
-        Profile Settings Page
-      </Text>
-      <Text>Profile Picture</Text>
-      <Text>Name</Text>
-      <Text>Email</Text>
-      <Text>Password</Text>
-      <Text>Bank</Text>
-      <Text>Finances</Text>
-    </View>
-  )
-}
-
-
-function AppSettings() {
-  return (
-    <View className='m-auto'>
-      <Text>
-        App Settings Page
-      </Text>
-      <Text>Theme</Text>
-      <Text>Notification</Text>
-      <Text>Security, etc</Text>
+      <Text>Coming soon....</Text>
     </View>
   )
 }
@@ -183,6 +176,6 @@ const style = StyleSheet.create({
     height: '100%'
   },
   semiprofile: {
-    backgroundColor: 'pink'
+    backgroundColor: 'gray'
   }
 })
