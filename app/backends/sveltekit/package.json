@@ -15,7 +15,8 @@
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate",
 		"db:generate": "drizzle-kit generate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"sys": "npx tsx ./scripts/migrate.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.49.1",
@@ -27,7 +28,9 @@
 		"drizzle-kit": "^0.30.6",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
-		"typescript": "^5.0.0",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.20.3",
+		"typescript": "^5.8.3",
 		"vite": "^6.2.6",
 		"vite-plugin-mkcert": "^1.17.8"
 	},
