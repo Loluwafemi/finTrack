@@ -2,6 +2,7 @@ import { REQUESTAUTHENTICATOR } from '$lib/index.server';
 import { User } from '$lib/server/models/user';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { ReportGenerator, type AuthenticationTemplate } from '$lib/gen/processor';
 
 export const POST: RequestHandler = async (event) => {
 
@@ -23,16 +24,21 @@ export const POST: RequestHandler = async (event) => {
     
     if (!findUserByID.status || !validate) return json({status: false, message: "Invald Credentails, Enter valid password"})
     
-    const reports = await user.getAllBudgetData(data.budget_id)
+    const reports = await user.getAllBudgetData(data.budget_id, auth.userid)
 
-    // if(!reports.status) return json({ status: false, message:  "Unable to generate report. Try again next time"})
+    if(!reports.status) return json({ status: false, message:  reports.message})
 
-    // // send report data to a function that generate a report and send back to user.
+    const currentUser:AuthenticationTemplate = findUserByID.data
+    
+    const workingReport = reports.data
+
+    const prepareReport = new ReportGenerator(currentUser)
+
+    let generateReport = await prepareReport.extractReport(workingReport)
+    
 
 
-
-
-    return json({status: true, message: "Report has been generated. Kindly check your folder [storage/expTracker/report] to retrieve your report"})
+    return json({status: true, message: "Report has been generated. Kindly check your folder [storage/expTracker/report] to retrieve your report", data: generateReport.data})
 
     
 };

@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import db from "../db";
 import { protection, user, user_bank, user_budget, user_data, user_transactions } from "../db/schema";
 import { Budget } from "./budget";
@@ -544,13 +544,39 @@ export class User {
 
     }
 
-    async getAllBudgetData(budget_id: string){
+    async getAllBudgetData(budget_id: string, userid: string){
         let transaction;
 
-        
-        console.log('getting all budget');
+        /* 
+        Using userid find the following
+        Run a query that returns all transaction with type receipts from the transaction and as well collect the budget details such as:
+        title, name, expense objects.
+        This details will be used to design a template that will be used by the excel generator. Output of data is decided outside of this scope.
+        */
+       transaction = await db.query.user_transactions.findMany({
+        where: and(eq(user_transactions.author, userid), 
+                    eq(user_transactions.type, 'receipt')),
+        orderBy: asc(user_transactions.created_at)
+       })
 
-        return { status: true, data:  transaction}
+       const receipt = transaction
+
+        // then find budget information
+       transaction = await db.query.user_budget.findFirst({
+        where: eq(user_budget.budgetid, budget_id),
+        with: {
+            expense: true
+        }
+       })
+
+       const budgetInfo = transaction
+
+       if (!receipt || !budgetInfo)  return { status: false, message: "Unable to retrieve budget information. Kindly contact customer support." }
+
+
+       
+
+        return { status: true, data:  { receipt, budgetInfo }}
     }
 
     
