@@ -323,7 +323,7 @@ export class User {
                     data: true,
                     banks: true,
                     budgets: true,
-                    transactions: true
+                    transactions: true,
                 }
             })
             if(!transaction) return false
@@ -345,9 +345,9 @@ export class User {
                 where: eq(user.userid, userid),
                 with: {
                     data: true,
-                    banks: true,
                     budgets: true,
-                    transactions: true
+                    transactions: true,
+                    banks: true
                 }
             })
         }else{
