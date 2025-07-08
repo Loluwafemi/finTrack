@@ -321,9 +321,9 @@ export class User {
                 where: eq(email, user.email),
                 with: {
                     data: true,
-                    // banks: true,
-                    // budgets: true,
-                    // transactions: true
+                    banks: true,
+                    budgets: true,
+                    transactions: true
                 }
             })
             if(!transaction) return false
