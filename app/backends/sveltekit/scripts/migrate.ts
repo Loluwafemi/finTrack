@@ -38,7 +38,7 @@ export const verceldbGenerator = cloud(cloud_client, {
 
 async function main() {    
     console.log("Initiating migration");
-    const cloudDBConnection = await cloud_client.connect()
+    await cloud_client.connect()
 
 
     await migrate(verceldbGenerator, { migrationsFolder: './drizzle' }).then(async (output)=>{

@@ -1,8 +1,32 @@
 import { desc, eq } from "drizzle-orm";
-import db from "../db";
+import { verceldb, db as localdb, type dbInterface } from "../db";
 import { Budget } from "./budget"
 import { user, user_budget, user_data, user_transactions } from "../db/schema";
 import { User, type transactionTypes } from "./user";
+
+
+let db: dbInterface;
+
+
+try {
+		if(await verceldb.query.user.findFirst()){
+			db = verceldb
+		}else{
+			// log this
+			throw new Error('Can not connect to the cloud: USER'); 
+		}
+	// log this
+	console.log("cloud connection not established Established, Connecting locally:ADMIN.");
+} catch (error) {
+	db = localdb
+	// log this
+	console.log("local connection established Established, Connecting locally:ADMIN.");
+}
+
+
+
+
+
 
 
 export class Admin{
