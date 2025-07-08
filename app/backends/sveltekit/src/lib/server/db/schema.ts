@@ -152,8 +152,6 @@ export const usertoDataRelation = relations(user, ({ one, many })=> ({
 }))
 
 
-
-
 // bank -> user
 export const bankToUsersRelation = relations(user_bank, ({ one })=>({
 	user: one(user, {

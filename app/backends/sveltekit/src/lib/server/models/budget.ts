@@ -1,26 +1,8 @@
 import { asc, desc, eq } from "drizzle-orm";
-import { verceldb, db as localdb, type dbInterface } from "../db";
 import { budget_expense, registered_budget_templates, user_budget } from "../db/schema";
 import { Transactions } from "./transaction";
 import { generateTimeStamp } from "./user";
-
-
-let db:dbInterface;
-
-try {
-        if(await verceldb.query.user.findFirst()){
-            db = verceldb
-        }else{
-            // log this
-            throw new Error('Can not connect to the cloud: USER'); 
-        }
-    // log this
-    console.log("cloud connection not established Established, Connecting locally:BUDGET.");
-} catch (error) {
-    db = localdb
-    // log this
-    console.log("local connection established Established, Connecting locally:BUDGET.");
-}
+import db from "./index";
 
 
 export class Budget{

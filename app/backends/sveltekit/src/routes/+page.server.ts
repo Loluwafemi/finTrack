@@ -55,7 +55,6 @@ export const actions: Actions = {
 
         const UserModel = new User()
         let transaction:any = await UserModel.users(formData.email)
-        
         if (!transaction){
             console.log("authentication error");
             return ''

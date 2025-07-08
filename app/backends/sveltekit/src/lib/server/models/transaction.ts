@@ -1,25 +1,6 @@
 import { asc, desc, eq } from "drizzle-orm";
-import { verceldb, db as localdb, type dbInterface } from "../db";
 import { user_transactions } from "../db/schema";
-
-
-
-let db:dbInterface;
-
-try {
-        if(await verceldb.query.user.findFirst()){
-            db = verceldb
-        }else{
-            // log this
-            throw new Error('Can not connect to the cloud: USER'); 
-        }
-    // log this
-    console.log("cloud connection not established Established, Connecting locally:TRANSCAT.");
-} catch (error) {
-    db = localdb
-    // log this
-    console.log("local connection established Established, Connecting locally:TRANSCAT.");
-}
+import db from "./index";
 
 
 type TransactionTypes = {
