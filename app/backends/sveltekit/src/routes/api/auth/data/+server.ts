@@ -17,9 +17,7 @@ export const GET: RequestHandler = async (event) => {
     
     let transaction = await userObj.get(user?.userid!, 'data')
 
-            
-    console.log(transaction);
-    
+
 
     response = {
         ...transaction
