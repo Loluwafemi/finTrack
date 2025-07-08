@@ -1,64 +1,60 @@
-// cloud
-import { drizzle as CloudDrizzle } from 'drizzle-orm/neon-http';
-import { neon } from '@neondatabase/serverless';
 
 // local
-import { drizzle, drizzle as localdb } from 'drizzle-orm/postgres-js';
-import { Pool } from "pg";
+import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 import * as schema from './schema';
 import { env } from '$env/dynamic/private';
+
 import { config } from 'dotenv';
 
 
+// cloud
+import { drizzle as cloud, VercelPgDatabase} from "drizzle-orm/vercel-postgres";
+import { createPool, VercelPool } from '@vercel/postgres';
 
-
-
-import { drizzle as vdrizzle } from 'drizzle-orm/vercel-postgres';
 config({ path: '.env.local' }); // or .env
 
 
 
 
+const localdbURL = process.env.DATABASE_URL! || env.DATABASE_URL!
+
+
+const clouddbURL = process.env.DATABASE_URL_POSTGRES_URL_NON_POOLING! || env.DATABASE_URL_POSTGRES_URL_NON_POOLING!
+const clouddbURLPOOL = process.env.DATABASE_URL_POSTGRES_URL! || env.DATABASE_URL_POSTGRES_URL!
+
+if (!localdbURL || !clouddbURL! || !clouddbURLPOOL) {
+
+  console.log("Environment variables not set");
+  
+
+  throw new Error('IMPORTANT DATABASE_URL IS NOT SET');
+}
+
+
+const pool = createPool({
+        connectionString: clouddbURLPOOL
+});
+
+
+// cloud db
+export const verceldb = cloud(pool, {
+    schema: schema
+});
 
 
 
 
-
-const localdbURL = process.env.DATABASE_URL! || env.DATABASE_URL
-const clouddbURL = process.env.CLOUD_DATABASE_URL! || env.CLOUD_DATABASE_URL
-
-if (!localdbURL) throw new Error('DATABASE_URL is not set');
-// if (!clouddbURL) throw new Error('CLOUD DATABASE_URL is not set');
-
-
-// const pool = new Pool({
-//     connectionString: localdbURL,
-// });
-
+// local db
 const client = postgres(localdbURL);
 
-const db = drizzle(client, {
+export const db = drizzle(client, {
   schema: schema
 })
 
 
-// export const db = drizzle(client, {
-//   schema: schema
-// });
 
-
-export default db;
-
-
-
-
-
-
-// Only for Cloud DB
-/* Enable for production only then disable cloud */
-
-// const client = neon(clouddbURL);
-
-// export const db = CloudDrizzle(client, { schema })
+export type dbInterface = PostgresJsDatabase<typeof schema> & 
+{ $client: postgres.Sql<{}>;} | VercelPgDatabase<typeof schema> & {
+$client: VercelPool}

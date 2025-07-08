@@ -1,7 +1,25 @@
 import { asc, desc, eq } from "drizzle-orm";
-import db from "../db";
+import { verceldb, db as localdb, type dbInterface } from "../db";
 import { user_transactions } from "../db/schema";
 
+
+
+let db:dbInterface;
+
+try {
+        if(await verceldb.query.user.findFirst()){
+            db = verceldb
+        }else{
+            // log this
+            throw new Error('Can not connect to the cloud: USER'); 
+        }
+    // log this
+    console.log("cloud connection not established Established, Connecting locally:TRANSCAT.");
+} catch (error) {
+    db = localdb
+    // log this
+    console.log("local connection established Established, Connecting locally:TRANSCAT.");
+}
 
 
 type TransactionTypes = {
@@ -12,9 +30,8 @@ type TransactionTypes = {
     status: "pending" | "approved" | "declined" | "deleted",
 }
 
+
 export class Transactions {
-
-
     async invoke( data: TransactionTypes ) {
         let transaction;
 
