@@ -89,8 +89,6 @@ export const actions: Actions = {
         const auth = await event.locals.user
         let transaction = await userObj.addBudget(formData, auth)
 
-        console.log(transaction);
-        
 
         return
         
@@ -108,7 +106,6 @@ export const actions: Actions = {
         const admin = new Admin()
         const auth = await event.locals.user
         transaction = await admin.registerBuget(formData, auth)
-        console.log(transaction);
 
     }
     

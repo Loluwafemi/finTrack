@@ -320,10 +320,10 @@ export class User {
             transaction = await db.query.user.findFirst({
                 where: eq(email, user.email),
                 with: {
-                    data: true,
                     banks: true,
                     budgets: true,
-                    transactions: true
+                    transactions: true,
+                    data: true
                 }
             })
             if(!transaction) return false

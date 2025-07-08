@@ -220,7 +220,10 @@ export async function signupREQUEST(data:any) {
     const responseClone = request.clone()
     const {status, message} = await responseClone.json()    
 
+
     if (status){     
+
+        
         
         return {
             status: true,
