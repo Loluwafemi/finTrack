@@ -18,7 +18,7 @@ config({ path: '.env.local' }); // or .env
 
 
 
-const localdbURL = process.env.DATABASE_URL! || env.DATABASE_URL!
+const localdbURL = process.env.LOCAL_DATABASE_URL! || env.LOCAL_DATABASE_URL!
 
 
 const clouddbURL = process.env.DATABASE_URL_POSTGRES_URL_NON_POOLING! || env.DATABASE_URL_POSTGRES_URL_NON_POOLING!

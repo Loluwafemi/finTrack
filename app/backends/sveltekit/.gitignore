@@ -1,5 +1,6 @@
 test-results
 node_modules
+package-lock.json
 
 # Output
 .output
@@ -25,3 +26,6 @@ vite.config.ts.timestamp-*
 
 
 cert
+
+scripts
+scripts/*
