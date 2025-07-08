@@ -25,7 +25,7 @@ dotenv.config()
 const env:any = dotenv.config().parsed
 
 const cloud_client = createClient({
-    connectionString: env.DATABASE_URL_POSTGRES_URL_NON_POOLING,
+    connectionString: env.XDATEBASE_URL_POSTGRES_URL_NON_POOLING,
     ssl: true,
     keepAlive: true,
     application_name: 'CloudDB'

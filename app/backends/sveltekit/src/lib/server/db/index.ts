@@ -21,8 +21,8 @@ config({ path: '.env.local' }); // or .env
 const localdbURL = process.env.LOCAL_DATABASE_URL! || env.LOCAL_DATABASE_URL!
 
 
-const clouddbURL = process.env.DATABASE_URL_POSTGRES_URL_NON_POOLING! || env.DATABASE_URL_POSTGRES_URL_NON_POOLING!
-const clouddbURLPOOL = process.env.DATABASE_URL_POSTGRES_URL! || env.DATABASE_URL_POSTGRES_URL!
+const clouddbURL = process.env.XDATEBASE_URL_POSTGRES_URL_NON_POOLING! || env.XDATEBASE_URL_POSTGRES_URL_NON_POOLING!
+const clouddbURLPOOL = process.env.XDATEBASE_URL_POSTGRES_URL! || env.XDATEBASE_URL_POSTGRES_URL!
 
 if (!localdbURL || !clouddbURL! || !clouddbURLPOOL) {
 
