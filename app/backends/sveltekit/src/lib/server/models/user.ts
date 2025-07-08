@@ -6,6 +6,7 @@ import { Transactions } from "./transaction";
 
 let db:dbInterface;
 
+
 try {
         if(await verceldb.query.user.findFirst()){
             db = verceldb
@@ -20,6 +21,7 @@ try {
     // log this
     console.log("local connection established Established, Connecting locally:USER.");
 }
+
 
 export interface User {
     firstname: string | null,

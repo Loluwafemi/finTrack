@@ -12,6 +12,8 @@ import { config } from 'dotenv';
 // cloud
 import { drizzle as cloud, VercelPgDatabase} from "drizzle-orm/vercel-postgres";
 import { createPool, VercelPool } from '@vercel/postgres';
+import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
+import { drizzle as cloud2, NeonHttpDatabase } from 'drizzle-orm/neon-http';
 
 config({ path: '.env.local' }); // or .env
 
@@ -33,13 +35,27 @@ if (!localdbURL || !clouddbURL! || !clouddbURLPOOL) {
 }
 
 
-const pool = createPool({
-        connectionString: clouddbURLPOOL
-});
+
+
+
+
+
+// const pool = createPool({
+//         connectionString: clouddbURLPOOL
+// });
+
+
+/* 
+  To allow neon to work with drizzle-orm, you need to use the neon-http package.
+  This package provides a drizzle-orm compatible interface for Neon databases.
+  You can use the neon-http package to create a drizzle-orm instance for your Neon database.
+
+*/
+const sql = neon(clouddbURL);
 
 
 // cloud db
-export const verceldb = cloud(pool, {
+export const verceldb = cloud2(sql, {
     schema: schema
 });
 
@@ -53,8 +69,7 @@ export const db = drizzle(client, {
   schema: schema
 })
 
-
-
 export type dbInterface = PostgresJsDatabase<typeof schema> & 
-{ $client: postgres.Sql<{}>;} | VercelPgDatabase<typeof schema> & {
-$client: VercelPool}
+{ $client: postgres.Sql<{}>;} | NeonHttpDatabase<typeof schema> & {
+    $client: NeonQueryFunction<false, false>;
+}

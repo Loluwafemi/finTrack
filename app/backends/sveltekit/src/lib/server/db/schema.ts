@@ -154,13 +154,6 @@ export const usertoDataRelation = relations(user, ({ one, many })=> ({
 
 
 
-// // user => user
-// export const dataToUserRelation = relations(user_data, ({})=> ({
-
-// }))
-
-
-
 // bank -> user
 export const bankToUsersRelation = relations(user_bank, ({ one })=>({
 	user: one(user, {
@@ -217,35 +210,3 @@ export const expenseToBudgetRelation = relations(budget_expense, ({ one })=> ({
         references: [user_budget.budgetid]
     })
 }))
-
-
-
-// // user -> allbudgets
-// export const allBudgetsToUserRelation = relations(user, ({many})=>({
-// 	budget: many(user_budget)
-// }))
-
-
-
-// /*
-// One to Many 
-// 1. user to banks
-// 2. user to budgets
-// 3. user to transactions
-// */
-
-// export const userRelationstoAttachedBanks = relations(user, ({many})=> ({
-//     banks: many(user_bank)
-// }))
-
-// export const userRelationstoBudgets = relations(user, ({many})=> ({
-//     budgets: many(user_budget)
-// }))
-
-// export const userRelationstoTransactions = relations(user, ({many})=> ({
-//     transactions: many(user_transactions)
-// }))
-
-
-
-/* Many to Many */

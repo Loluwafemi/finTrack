@@ -16,7 +16,8 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:generate": "drizzle-kit generate",
 		"db:studio": "drizzle-kit studio",
-		"sys": "npx tsx ./scripts/migrate.ts"
+		"sys": "npx tsx ./scripts/migrate.ts",
+		"sys-neon": "npx tsx ./scripts/migrate-neon.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.49.1",

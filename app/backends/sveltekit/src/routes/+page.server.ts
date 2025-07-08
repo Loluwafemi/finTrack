@@ -8,15 +8,15 @@ import { Budget } from "$lib/server/models/budget";
 
 export const load: PageServerLoad = async (event) => {
     
-    const budgets = new Budget()
-    let allBudget = await budgets.templates()   
+    // const budgets = new Budget()
+    // let allBudget = await budgets.templates()   
     
-    // console.log(allBudget);
+    // // console.log(allBudget);
     
 
-    return {
-        registeredBudget: allBudget
-    }
+    // return {
+    //     registeredBudget: allBudget
+    // }
 };
 
 

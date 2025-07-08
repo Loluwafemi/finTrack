@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1750538127330,
-      "tag": "0000_sudden_clea",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1750961346595,
-      "tag": "0001_conscious_sunset_bain",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1750972142733,
-      "tag": "0002_dry_gladiator",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1750972147170,
-      "tag": "0003_large_gwen_stacy",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1750972279768,
-      "tag": "0004_concerned_kid_colt",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1751223631315,
-      "tag": "0005_slim_apocalypse",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1751224513046,
-      "tag": "0006_tidy_sebastian_shaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1751404721153,
-      "tag": "0007_funny_ozymandias",
+      "when": 1751974923355,
+      "tag": "0000_condemned_ted_forrester",
       "breakpoints": true
     }
   ]

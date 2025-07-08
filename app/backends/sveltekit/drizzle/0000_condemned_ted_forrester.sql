@@ -1,6 +1,7 @@
 CREATE TYPE "public"."accounttype" AS ENUM('user', 'admin', 'superadmin', 'system');--> statement-breakpoint
 CREATE TYPE "public"."bankstatus" AS ENUM('approved', 'pending', 'disabled', 'deleted');--> statement-breakpoint
 CREATE TYPE "public"."budgetstatus" AS ENUM('pending', 'approved', 'declined', 'deleted');--> statement-breakpoint
+CREATE TYPE "public"."transactiontype" AS ENUM('receipt', 'notification', 'activity', 'message', 'log');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('pending', 'approved', 'disabled', 'deleted');--> statement-breakpoint
 CREATE TABLE "banks_receipt_template" (
 	"id" serial NOT NULL,
@@ -84,13 +85,18 @@ CREATE TABLE "user_budget" (
 --> statement-breakpoint
 CREATE TABLE "user_data" (
 	"userid" text NOT NULL,
+	"organization" text DEFAULT 'personal',
+	"organization_name" text,
 	"data" json NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "user_transaction" (
 	"user_id" text NOT NULL,
 	"message" json NOT NULL,
-	"sender_id" text,
+	"type" "transactiontype" NOT NULL,
+	"status" "budgetstatus" NOT NULL,
+	"author" text NOT NULL,
+	"id" text DEFAULT gen_random_uuid() NOT NULL,
 	"updated_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"deleted_at" timestamp with time zone
@@ -102,4 +108,5 @@ ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_userid_fk" FOREIGN KE
 ALTER TABLE "user_bank" ADD CONSTRAINT "user_bank_userid_user_userid_fk" FOREIGN KEY ("userid") REFERENCES "public"."user"("userid") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "user_budget" ADD CONSTRAINT "user_budget_userid_user_userid_fk" FOREIGN KEY ("userid") REFERENCES "public"."user"("userid") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "user_data" ADD CONSTRAINT "user_data_userid_user_userid_fk" FOREIGN KEY ("userid") REFERENCES "public"."user"("userid") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
-ALTER TABLE "user_transaction" ADD CONSTRAINT "user_transaction_user_id_user_userid_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("userid") ON DELETE cascade ON UPDATE cascade;
+ALTER TABLE "user_transaction" ADD CONSTRAINT "user_transaction_user_id_user_userid_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("userid") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "user_transaction" ADD CONSTRAINT "user_transaction_author_user_userid_fk" FOREIGN KEY ("author") REFERENCES "public"."user"("userid") ON DELETE no action ON UPDATE no action;
