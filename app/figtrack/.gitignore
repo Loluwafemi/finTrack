@@ -15,8 +15,6 @@ expo-env.d.ts
 .env
 .gitignore
 
-ios
-android
 
 # macOS
 .DS_Store
