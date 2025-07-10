@@ -38,6 +38,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+        
       },
       "package": "com.femi_android.myexpoapp",
       "edgeToEdgeEnabled": true
