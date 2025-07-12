@@ -409,13 +409,13 @@ export class User {
                     budgets: true,
                     transactions: true
                 }
-            }).then(async (response:any)=>{
-
+            }).then(async (response:any)=>{                
                 if(response){
                                     // let found = response;
                 let transaction = await db.query.protection.findFirst({
                     where: eq(response.userid, protection.userid)
                     })
+
                     if (transaction?.password == password) {{
                         return response
                     }}else{
@@ -478,8 +478,8 @@ export class User {
                 message: {
                     title: "Receipt Upload",
                     text: {
-                        title: (await budgetInfo).transaction?.budgettitle,
-                        name: (await budgetInfo).transaction?.budgetname,
+                        title: (await budgetInfo).data?.budgettitle,
+                        name: (await budgetInfo).data?.budgetname,
                         desc: data.description,
                         expense: data.expenseCategory, 
                         cost: data.cost,

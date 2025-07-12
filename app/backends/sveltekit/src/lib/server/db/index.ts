@@ -2,12 +2,12 @@
 // local
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-
+import * as dotenv from "dotenv";
 import * as schema from './schema';
 import { env } from '$env/dynamic/private';
 
 import { config } from 'dotenv';
-
+dotenv.config()
 
 // cloud
 import { drizzle as cloud, VercelPgDatabase} from "drizzle-orm/vercel-postgres";
