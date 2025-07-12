@@ -31,7 +31,7 @@ export const apiHeaders = new Map()
 
 apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
-apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
+// apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
 apiHeaders.set("Access-Control-Allow-Headers", "Authorization,X-PINGOTHER,X-Requested-With,Content-Type,Accept,X-Custom-header")
 apiHeaders.set("Access-Control-Expose-Headers", "Authorization, X-Custom-header")
@@ -202,8 +202,11 @@ export async function signinREQUEST(data:any) {
             // credentials: 'same-origin',
             redirect: 'follow'
         })
-    console.log(data);
         
+        
+        console.log(response);
+        
+
         const responseClone = response.clone()
 
 
@@ -224,7 +227,7 @@ export async function signinREQUEST(data:any) {
         
         const {status, message } = await output.json()    
         
-        console.log(output);
+        // console.log(output);
             
 
         if (status){

@@ -42,16 +42,15 @@ export default function Authentication() {
         return (
 
             // <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView className='flex flex-row justify-end items-end h-full bg-gray-700 mt-0'>
             <ScrollView>
-            <View style={styles.login}>
-                    <Text>
-                        Login Page
+            <View className='flex flex-col justify-center items-center bg-white p-2 mx-2 rounded-2xl'>
+                    <Text className='text-2xl font-bold text-blue-400 self-start m-3'>
+                        FIGTRACK
                     </Text>
                     <View>
-                        <Text style={[styles.header, styles.headerText]}>Welcome Back</Text>
-                        <Text style={[styles.header, styles.headerDescription]}>Sign in to access your financial aid dashboard</Text>
-
+                        <Text className='self-start mx-3 text-center font-bold mt-3 text-lg'>Welcome Back</Text>
+                        <Text className='text-center text-sm self-start mx-3'>Sign in to your financial aid dashboard</Text>
                         <Formik
                           initialValues={{email: '', password: ''}}
 
@@ -79,7 +78,7 @@ export default function Authentication() {
                             <Text>Email</Text>
                             {/* <Field name="email" type="email" /> */}
                             <TextInput 
-                            style={styles.formInput}
+                            className='p-4 border border-gray-500 rounded-xl mt-2'
                             placeholder='name@university.edu.com'
                             value={values.email}
                             onBlur={handleBlur('email')}
@@ -89,7 +88,7 @@ export default function Authentication() {
                         <View style={styles.formItem}>
                             <Text>Password</Text>
                             <TextInput 
-                            style={styles.formInput}
+                            className='p-4 border border-gray-500 rounded-xl mt-2'
                             placeholder='********'
                             textContentType='newPassword'
                             value={values.password}
@@ -102,31 +101,32 @@ export default function Authentication() {
                         </Text>: ''}
                         
                         <View style={[styles.formOptionsItems]}>
-                            <View style={styles.formOptions}>
+                            {/* <View style={styles.formOptions}>
                                 <Checkbox style={ {margin: 3} } />
                                 <Text>Remember me</Text>
-                            </View>
+                            </View> */}
             
                             <View style={styles.formOptions}>
                                 <Link href={'./forgot'}>Forgot password?</Link>
                             </View>
                         </View>
-                        <View style={[styles.formOptionsItems]}>
+                        <View className='flex flex-col items-center my-2'>
                             <TouchableOpacity 
                               onPress={handleSubmit}
-                              style={styles.formSubmit}>
-                            <Text style={styles.formSubmitText}>Sign In</Text>
+                              className='p-2 bg-gray-700 flex flex-row justify-center w-full rounded-xl'>
+                            <Text className='text-white font-bold text-lg'>Sign In</Text>
                             </TouchableOpacity>
                         </View>
             
-                        <View style={[styles.horizontal]}>
+                        <View className='my-2 border border-gray-700'>
                         </View>
             
-                        <View style={[styles.formOptionsItems]}>
-                            <TouchableOpacity style={styles.formRegister}
+                        <View className='flex flex-row justify-between items-center mt-2'>
+                            <TouchableOpacity
+                            className='p-2 bg-white flex flex-row justify-center w-full rounded-xl border border-gray'
                             onPress={()=> navigation.navigate('./signup')}
                             >
-                            <Text style={styles.formRegisterText}>Sign Up</Text>
+                            <Text className='text-gray-700 font-bold text-lg'>Sign Up</Text>
                             </TouchableOpacity>
                         </View>
                         

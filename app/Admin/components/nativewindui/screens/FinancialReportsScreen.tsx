@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SkeletonBase } from "../SkeletonBase";
 
 // Financial Reports Screen
@@ -15,10 +15,7 @@ export function FinancialReportsScreen() {
           <Text className="text-lg font-semibold mb-3">Report Types</Text>
           <View className="flex-row flex-wrap gap-3">
             {[
-              "Income Statement",
-              "Balance Sheet",
-              "Cash Flow",
-              "Budget Report",
+              "Expense Report",
             ].map((report) => (
               <TouchableOpacity
                 key={report}

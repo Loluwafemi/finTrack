@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Text, View, ScrollView, RefreshControl, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as Progress from "react-native-progress";
+import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
-import { Pressable } from "react-native";
+import * as Progress from "react-native-progress";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { useColorScheme } from "~/lib/useColorScheme";
 import { COLORS } from "~/theme/colors";
 
@@ -149,7 +149,7 @@ export function GrantMonitoringScreen() {
           </View>
 
 
-          <View className="mb-6">
+          <View className="mb-6 hidden">
             <Text
               className="text-lg font-semibold mb-4"
               style={{ color: colors.foreground }}
@@ -203,7 +203,7 @@ export function GrantMonitoringScreen() {
           </View>
 
 
-          <View className="mb-6">
+          <View className="mb-6 hidden">
             <SelectList
               placeholder="Filter by status"
               setSelected={setSelectedFilter}
@@ -224,7 +224,7 @@ export function GrantMonitoringScreen() {
           </View>
 
 
-          <View className="mb-6">
+          <View className="mb-6 hidden">
             <View className="flex-row items-center justify-between mb-4">
               <Text
                 className="text-lg font-semibold"

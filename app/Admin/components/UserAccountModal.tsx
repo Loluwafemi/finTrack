@@ -1,16 +1,15 @@
+import { unitUserType } from "@/lib/auth";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
   Dimensions,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { COLORS } from "../theme/colors";
-import { unitUserType } from "@/lib/auth";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -48,7 +47,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
   const { isDarkColorScheme } = useColorScheme();
   const currentColors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const [selectedTab, setSelectedTab] = useState<string>("overview");
-
+  
   // Format currency in Nigerian Naira
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat("en-NG", {
@@ -174,7 +173,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
             borderBottomColor: currentColors.border,
           }}
         >
-          {["overview", "activities", "settings"].map((tab) => (
+          {["overview", "expenses", "settings"].map((tab) => (
             <TouchableOpacity
               key={tab}
               className="flex-1 py-3"
@@ -206,7 +205,8 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
         {/* Content */}
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {selectedTab === "overview" && (
-            <View className="p-4" style={{ gap: 16 }}>
+            <View className="flex flex-row">
+            <View className="p-4 bg-blue-500 w-2/6 h-8/9" style={{ gap: 16}}>
               {/* User Profile Section */}
               <View
                 className="p-4 rounded-lg border"
@@ -369,7 +369,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
 
               {/* Banking Information Section */}
               {userAccount.data && (
-                <View
+              <View
                   className="p-4 rounded-lg border"
                   style={{
                     backgroundColor: currentColors.card,
@@ -444,12 +444,19 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                       </Text>
                     </View>
                   </View>
-                </View>
+              </View>
               )}
             </View>
+
+            <View className="p-4 bg-blue-500 w-4/6 flex flex-row justify-center items-center">
+              <Text className="text-white">coming soon.....</Text>
+
+            </View>
+            </View>
+            
           )}
 
-          {selectedTab === "activities" && (
+          {selectedTab === "expenses" && (
             <View className="p-4">
               <View
                 className="p-4 rounded-lg border"
@@ -462,7 +469,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                   className="font-semibold text-lg mb-4"
                   style={{ color: currentColors.foreground }}
                 >
-                  Recent Activities
+                  All Expense
                 </Text>
 
                 {/* Activities will be loaded from API */}
@@ -477,13 +484,13 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                     className="text-sm font-medium mb-2"
                     style={{ color: currentColors.textSecondary }}
                   >
-                    No activities available
+                    Coming soon....
                   </Text>
                   <Text
                     className="text-xs"
                     style={{ color: currentColors.textSecondary }}
                   >
-                    User activities will be displayed here when available from the API
+                    User expenses will be displayed...
                   </Text>
                 </View>
               </View>

@@ -5,6 +5,27 @@
 ## Run the server locally on 127.0.0.1:port/ make sure you reverse the connection. esle api-request-header will return undefined
 
 
+## Reverse the port to ensure the emulator gets access accross 
+
+
+1. to show all configured port proxy rules in netsh, use the command
+ `netsh interface portproxy show all`
+
+2. `netsh interface portproxy delete v4tov4 listenport=8080`:
+This command specifically deletes the IPv4 port proxy rule listening on port 8080.
+
+
+3. `netsh interface portproxy reset`: This command resets the portproxy configuration to its default state, effectively deleting all existing rules. 
+
+
+4. Then reverse the host to a secure one.
+
+> map the backend[PORT:5173] to another port accessible to android and admin PORT:8080
+
+`netsh interface portproxy add v4tov4 connectaddress=127.0.0.1 connectport=8081 listenaddress=localhost listenport=8081 protocol=tcp`
+
+
+
 > **Professional Financial Tracking System - Administrative Interface**
 
 A comprehensive React Native administrative dashboard built with Expo Router, designed for managing financial tracking operations, user accounts, and system-wide configurations. This application serves as the central control hub for the FInTrack ecosystem.
