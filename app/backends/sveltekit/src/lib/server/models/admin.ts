@@ -1,29 +1,8 @@
-import { desc, eq } from "drizzle-orm";
-import { verceldb, db as localdb, type dbInterface } from "../db";
+import { desc, eq, isNotNull } from "drizzle-orm";
 import { Budget } from "./budget"
 import { user, user_budget, user_data, user_transactions } from "../db/schema";
 import { User, type transactionTypes } from "./user";
-
-
-let db: dbInterface;
-
-
-try {
-		if(await verceldb.query.user.findFirst()){
-			db = verceldb
-		}else{
-			// log this
-			throw new Error('Can not connect to the cloud: USER'); 
-		}
-	// log this
-	console.log("cloud connection not established Established, Connecting locally:ADMIN.");
-} catch (error) {
-	db = localdb
-	// log this
-	console.log("local connection established Established, Connecting locally:ADMIN.");
-}
-
-
+import db from "./index";
 
 
 
@@ -57,12 +36,21 @@ export class Admin{
     }
 
 
-    async OrganizationAccounts(organization_name:any){
+    async OrganizationAccounts(organization_name:any, isSystem:boolean=false){
         let transaction;
 
-        let organization = await db.select().from(user_data)
-        .where(eq(user_data.organization_name, organization_name))
-        .as("organization");
+
+        let organization;
+        if (isSystem) {
+             organization = await db.select().from(user_data)
+                            // .where(isNotNull(user_data.organization))
+                            .as("organization");
+        }else{
+            organization = await db.select().from(user_data)
+                            .where(eq(user_data.organization_name, organization_name))
+                            .as("organization");
+        }
+         
 
         let organization_members = await db.select().from(user).leftJoin(organization, eq(user.userid, organization.id)).then((members)=>{
             let validMembers: typeof members = []
@@ -91,18 +79,27 @@ export class Admin{
 
     }
 
-    async organizationTransactions(organization_name:any){
+    async organizationTransactions(organization_name:any, isSystem:boolean=false){
         
         let transaction;
 
         // select members only
-        let organization_members = await db.select().from(user_data)
-        .where(eq(user_data.organization_name, organization_name))
-        .as("organization");        
-        
+        let organization_members;
+        if (isSystem) {
+            organization_members = await db.select().from(user_data)
+            // .where(isNotNull(user_data.organization))
+            .as("organization");
+            
+        }else{
+            organization_members = await db.select().from(user_data)
+            .where(eq(user_data.organization_name, organization_name))
+            .as("organization"); 
+        }
+
         // select members data
-        let organization_transaction = await db.select().from(user_transactions).leftJoin(organization_members, eq(user_transactions.author, organization_members.id)).orderBy(desc(user_transactions.created_at))
-        // uncomment this later
+        let organization_transaction = await db.select().from(user_transactions)
+        .leftJoin(organization_members, eq(user_transactions.author, organization_members.id))
+        .orderBy(desc(user_transactions.created_at))
         .then((members)=>{
             let validMembers: typeof members = []
             if (members.length > 0) {
@@ -126,13 +123,21 @@ export class Admin{
 
 
     // all members organization budget sort by status: pending|approved|declined
-    async organizationBudgets(organization_name:any){
+    async organizationBudgets(organization_name:any, isSystem:boolean=false){
         
         let transaction;
 
         // select members only
-        let organization_members = await db.select().from(user_data)
-        .where(eq(user_data.organization_name, organization_name)).as("organization");
+        let organization_members
+        if (isSystem) {
+            organization_members = await db.select().from(user_data)
+            // .where(isNotNull(user_data.organization)).as("organization");
+        }else{
+            organization_members = await db.select().from(user_data)
+            .where(eq(user_data.organization_name, organization_name)).as("organization");
+        }
+
+
 
         // select members data
         let organization_budget = await db.select().from(user_budget).leftJoin(organization_members, eq(user_budget.userid, organization_members.id))
@@ -144,6 +149,17 @@ export class Admin{
         return { status: true, data: organization_budget }        
     }
 
+
+
+
+
+
+
+
+
+
+
+    
     // return user with the selected activity
     async findMemberWithActivity(activityId: string, userid: string){
         let transaction;

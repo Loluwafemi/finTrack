@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Formik } from 'formik';
 import { TextInput } from 'react-native';
 import { Icon } from '@roninoss/icons';
+import { useEffect, useReducer, useState } from 'react';
+import { Auth } from '~/lib/func/tailored';
 
 /* 
 
@@ -24,9 +26,64 @@ Note all web pagemlink are defined in the google parse link. the button refers t
 
 */
 
+type UserProfile = { 
+  "accounttype": string | null, 
+  "created_at": string | null, 
+  "data": { 
+    "data": object[] | null, 
+    "id": string | null, 
+    "organization": string | null, 
+    "organization_name": string | null 
+  }, 
+  "deleted_at": string | null, 
+  "email": string | null, 
+  "firstname": string | null, 
+  "id": string | null, 
+  "lastname": string | null, 
+  "status": string | null, 
+  "updated_at": string | null, 
+  "userid": string | null, 
+  "username": string | null
+}
+
+
+
 export default function UsersSettings() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const [profile, setProfile] = useState<UserProfile>({
+    accounttype: null,
+    created_at: null,
+    data: {
+      data: [],
+      id: null,
+      organization: null,
+      organization_name: null
+    },
+    deleted_at: null,
+    email: null,
+    firstname: null,
+    id: null,
+    lastname: null,
+    status: null,
+    updated_at: null,
+    userid: null,
+    username: null  
+  })
+
+  const userObject = new Auth()
+
+  useEffect(() =>{
+    const collectProfile = async () => {
+      const profileData = await userObject.profile()
+        setProfile(profileData)
+    }
+
+    collectProfile();
+      // This function will collect user profile information from the backend
+  })
+
+
 
   return (
           <SafeAreaView className='p-2'>
@@ -46,14 +103,17 @@ export default function UsersSettings() {
                     <View className='mt-8'>
                       <Text>First Name: </Text>
                       <TextInput
+                      value={profile.firstname!}
                       readOnly={true} 
                       className='border text-gray-500 py-4 px-2 my-1'
-                      placeholder='Enter First name' />
+                      placeholder='Enter First name' 
+                      />
                     </View>
 
                     <View className='mt-1'>
                       <Text>Last Name: </Text>
                       <TextInput
+                      value={profile.lastname!}
                       readOnly={true} 
                       className='border text-gray-500 py-4 px-2 my-1'
                       placeholder='Enter Last name' />
@@ -62,6 +122,7 @@ export default function UsersSettings() {
                     <View className='mt-1'>
                       <Text>Email: </Text>
                       <TextInput
+                      value={profile.email!}
                       readOnly={true} 
                       className='border text-gray-500 py-4 px-2 my-1'
                       placeholder='Enter email' />
@@ -70,6 +131,7 @@ export default function UsersSettings() {
                     <View className='mt-1'>
                       <Text>Status: </Text>
                       <TextInput
+                      value={profile.status!}
                       readOnly={true} 
                       className='border text-gray-500 py-4 px-2 my-1'
                       placeholder='Status' />
@@ -78,6 +140,7 @@ export default function UsersSettings() {
                     <View className='mt-1'>
                       <Text>Registered as: </Text>
                       <TextInput
+                      value={profile.data.organization!}
                       readOnly={true} 
                       className='border text-gray-500 py-4 px-2 my-1'
                       placeholder='Personal or Institution' />
@@ -86,6 +149,7 @@ export default function UsersSettings() {
                     <View className='mt-1'>
                       <Text>Organization: </Text>
                       <TextInput
+                      value={profile.data.organization_name!}
                       readOnly={true} 
                       className='border text-gray-500 py-4 px-2 my-1'
                       placeholder='Institution name' />
@@ -95,6 +159,7 @@ export default function UsersSettings() {
                       <View className='w-[40%] mx-1'>
                         <Text>Joined at: </Text>
                         <TextInput
+                        value={new Date(profile.created_at!).toDateString()}
                         readOnly={true} 
                         className='border text-gray-500 py-4 px-2 my-1'
                         placeholder='Date Time' />
@@ -104,6 +169,7 @@ export default function UsersSettings() {
                       <View className='w-[40%] mx-1'>
                         <Text>Last Modified at: </Text>
                         <TextInput
+                        value={new Date(profile.updated_at!).toDateString()}
                         readOnly={true} 
                         className='border text-gray-500 py-4 px-2 my-1'
                         placeholder='Date Time' />

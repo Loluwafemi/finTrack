@@ -1,25 +1,9 @@
 import { and, asc, desc, eq } from "drizzle-orm";
-import { verceldb, db as localdb, type dbInterface } from "../db";
 import { protection, user, user_bank, user_budget, user_data, user_transactions } from "../db/schema";
 import { Budget } from "./budget";
 import { Transactions } from "./transaction";
+import db from "./index";
 
-let db:dbInterface;
-
-try {
-        if(await verceldb.query.user.findFirst()){
-            db = verceldb
-        }else{
-            // log this
-            throw new Error('Can not connect to the cloud: USER'); 
-        }
-    // log this
-    console.log("cloud connection not established Established, Connecting locally:USER.");
-} catch (error) {
-    db = localdb
-    // log this
-    console.log("local connection established Established, Connecting locally:USER.");
-}
 
 export interface User {
     firstname: string | null,
@@ -339,7 +323,7 @@ export class User {
                     data: true,
                     banks: true,
                     budgets: true,
-                    transactions: true
+                    transactions: true,
                 }
             })
             if(!transaction) return false
@@ -361,9 +345,9 @@ export class User {
                 where: eq(user.userid, userid),
                 with: {
                     data: true,
-                    banks: true,
                     budgets: true,
-                    transactions: true
+                    transactions: true,
+                    banks: true
                 }
             })
         }else{
@@ -425,13 +409,13 @@ export class User {
                     budgets: true,
                     transactions: true
                 }
-            }).then(async (response:any)=>{
-
+            }).then(async (response:any)=>{                
                 if(response){
                                     // let found = response;
                 let transaction = await db.query.protection.findFirst({
                     where: eq(response.userid, protection.userid)
                     })
+
                     if (transaction?.password == password) {{
                         return response
                     }}else{
@@ -494,8 +478,8 @@ export class User {
                 message: {
                     title: "Receipt Upload",
                     text: {
-                        title: (await budgetInfo).transaction?.budgettitle,
-                        name: (await budgetInfo).transaction?.budgetname,
+                        title: (await budgetInfo).data?.budgettitle,
+                        name: (await budgetInfo).data?.budgetname,
                         desc: data.description,
                         expense: data.expenseCategory, 
                         cost: data.cost,

@@ -1,10 +1,10 @@
 import { Icon } from '@roninoss/icons';
 import { Link } from 'expo-router';
-import { Platform, View, type ViewStyle } from 'react-native';
+import { Platform, View, Text, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '~/components/nativewindui/Button';
-import { Text } from '~/components/nativewindui/Text';
+
 import { useColorScheme } from '~/lib/useColorScheme';
 
 const ROOT_STYLE: ViewStyle = { flex: 1, backgroundColor: 'white' };
@@ -17,32 +17,19 @@ export default function WelcomeConsentScreen() {
     <SafeAreaView style={ROOT_STYLE}>
       <View className="mx-auto max-w-sm flex-1 justify-between gap-4 px-8 py-4 ">
         <View className="ios:pt-8 pt-12">
-          <Text variant="largeTitle" className="ios:text-left ios:font-black text-center font-bold">
+          <Text className="text-4xl text-center font-bold">
             Welcome to
           </Text>
+
           <Text
-            variant="largeTitle"
-            className="ios:text-left ios:font-black text-primary text-center font-bold">
+            className="text-4xl text-primary text-center font-bold">
             FIGTRACK
           </Text>
-          <Text>Your Trusted Partner in Financial Clarity</Text>
+          <Text className='text-center'>Your Trusted Partner in Financial Clarity</Text>
         </View>
         <View className="gap-8">
-          {FEATURES.map((feature) => (
-            <View key={feature.title} className="flex-row gap-4">
-              <View className="pt-px">
-                <Icon
-                  name={feature.icon}
-                  size={38}
-                  color={colors.primary}
-                  ios={{ renderingMode: 'hierarchical' }}
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="font-bold">{feature.title}</Text>
-                <Text variant="footnote">{feature.description}</Text>
-              </View>
-            </View>
+          {FEATURES.map((feature, index) => (
+            <FeatureContent key={index} feature={feature} colors={colors} />
           ))}
         </View>
         <View className="gap-4">
@@ -53,16 +40,16 @@ export default function WelcomeConsentScreen() {
               color={colors.primary}
               ios={{ renderingMode: 'hierarchical' }}
             />
-            <Text variant="caption2" className="pt-1 text-center">
+            <Text className="text-[11px] leading-4 pt-1 text-center">
               By pressing continue, you agree to our{' '}
               <Link href="/">
-                <Text variant="caption2" className="text-primary">
+                <Text className="text-[11px] leading-4 text-primary">
                   Terms of Service
                 </Text>
               </Link>{' '}
               and that you have read our{' '}
               <Link href="/">
-                <Text variant="caption2" className="text-primary">
+                <Text className="text-[11px] leading-4 text-primary">
                   Privacy Policy
                 </Text>
               </Link>
@@ -72,7 +59,7 @@ export default function WelcomeConsentScreen() {
             <Button 
               size={Platform.select({ ios: 'lg', default: 'md' })}
               >
-              <Text>Continue</Text>
+              <Text className='text-white'>Continue</Text>
             </Button>
           </Link>
         </View>
@@ -98,3 +85,26 @@ const FEATURES = [
     icon: 'chart-timeline-variant',
   },
 ] as const;
+
+
+
+
+const FeatureContent = ({ feature, colors }:{ feature: {title:string, icon:any, description: string}, colors: any })=> {
+
+
+  return ( 
+            <View key={feature.title} className="flex-row gap-4">
+              <View className="pt-px">
+                <Icon
+                  name={feature.icon}
+                  size={38}
+                  color={colors.primary}
+                  ios={{ renderingMode: 'hierarchical' }}
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="font-bold">{feature.title}</Text>
+                <Text className='text-[13px] leading-5'>{feature.description}</Text>
+              </View>
+            </View>)
+}

@@ -70,7 +70,7 @@ export const PAGEMIDDLEWARE = (pagename:string, user_accounttype: "admin" | "sup
 
 
     if (user_accounttype === 'system') {
-      let finder = super_admin_accessible_page.find((value)=> value === pagename)
+      let finder = system_accessible_page.find((value)=> value === pagename)
 
       return finder === pagename
   }

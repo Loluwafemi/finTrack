@@ -295,7 +295,6 @@ export class Auth {
         let transaction;
 
         transaction = await GetrequestHandler({url: '/api/auth/data'})
-        
         if (transaction.status) {
             return transaction.data
         }

@@ -14,12 +14,12 @@ import ExpoCheckbox from 'expo-checkbox/build/ExpoCheckbox';
 function Personal (
     { validation }: any ){
     return (
-        <View style={formStyle.form}>
+        <View className='p-1'>
 
             <View style={formStyle.formItem}>
-                <Text>First Name</Text>
+                <Text className='font-bold text-md'>First Name</Text>
                 <TextInput 
-                style={formStyle.formInput}
+                className='p-4 border border-gray-500 rounded-xl mt-2'
                 placeholder='Davis'
                 onBlur={validation.handleBlur('firstname')}
                 onChangeText={validation.handleChange('firstname')}
@@ -31,9 +31,9 @@ function Personal (
             </View>
 
             <View style={formStyle.formItem}>
-                <Text>Last Name</Text>
+                <Text className='font-bold text-md'>Last Name</Text>
                 <TextInput 
-                style={formStyle.formInput}
+                className='p-4 border border-gray-500 rounded-xl mt-2'
                 placeholder='Jones'
                 onBlur={validation.handleBlur('lastname')}
                 onChangeText={validation.handleChange('lastname')}
@@ -45,9 +45,9 @@ function Personal (
             </View>
 
             <View style={formStyle.formItem}>
-                <Text>Email</Text>
+                <Text className='font-bold text-md'>Email</Text>
                 <TextInput 
-                style={formStyle.formInput}
+                className='p-4 border border-gray-500 rounded-xl mt-2'
                 placeholder='youremail@email.com'
                 onBlur={validation.handleBlur('email')}
                 onChangeText={validation.handleChange('email')}
@@ -59,9 +59,9 @@ function Personal (
             </View>
 
             <View style={formStyle.formItem}>
-                <Text>Password</Text>
+                <Text className='font-bold text-md'>Password</Text>
                 <TextInput 
-                style={formStyle.formInput}
+                className='p-4 border border-gray-500 rounded-xl mt-2'
                 placeholder='********'
                 onBlur={validation.handleBlur('password')}
                 onChangeText={validation.handleChange('password')}
@@ -96,7 +96,7 @@ function Organization ({ validation }: any){
             <View style={formStyle.form}>
                 <View style={formStyle.formItem}>
                     <Text>Select Organization</Text>
-                    <SelectList 
+                    <SelectList
                         setSelected={(val:any) => {                            
                             changeOraganization(val)
                         }
@@ -153,7 +153,7 @@ function Institution ({ validation }: any) {
                 <View style={formStyle.formItem}>
                     <Text>Institution ID</Text>
                     <TextInput 
-                    className='border border-black p-2 rounded-lg'
+                    className='p-3 border border-black p-2 rounded-lg'
                     onChangeText={validation.handleChange('organizationid')}
                     onBlur={validation.handleBlur('organizationid')}
                     value={validation.values.organizationid}
@@ -266,7 +266,7 @@ function Bank ({ validation }){
             
             <View style={formStyle.form}>
                 <View style={formStyle.formItem}>
-                    <Text>Select Bank</Text>
+                    <Text className='font-bold text-md'>Select Bank</Text>
                     <SelectList 
                         setSelected={(val) => {
                                 changeSelectedBank(val)
@@ -280,10 +280,10 @@ function Bank ({ validation }){
                     </SelectList>
                 </View>
 
-                <View style={formStyle.formItem}>
-                    <Text>Bank</Text>
+                <View>
+                    <Text className='font-bold text-md'>Bank</Text>
                     <TextInput 
-                    style={formStyle.formInput}
+                    className='p-4 border border-gray-500 rounded-xl mt-2'
                     placeholder=''
                     readOnly={true}
                     onBlur={validation.handleBlur('bank')}
@@ -297,9 +297,9 @@ function Bank ({ validation }){
                 </View>
 
                 <View style={formStyle.formItem}>
-                    <Text>Account Number</Text>
+                    <Text className='font-bold text-md'>Account Number</Text>
                     <TextInput 
-                    style={formStyle.formInput}
+                    className='p-4 border border-gray-500 rounded-xl mt-2'
                     placeholder='12345678900'
                     onBlur={validation.handleBlur('accountnumber')}
                     onChangeText={validation.handleChange('accountnumber')}
@@ -311,9 +311,9 @@ function Bank ({ validation }){
                 </View>
 
                 <View style={formStyle.formItem}>
-                    <Text>Account Name</Text>
+                    <Text className='font-bold text-md'>Account Name</Text>
                     <TextInput 
-                    style={formStyle.formInput}
+                    className='p-4 border border-gray-500 rounded-xl mt-2'
                     placeholder='Davis Jones'
                     onBlur={validation.handleBlur('accountname')}
                     onChangeText={validation.handleChange('accountname')}
@@ -390,23 +390,25 @@ export class FormNav extends Component{
                     }
                     </View>
 
-                    <View className='flex flex-row justify-between mx-1'>
-                    <TouchableOpacity 
+                    <View className='flex flex-row mx-1'>
+                    <TouchableOpacity
+                        className='p-3 flex-2 w-1/4 border border-gray-700 m-1 rounded-xl'
                         onPress={()=> {
                             this.decreaseNav(this.state)
                         }}
                         // go back
-                    style={[style.navigator, style.navBack]}>
+                    >
                     <Text style={[style.navigatorText, style.navigatorBack]}> Back</Text>
                     </TouchableOpacity>
             
                     <TouchableOpacity 
+                    className='p-3 bg-gray-700 m-1 flex-8 w-3/4 items-end rounded-xl'
                         onPress={()=> {
                             this.increaseNav(this.state)
                         }}
                         // go forward
-                    style={[style.navigator, style.navContinue]}>
-                    <Text style={style.navigatorText}>Continue</Text>
+                    >
+                    <Text className='text-white'>Continue</Text>
                     </TouchableOpacity>
                     </View>
 
@@ -419,7 +421,7 @@ export class FormNav extends Component{
                     // disabled={formObjects.isValid}
                     
                     
-                    className={`flex ${formObjects.isValid? 'bg-green-800': 'bg-red-800'} flex-row justify-center rounded-md p-2 m-4`}
+                    className={`flex ${formObjects.isValid? 'bg-green-800 p-3': 'bg-red-800'} flex-row justify-center rounded-md p-2 m-4`}
                     >
                     <Text style={style.navigatorText}>Submit </Text>
                     </TouchableOpacity>

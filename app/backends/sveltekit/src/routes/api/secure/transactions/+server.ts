@@ -10,17 +10,30 @@ export const GET: RequestHandler = async (event) => {
 
     let response
 
+    // make sure to differentiate between admin and system users
+
     response = {
         ...event.locals.user
     }
+
+
+
     const admin = new Admin()
     let transaction;
     transaction = await admin.admin(response.userid)    
 
-    transaction = await admin.organizationTransactions(transaction?.data.organization_name)
+    if (transaction?.accounttype == 'system') {
+
+        transaction = await admin.organizationTransactions(null, true)
         
-    const responseOutput =  json({...transaction})    
-    
+    }else{
+        transaction = await admin.organizationTransactions(transaction?.data.organization_name, false)
+        console.log("misxalled");
+        
+    }
+
+ 
+    const responseOutput =  json({...transaction})  
     if (!transaction?.status) return responseOutput
     
     return responseOutput;

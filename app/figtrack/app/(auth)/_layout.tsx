@@ -7,9 +7,9 @@ export default function AuthRoot() {
 
   return (
     <Stack
-    
     screenOptions={{
-      title: ""
+      title: "",
+      headerShown: false
     }}>
         <Stack.Screen name='index' />
         <Stack.Screen name='signup' />

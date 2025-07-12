@@ -5,6 +5,7 @@ import { userSignupDataTemplate } from '../auth'
 const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
 const BACKEND_ORIGIN = process.env.EXPO_PUBLIC_ORIGIN
 const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
+const HOST_ADDR = process.env.EXPO_PUBLIC_HOST_ADDR
 
 
 
@@ -31,12 +32,14 @@ export const apiHeaders = new Map()
 
 apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
-apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
+// apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
 apiHeaders.set("Access-Control-Allow-Headers", "Authorization,X-PINGOTHER,X-Requested-With,Content-Type,Accept,X-Custom-header")
 apiHeaders.set("Access-Control-Expose-Headers", "Authorization, X-Custom-header")
 apiHeaders.set('Access-Control-Allow-Credentials', "true");
 apiHeaders.set('Accept', "*/*");
+apiHeaders.set("Origin", HOST_ADDR)
+
 
 
 
@@ -202,8 +205,11 @@ export async function signinREQUEST(data:any) {
             // credentials: 'same-origin',
             redirect: 'follow'
         })
-    console.log(data);
         
+        
+        console.log(response);
+        
+
         const responseClone = response.clone()
 
 
@@ -224,7 +230,7 @@ export async function signinREQUEST(data:any) {
         
         const {status, message } = await output.json()    
         
-        console.log(output);
+        // console.log(output);
             
 
         if (status){

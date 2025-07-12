@@ -200,8 +200,8 @@ export function UserAccountManagementScreen({
 
   return (
     <SkeletonBase
-      title="System Health Dashboard"
-      description="Monitor system performance and user activities"
+      title="System Dashboard"
+      description="Monitor system and user activities"
     >
       <ActivityModal
         visible={isopen}

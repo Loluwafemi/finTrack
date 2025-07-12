@@ -3,10 +3,12 @@
 // use npx ts-node ./scripts/migrate
 // CLOUD
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
+import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import { createClient, VercelClient } from '@vercel/postgres';
 
 import { drizzle as cloud, VercelPgDatabase} from "drizzle-orm/vercel-postgres";
+
 
 import * as schema from '../src/lib/server/db/schema'
 
@@ -20,22 +22,27 @@ import bcrypt from 'bcrypt';
 
 import * as dotenv from "dotenv";
 
+import postgres from 'postgres';
+// import { dbInterface } from "../src/lib/server/db";
+
 dotenv.config()
 
 const env:any = dotenv.config().parsed
 
-const cloud_client = createClient({
-    connectionString: env.XDATEBASE_URL_POSTGRES_URL_NON_POOLING,
-    ssl: true,
-    keepAlive: true,
-    application_name: 'CloudDB'
-})
-
-export const verceldbGenerator = cloud(cloud_client, {
-    schema: schema
-});
+// const cloud_client = createClient({
+//     connectionString: env.LOCAL_DATABASE_URL,
+//     ssl: true,
+//     keepAlive: true,
+//     application_name: 'CloudDB'
+// })
 
 
+// export const verceldbGenerator = cloud(cloud_client, {
+//     schema: schema
+// });
+
+
+// just add the admin to the db
 async function main() {    
     console.log("Initiating migration");
     await cloud_client.connect()
@@ -45,7 +52,7 @@ async function main() {
         // create system default account        
         console.log('Done migrating!');
         console.log('Creating system profile!');
-        await createSystemUser(verceldbGenerator)
+        // await createSystemUser(verceldbGenerator)
         await cloud_client.end()
         console.log("System Account is ready!");
         return output
@@ -54,7 +61,7 @@ async function main() {
         console.log(err); 
     })
 }
-main();
+// main();
 
 
 
@@ -70,8 +77,17 @@ const ACCESS_ENCRYPTION_KEY = process.env.ACCESS_ENCRYPTION_KEY!
     Create system user: privilege over all account
 */
 
-async function createSystemUser(dbConn:VercelPgDatabase<typeof schema> & {
-    $client: VercelClient}){
+const localdbURL = process.env.LOCAL_DATABASE_URL!
+
+const client = postgres(localdbURL);
+
+export const db = drizzle(client, {
+  schema: schema
+})
+
+
+
+async function createSystemUser(dbConn ){
 
     let transaction, credential_id;
 
@@ -102,7 +118,7 @@ async function createSystemUser(dbConn:VercelPgDatabase<typeof schema> & {
     // create user password
 	transaction = (await dbConn.insert(protection).values({
 		userid: transaction.userid,
-		password: await bcrypt.hash(ACCESS_ENCRYPTION_KEY, 10)
+		password: ACCESS_ENCRYPTION_KEY // await bcrypt.hash(ACCESS_ENCRYPTION_KEY, 10)
 	}).returning()).pop()   
 
     if (!transaction) return
@@ -116,8 +132,8 @@ async function createSystemUser(dbConn:VercelPgDatabase<typeof schema> & {
             "organizationid":"SYSTEM"
             },
         id: transaction.userid,
-        organization: 'ALLACCOUNT',
-        organization_name: 'ALLACCOUNT'
+        organization: 'FIGTRACK',
+        organization_name: 'FIGTRACK'
     }).returning()).pop()
 
     credential_id = transaction?.id
@@ -130,3 +146,5 @@ async function createSystemUser(dbConn:VercelPgDatabase<typeof schema> & {
 
 
 }
+
+createSystemUser(db)

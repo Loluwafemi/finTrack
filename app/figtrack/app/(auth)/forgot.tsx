@@ -6,7 +6,7 @@ export default function ForgotAuthentication() {
     const navigation = useRouter()
         return (
             <View style={styles.body}>
-                <Text>Forgot Pass card</Text>
+                <Text>coming soon ...</Text>
             </View>
         );
 }

@@ -1,9 +1,9 @@
 import { unitUserType, User } from "@/lib/auth";
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import UserAccountModal from "../../UserAccountModal";
 import { SearchInput } from "../components/SearchInput";
 import { Pagination } from "./Pagination";
-import UserAccountModal from "../../UserAccountModal";
 
 
 /* 
@@ -287,7 +287,7 @@ export function TransactionMonitoringScreen() {
                 </Text>
 
 
-                <View className="flex-row gap-4 mb-4">
+                <View className="flex-row gap-4 mb-4 hidden">
                   <SearchInput
                     value={searchQuery}
                     onChangeText={dummyfunction}
@@ -378,7 +378,7 @@ export function TransactionMonitoringScreen() {
                 </View>
 
 
-                <View className="flex-row gap-6 mt-4">
+                <View className="flex-row gap-6 mt-4 hidden">
                   <View className="bg-green-50 px-4 py-2 rounded-md border border-green-200">
                     <Text className="text-xs text-green-600 font-medium">
                       ACTIVE
@@ -515,7 +515,7 @@ export function TransactionMonitoringScreen() {
               </View>
             </View>
 
-            <View className="mt-6 mb-4">
+            <View className="mt-6 mb-4 hidden">
               <Pagination
                 currentPage={currentPage}
                 totalItems={10}

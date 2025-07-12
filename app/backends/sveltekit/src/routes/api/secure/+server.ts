@@ -82,8 +82,12 @@ export const GET: RequestHandler = async (event) => {
     let transaction;
     transaction = await admin.admin(response.userid)    
 
-    transaction = await admin.OrganizationAccounts(transaction?.data.organization_name)
-        
+    if (transaction?.accounttype === 'system') {
+            transaction = await admin.OrganizationAccounts(null, true)
+    }else{
+            transaction = await admin.OrganizationAccounts(transaction?.data.organization_name)
+    }
+
     const responseOutput =  json({...transaction})    
     
     if (!transaction?.status) return responseOutput

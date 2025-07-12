@@ -6,6 +6,7 @@ import { User, type UserCredential, type userDataType } from '$lib/server/models
 export const POST: RequestHandler = async (event) => {
 
     REQUESTAUTHENTICATOR(event)
+
     
     // if(event.locals.session) {
     //     // console.log("session active");
@@ -37,7 +38,6 @@ export const POST: RequestHandler = async (event) => {
 
     }
 
-    console.log(userData);
     
     
     const userObj = new User()

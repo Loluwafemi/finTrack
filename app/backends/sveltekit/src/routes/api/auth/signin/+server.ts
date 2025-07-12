@@ -22,9 +22,9 @@ export const POST: RequestHandler = async (event) => {
     // validate data
     if (!email && !password) return json({  status: false, message: "Missing Parameter"})    
     // sign user in and redirect to /api
-        
     // validat user
     const UserModel = new User()
+    
     let transaction:any = await UserModel.validate(email, password)
         
     if (!transaction){

@@ -15,9 +15,8 @@ export const load = (async (event) => {
 
 
 
-    // let extransaction:any = await Users.budgets(user?.userid)
-
-    // // console.log(extransaction.data[8]);
+    let extransaction:any = await Users.users(user?.email)
+    
     
     
     

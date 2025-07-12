@@ -17,7 +17,7 @@ export const GET: RequestHandler = async (event) => {
     
     let transaction = await userObj.get(user?.userid!, 'data')
 
-            
+
 
     response = {
         ...transaction

@@ -38,9 +38,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+        
       },
       "package": "com.femi_android.myexpoapp",
       "edgeToEdgeEnabled": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "74e19681-0777-4350-86b7-a37ac04baa3d"
+      }
+    },
+    "owner": "femi_android"
   }
 }

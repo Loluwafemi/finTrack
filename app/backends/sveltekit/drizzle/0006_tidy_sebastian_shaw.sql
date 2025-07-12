@@ -1,1 +1,0 @@
-ALTER TABLE "user_data" ALTER COLUMN "organization" SET DEFAULT 'personal';

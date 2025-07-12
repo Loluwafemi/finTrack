@@ -8,15 +8,15 @@ import { Budget } from "$lib/server/models/budget";
 
 export const load: PageServerLoad = async (event) => {
     
-    const budgets = new Budget()
-    let allBudget = await budgets.templates()   
+    // const budgets = new Budget()
+    // let allBudget = await budgets.templates()   
     
-    // console.log(allBudget);
+    // // console.log(allBudget);
     
 
-    return {
-        registeredBudget: allBudget
-    }
+    // return {
+    //     registeredBudget: allBudget
+    // }
 };
 
 
@@ -55,7 +55,6 @@ export const actions: Actions = {
 
         const UserModel = new User()
         let transaction:any = await UserModel.users(formData.email)
-        
         if (!transaction){
             console.log("authentication error");
             return ''
@@ -90,8 +89,6 @@ export const actions: Actions = {
         const auth = await event.locals.user
         let transaction = await userObj.addBudget(formData, auth)
 
-        console.log(transaction);
-        
 
         return
         
@@ -109,7 +106,6 @@ export const actions: Actions = {
         const admin = new Admin()
         const auth = await event.locals.user
         transaction = await admin.registerBuget(formData, auth)
-        console.log(transaction);
 
     }
     

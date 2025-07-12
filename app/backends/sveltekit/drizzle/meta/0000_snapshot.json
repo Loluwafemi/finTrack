@@ -1,5 +1,5 @@
 {
-  "id": "c1b348d7-c03e-48de-98bd-5dd0f715d698",
+  "id": "94f37a28-6dc8-435d-86b6-25bd2d6626d7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -544,6 +544,19 @@
           "primaryKey": false,
           "notNull": true
         },
+        "organization": {
+          "name": "organization",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'personal'"
+        },
+        "organization_name": {
+          "name": "organization_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "data": {
           "name": "data",
           "type": "json",
@@ -589,11 +602,32 @@
           "primaryKey": false,
           "notNull": true
         },
-        "sender_id": {
-          "name": "sender_id",
+        "type": {
+          "name": "type",
+          "type": "transactiontype",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "budgetstatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author": {
+          "name": "author",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "updated_at": {
           "name": "updated_at",
@@ -629,6 +663,19 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "cascade"
+        },
+        "user_transaction_author_user_userid_fk": {
+          "name": "user_transaction_author_user_userid_fk",
+          "tableFrom": "user_transaction",
+          "tableTo": "user",
+          "columnsFrom": [
+            "author"
+          ],
+          "columnsTo": [
+            "userid"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -667,6 +714,17 @@
         "approved",
         "declined",
         "deleted"
+      ]
+    },
+    "public.transactiontype": {
+      "name": "transactiontype",
+      "schema": "public",
+      "values": [
+        "receipt",
+        "notification",
+        "activity",
+        "message",
+        "log"
       ]
     },
     "public.user_status": {

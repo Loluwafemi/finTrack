@@ -140,64 +140,68 @@ One to Ones
 7. banks to user     ✅
 */
 
-// user -> user_data|banks|budgets|transactions :done
-export const usertoDataRelation = relations(user, ({ one, many })=> ({
-    data: one(user_data, {
-        fields: [user.userid],
-        references: [user_data.id]
-    }),
-	banks: many(user_bank),
-	budgets: many(user_budget, { relationName: 'budgets' }),
-	transactions: many(user_transactions, { relationName: 'transactions' })
-}))
 
 
+/* 
+
+USER RELTIONS TO ALL
+1. user to banks ✅
+2. user to budgets ✅
+3. user to transactions ✅
+4. user to data ✅
 
 
-// // user => user
-// export const dataToUserRelation = relations(user_data, ({})=> ({
-
-// }))
-
-
-
-// bank -> user
-export const bankToUsersRelation = relations(user_bank, ({ one })=>({
-	user: one(user, {
-		fields: [user_bank.userid],
-		references: [user.userid],
-		relationName: 'user'
+*/
+export const budgetsToUserRelation = relations(user, ({many, one})=>({
+	budgets: many(user_budget, {relationName: 'budgets'}),
+	banks: many(user_bank, {relationName: 'banks'}),
+	transactions: many(user_transactions, {relationName: 'transactions'}),
+	data: one(user_data, {
+		fields: [user.userid],
+		references: [user_data.id],
+		relationName: 'data'
 	})
 }))
 
-
-// ambiguity check: always append if needed
-export const userRelationstoBudgetandTransactions = relations(user, ({ many, one })=>({
-	budgets: many(user_budget, { relationName: 'user' }),
-	transactions: many(user_transactions, { relationName: 'user' }),
-    data: one(user_data, {
-        fields: [user.userid],
-        references: [user_data.id]
-    }),
-	banks: many(user_bank),
-
-}))
-
+/*  User: Budget, Banks, Relation, Transactions */
 export const usertoBudgetRelation = relations(user_budget, ({ one })=>({
 	user: one(user, {
 		fields: [user_budget.userid],
 		references: [user.userid],
-		relationName: 'user'
+		relationName: 'budgets'
 	})
 }))
 
-export const usertoTransactionsRelation = relations(user_transactions, ({ one })=>({
+
+export const userToBankRelation = relations(user_bank, ({one})=>({
 	user: one(user, {
-		fields: [user_transactions.id],
+		fields: [user_bank.userid],
 		references: [user.userid],
-		relationName: 'user'
+		relationName: 'banks'
 	})
 }))
+
+
+export const userToTransactionRelation = relations(user_transactions, ({one})=>({
+	user: one(user, {
+		fields: [user_transactions.author],
+		references: [user.userid],
+		relationName: 'transactions'
+	})
+}))
+
+
+export const userToDataRelation = relations(user_data, ({one})=>({
+	user: one(user, {
+		fields: [user_data.id],
+		references: [user.userid],
+		relationName: 'data'
+	})
+}))
+
+
+
+
 
 
 
@@ -205,7 +209,8 @@ export const usertoTransactionsRelation = relations(user_transactions, ({ one })
 export const budgetToExpenseRelation = relations(user_budget, ({ one })=> ({
     expense: one(budget_expense, {
         fields: [user_budget.budgetid],
-        references: [budget_expense.id]
+        references: [budget_expense.id],
+		relationName: 'expense'
     })
 }))
 
@@ -214,38 +219,13 @@ export const budgetToExpenseRelation = relations(user_budget, ({ one })=> ({
 export const expenseToBudgetRelation = relations(budget_expense, ({ one })=> ({
     budget: one(user_budget, {
         fields: [budget_expense.id],
-        references: [user_budget.budgetid]
+        references: [user_budget.budgetid],
+		relationName: 'budget'
     })
 }))
 
 
-
-// // user -> allbudgets
-// export const allBudgetsToUserRelation = relations(user, ({many})=>({
-// 	budget: many(user_budget)
-// }))
+/*  Relation End */
 
 
 
-// /*
-// One to Many 
-// 1. user to banks
-// 2. user to budgets
-// 3. user to transactions
-// */
-
-// export const userRelationstoAttachedBanks = relations(user, ({many})=> ({
-//     banks: many(user_bank)
-// }))
-
-// export const userRelationstoBudgets = relations(user, ({many})=> ({
-//     budgets: many(user_budget)
-// }))
-
-// export const userRelationstoTransactions = relations(user, ({many})=> ({
-//     transactions: many(user_transactions)
-// }))
-
-
-
-/* Many to Many */
