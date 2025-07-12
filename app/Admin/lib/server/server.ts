@@ -5,6 +5,7 @@ import { userSignupDataTemplate } from '../auth'
 const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
 const BACKEND_ORIGIN = process.env.EXPO_PUBLIC_ORIGIN
 const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
+const HOST_ADDR = process.env.EXPO_PUBLIC_HOST_ADDR
 
 
 
@@ -37,6 +38,8 @@ apiHeaders.set("Access-Control-Allow-Headers", "Authorization,X-PINGOTHER,X-Requ
 apiHeaders.set("Access-Control-Expose-Headers", "Authorization, X-Custom-header")
 apiHeaders.set('Access-Control-Allow-Credentials', "true");
 apiHeaders.set('Accept', "*/*");
+apiHeaders.set("Origin", HOST_ADDR)
+
 
 
 
