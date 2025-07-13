@@ -28,8 +28,6 @@ export const GET: RequestHandler = async (event) => {
         
     }else{
         transaction = await admin.organizationTransactions(transaction?.data.organization_name, false)
-        console.log("misxalled");
-        
     }
 
  

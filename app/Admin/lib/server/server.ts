@@ -2,10 +2,9 @@
 import { MMKV } from 'react-native-mmkv'
 import { userSignupDataTemplate } from '../auth'
 
-const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
-const BACKEND_ORIGIN = process.env.EXPO_PUBLIC_ORIGIN
-const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
-const HOST_ADDR = process.env.EXPO_PUBLIC_HOST_ADDR
+const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS!
+const BACKEND_ORIGIN = process.env.EXPO_PUBLIC_ORIGIN!
+const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION!
 
 
 
@@ -32,15 +31,11 @@ export const apiHeaders = new Map()
 
 apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
-// apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
 apiHeaders.set("Access-Control-Allow-Headers", "Authorization,X-PINGOTHER,X-Requested-With,Content-Type,Accept,X-Custom-header")
 apiHeaders.set("Access-Control-Expose-Headers", "Authorization, X-Custom-header")
 apiHeaders.set('Access-Control-Allow-Credentials', "true");
 apiHeaders.set('Accept', "*/*");
-apiHeaders.set("Origin", HOST_ADDR)
-
-
 
 
 const storage = new MMKV({
@@ -190,7 +185,6 @@ export async function GetRequestHandler(path:{ url: null|string }) {
 
 
 export async function signinREQUEST(data:any) {
-    
     // check if cookie is set
     const cookie = await getData(api_origin_address)
     
@@ -207,9 +201,6 @@ export async function signinREQUEST(data:any) {
         })
         
         
-        console.log(response);
-        
-
         const responseClone = response.clone()
 
 
@@ -442,7 +433,8 @@ export async function hydrate() {
     const request = await fetch(`${backendORIGIN}/api`, {
         headers: Object.fromEntries(apiHeaders.entries()),
         method: 'GET',
-        redirect: 'follow'
+        redirect: 'follow',
+        // credentials: 'include'
     })
     const session = await request.json()    
         

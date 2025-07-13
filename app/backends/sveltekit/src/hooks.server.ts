@@ -2,11 +2,13 @@ import type { Handle } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 
 import { ALLOWED_ORIGIN, API_AUTHORIZATION } from '$env/static/private'
+import { log } from 'console';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 
 	let allowed_origin = ALLOWED_ORIGIN.split(',')
 	let cloneResponse = event.request.clone()
+
 	let theOrigin = allowed_origin.find((value, index)=> value === cloneResponse.headers.get('origin')!)
 	
 	// handle all api request here
@@ -14,13 +16,14 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		// Required for CORS to work
 		if(cloneResponse.method === 'OPTIONS') {
 			const response = await resolve(event);
+
 			return new Response(response.body, {
 				headers: {
 				  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
 				  'Access-Control-Allow-Origin': theOrigin!,
 				  'Access-Control-Allow-Headers': '*',
 				  "Access-Control-Expose-Headers": "Authorization",
-
+					"Access-Control-Max-Age": "86400"
 				},
 				status: 200
 			  });
@@ -31,12 +34,17 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 			
 			const result = await resolve(event);
 
+
 			let resp = new Response(result.body, {
 				headers: result.headers });
+			
 			resp.headers.set("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-header, Set-Cookie, set-cookie")
 			resp.headers.set("Access-Control-Expose-Headers", "X-Custom-header")
 			resp.headers.set("content-type", "application/json")
 			resp.headers.set('Access-Control-Allow-Credentials', "true")
+			resp.headers.set('Access-Control-Allow-Origin', theOrigin!)
+			resp.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+			resp.headers.set('Access-Control-Max-Age', '86400') // 24 hours
 			resp.headers.set('X-Custom-header', resp.headers.getSetCookie().toString())
 			// console.log("res: ", resp);
 			return resp
@@ -45,15 +53,11 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 		if(event.request.method === 'GET') {
 			// add information from the event to the request
-			// event.request.headers.set("Access-Control-Allow-Credentials", "true")			
-			
-			
-			
-			event.request.headers.set("Access-Control-Allow-Origin", theOrigin!)
 			
 			event.request.headers.set("Access-Control-Allow-Headers", `X-Custom-header, ${auth.sessionCookieName}`)
 
 			event.request.headers.set("Access-Control-Expose-Headers", `X-Custom-header, ${auth.sessionCookieName}`)
+			
 
 			
 			// cookie control
@@ -99,6 +103,9 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 			resp.headers.set("content-type", "application/json")
 			resp.headers.set('Access-Control-Allow-Credentials', "true")
 			resp.headers.set('X-Custom-header', resp.headers.getSetCookie().toString())
+			resp.headers.set('Access-Control-Allow-Origin', theOrigin!)
+			resp.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+			resp.headers.set('Access-Control-Max-Age', '86400') 
 
 			return resp
 		}	

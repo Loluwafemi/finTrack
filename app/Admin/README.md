@@ -4,6 +4,10 @@
 
 ## Run the server locally on 127.0.0.1:port/ make sure you reverse the connection. esle api-request-header will return undefined
 
+> To initiate build from git/vercel. Kinly run this url
+
+> https://api.vercel.com/v1/integrations/deploy/prj_sjKaBJhTh2HZ36Sm1G9MhVG3JXdO/7BiVzusvoE
+
 
 ## Reverse the port to ensure the emulator gets access accross 
 
