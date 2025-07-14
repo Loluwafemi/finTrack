@@ -1,7 +1,8 @@
+import SplashScreen from "@/components/SplashScreen";
 import { User } from "@/lib/auth";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useColorScheme } from "../lib/useColorScheme";
 import { getRoute } from "../src/constants/routes";
 import { COLORS } from "../theme/colors";
@@ -12,10 +13,22 @@ export default function Index() {
   const { isDarkColorScheme } = useColorScheme();
   const colors = isDarkColorScheme ? COLORS.dark : COLORS.light;
   const [status, setStatus] = useState(false)
+  const [progress, setProgress] = useState(0);
 
   // use this to navigate about page on prompt request
   // check if cookies / session is active
   useEffect(() => {
+      const progressTimer = setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + 10;
+          if (next >= 100) {
+            clearInterval(progressTimer);
+            return 100;
+          }
+          return next;
+        });
+      }, 150);
+
     let isMounted = true;
     const navigateToDashboard = async () => {
     
@@ -38,20 +51,11 @@ export default function Index() {
     navigateToDashboard();
     return () => {
       isMounted = false;
+      clearInterval(progressTimer);
     };
   }, []);
 
-  return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        <Text style={[styles.loadingText, { color: colors.foreground }]}>
-          {isLoading ? "Loading Admin Dashboard..." : "Redirecting..."}
-        </Text>
-      )}
-    </View>
-  );
+ return <SplashScreen progress={progress} />;
 }
 
 const styles = StyleSheet.create({
