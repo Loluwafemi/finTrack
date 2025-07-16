@@ -2,6 +2,7 @@
 // dependencies for environment
 import * as SecureStore from 'expo-secure-store';
 
+
 const BACKEND_ORIGIN_ADDR = process.env.EXPO_PUBLIC_BACKEND_ORIGINS
 const ORIGIN = process.env.EXPO_PUBLIC_ORIGIN
 const API_AUTHORIZATION = process.env.EXPO_PUBLIC_API_AUTHORIZATION
@@ -34,11 +35,16 @@ export const apiHeaders = new Map()
 
 apiHeaders.set("Authorization", API_AUTHORIZATION)
 apiHeaders.set("content-type", "application/json")
-apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
+// apiHeaders.set("Access-Control-Allow-Origin", "http://192.168.43.107:8081")
 apiHeaders.set("Access-Control-Allow-Methods", "GET, POST")
 apiHeaders.set("Access-Control-Allow-Headers", "content-type, Authorization")
-
 apiHeaders.set("Origin", host_address)
+
+/* 
+assign custom header that represent origin
+this origin is a sub-address of the backend address
+api_origin_address-fintrack
+*/
 
 
 
@@ -48,7 +54,6 @@ export const storeData = async (key:any, value:any) => {
         console.log("cookies has been set");
         
     } catch (e) {
-      // await CookieManager.setFromResponse(backendORIGIN, value);
       console.log(e);
       
       console.log("Couldnt save data");
@@ -71,7 +76,6 @@ export const deleteCookie = async (key:any) => {
 };
 
 export async function signinREQUEST(data:any) {
-    console.log(API_AUTHORIZATION, ORIGIN, BACKEND_ORIGIN_ADDR);
 
     try {
         
@@ -80,10 +84,9 @@ export async function signinREQUEST(data:any) {
             body: JSON.stringify(data),
             method: 'POST',
             credentials: 'same-origin'
-        })
+        })        
         
-        
-        const responseClone = request.clone()
+        const responseClone = request.clone()        
 
         if (!responseClone.ok) {
 

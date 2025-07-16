@@ -5,9 +5,9 @@ import { Icon } from '@roninoss/icons';
 
 const windowHeight = Dimensions.get('window').height
 
-export function BottomSheet ({ children, funcClose }: Readonly<{children: any, funcClose:any}>) {
+export function BottomSheet ({ children, CallisVisible }: Readonly<{children: any, CallisVisible:boolean}>) {
         
-    const [isVisible, changeVisibility] = useState(false)
+    const [isVisible, changeVisibility] = useState(false);
 
     const openBottomSheet = ()=>{
         changeVisibility(true)
@@ -16,7 +16,13 @@ export function BottomSheet ({ children, funcClose }: Readonly<{children: any, f
     const closeBottomSheet = ()=>{
         changeVisibility(false)
     }    
-    
+
+    const handleClose = () => {
+        changeVisibility(false);
+        // if (funcClose) {
+        //     funcClose();
+        // }
+    }
     return (
         <View>
             <TouchableHighlight
@@ -24,7 +30,7 @@ export function BottomSheet ({ children, funcClose }: Readonly<{children: any, f
             >
                 <View className='p-1 flex flex-row justify-center items-center bg-gray-500 rounded'>
                     <Text className='text-white font-bold'>
-                    Add Expense
+                    Open Bottom Sheet
                     </Text>
                     <Icon color='white' name='plus' />
                 </View>
@@ -33,6 +39,7 @@ export function BottomSheet ({ children, funcClose }: Readonly<{children: any, f
                 animationType="slide"
                 transparent={true}
                 visible={isVisible}
+                onRequestClose={handleClose}
             >
                 <View style={styles.bottomSheet}>
 
@@ -51,7 +58,7 @@ export function BottomSheet ({ children, funcClose }: Readonly<{children: any, f
                 </View>
             </Modal>
         </View>
-)
+    )
 }
 
 

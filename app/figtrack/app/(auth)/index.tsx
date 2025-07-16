@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { useRouter, Link } from 'expo-router';
-import { Text, View, StyleSheet, TouchableOpacity,ScrollView, TextInput, Button } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity,ScrollView, TextInput, Button, Image } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Formik } from 'formik';
 import { loginSchema } from '~/lib/func/auth';
 import { signinREQUEST } from '~/lib/server/server';
 import { Auth } from '~/lib/func/tailored';
+import { colorScheme } from 'nativewind';
+import { useColorScheme } from '~/lib/useColorScheme';
+
 
 
 
@@ -38,107 +41,123 @@ export default function Authentication() {
         }, [])
 
         // end fetch
+
+        const {colors} = useColorScheme()
     
         return (
 
             // <SafeAreaProvider>
-            <SafeAreaView className='flex flex-row justify-end items-end h-full bg-gray-700 mt-0'>
-            <ScrollView>
-            <View className='flex flex-col justify-center items-center bg-white p-2 mx-2 rounded-2xl'>
-                    <Text className='text-2xl font-bold text-blue-400 self-start m-3'>
-                        FIGTRACK
-                    </Text>
-                    <View>
-                        <Text className='self-start mx-3 text-center font-bold mt-3 text-lg'>Welcome Back</Text>
-                        <Text className='text-center text-sm self-start mx-3'>Sign in to your financial aid dashboard</Text>
-                        <Formik
-                          initialValues={{email: '', password: ''}}
+            <SafeAreaView
+            style={{backgroundColor: colors.primary}}
+            className='flex bg-white flex-col justify-between items-end h-full mt-0'>
+              <View className='h-[45%] w-full flex flex-row justify-center items-center'>
+                <Image
+                  source={require('~/assets/onboard.png')}
+                  className='w-40 h-40'
+                  style={{resizeMode: 'contain'}}
+                  
+                />
+              </View>
+              <ScrollView>
+              <View className='flex flex-col justify-center items-center bg-white p-1 mx-2 rounded-3xl shadow border-[0.5px]'>
+                      <Text
+                      style={{color: colors.primary}}
+                      className='hidden text-2xl font-bold self-start m-3'>
+                          FIGTRACK
+                      </Text>
+                      <View>
+                          <Text className='mx-3 text-left font-bold px-3 mt-3 text-2xl'>Welcome Back</Text>
+                          <Text className='hidden text-center text-sm self-start mx-3'>Sign in to your financial aid dashboard</Text>
+                          <Formik
+                            initialValues={{email: '', password: ''}}
 
-                          onSubmit={async (value, {setErrors, setSubmitting})=>{
-                            try {
-                              // const jsonString = JSON.stringify(value)
-                              let response = await signinREQUEST(value)
-                              if (response.status) {
-                                
-                                return navigation.navigate('/(dashboard)')
-                              }else{
-                                await setErrors({password: "Invalid Credentials!"})
+                            onSubmit={async (value, {setErrors, setSubmitting})=>{
+                              try {
+                                // const jsonString = JSON.stringify(value)
+                                let response = await signinREQUEST(value)
+                                if (response.status) {
+                                  
+                                  return navigation.navigate('/(dashboard)')
+                                }else{
+                                  await setErrors({password: "Invalid Credentials!"})
+                                }
+                              } catch (error) {
+                                console.log("Error: ", error);
+                              }finally{
+                                setSubmitting(false)
                               }
-                            } catch (error) {
-                              console.log("Error: ", error);
-                            }finally{
-                              setSubmitting(false)
-                            }
-                          }}
-                          validationSchema={loginSchema}
-                        
-                        >{({handleSubmit, handleChange, handleBlur, values, errors, isValidating})=>(
-                        <View style={styles.form}>
-                        <View style={styles.formItem}>
-                            <Text>Email</Text>
-                            {/* <Field name="email" type="email" /> */}
-                            <TextInput 
-                            className='p-4 border border-gray-500 rounded-xl mt-2'
-                            placeholder='name@university.edu.com'
-                            value={values.email}
-                            onBlur={handleBlur('email')}
-                            onChangeText={handleChange('email')}
-                            />
-                        </View>
-                        <View style={styles.formItem}>
-                            <Text>Password</Text>
-                            <TextInput 
-                            className='p-4 border border-gray-500 rounded-xl mt-2'
-                            placeholder='********'
-                            textContentType='newPassword'
-                            value={values.password}
-                            onBlur={handleBlur('password')}
-                            onChangeText={handleChange('password')}
-                            />
-                        </View>
-                        {errors.email || errors.password? <Text className='text-red-500 font-bold px-2'>
-                          Invalid Credential!
-                        </Text>: ''}
-                        
-                        <View style={[styles.formOptionsItems]}>
-                            {/* <View style={styles.formOptions}>
-                                <Checkbox style={ {margin: 3} } />
-                                <Text>Remember me</Text>
-                            </View> */}
-            
-                            <View style={styles.formOptions}>
-                                <Link href={'./forgot'}>Forgot password?</Link>
-                            </View>
-                        </View>
-                        <View className='flex flex-col items-center my-2'>
-                            <TouchableOpacity 
-                              onPress={handleSubmit}
-                              className='p-2 bg-gray-700 flex flex-row justify-center w-full rounded-xl'>
-                            <Text className='text-white font-bold text-lg'>Sign In</Text>
-                            </TouchableOpacity>
-                        </View>
-            
-                        <View className='my-2 border border-gray-700'>
-                        </View>
-            
-                        <View className='flex flex-row justify-between items-center mt-2'>
-                            <TouchableOpacity
-                            className='p-2 bg-white flex flex-row justify-center w-full rounded-xl border border-gray'
-                            onPress={()=> navigation.navigate('./signup')}
-                            >
-                            <Text className='text-gray-700 font-bold text-lg'>Sign Up</Text>
-                            </TouchableOpacity>
-                        </View>
-                        
-                        </View>
-                        )}
-                      </Formik>
+                            }}
+                            validationSchema={loginSchema}
+                          
+                          >{({handleSubmit, handleChange, handleBlur, values, errors, isValidating})=>(
+                          <View style={styles.form}>
+                          <View style={styles.formItem}>
+                              <Text>Email</Text>
+                              {/* <Field name="email" type="email" /> */}
+                              <TextInput 
+                              className='p-4 border border-gray-500 rounded-xl mt-2'
+                              placeholder='name@email.com'
+                              value={values.email}
+                              onBlur={handleBlur('email')}
+                              onChangeText={handleChange('email')}
+                              />
+                          </View>
+                          <View style={styles.formItem}>
+                              <Text>Password</Text>
+                              <TextInput 
+                              className='p-4 border border-gray-500 rounded-xl mt-2'
+                              placeholder='********'
+                              textContentType='newPassword'
+                              value={values.password}
+                              onBlur={handleBlur('password')}
+                              onChangeText={handleChange('password')}
+                              secureTextEntry={true}
+                              />
+                          </View>
+                          {errors.email || errors.password? <Text className='text-red-500 font-bold px-2'>
+                            Invalid Credential!
+                          </Text>: ''}
+                          
+                          <View style={[styles.formOptionsItems]}>
+                              {/* <View style={styles.formOptions}>
+                                  <Checkbox style={ {margin: 3} } />
+                                  <Text>Remember me</Text>
+                              </View> */}
+              
+                              <View style={styles.formOptions}>
+                                  <Link href={'./forgot'}>Forgot password?</Link>
+                              </View>
+                          </View>
+                          <View className='flex flex-col items-center my-2'>
+                              <TouchableOpacity 
+                                style={{backgroundColor: colors.primary}}
+                                onPress={handleSubmit}
+                                className='p-2 flex flex-row justify-center w-full rounded-xl'>
+                              <Text className='text-white font-bold text-lg'>Sign In</Text>
+                              </TouchableOpacity>
+                          </View>
+              
+                          <View className='my-2 border border-gray-700'>
+                          </View>
+              
+                          <View className='flex flex-row justify-between items-center mt-2'>
+                              <TouchableOpacity
+                              className='p-2 bg-white flex flex-row justify-center w-full rounded-xl border border-gray'
+                              onPress={()=> navigation.navigate('./signup')}
+                              >
+                              <Text className='text-gray-700 font-bold text-lg'>Sign Up</Text>
+                              </TouchableOpacity>
+                          </View>
+                          
+                          </View>
+                          )}
+                        </Formik>
 
-            
-                    </View>
-            </View>
+              
+                      </View>
+              </View>
 
-            </ScrollView>
+              </ScrollView>
             </SafeAreaView>
             // </SafeAreaProvider>
             

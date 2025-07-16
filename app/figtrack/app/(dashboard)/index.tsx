@@ -1,5 +1,5 @@
 import '~/global.css';
-import { useInitialAndroidBarSync } from '~/lib/useColorScheme';
+import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text, View } from 'react-native';
 import { Acivity, Settings, UserHome, UserRecord } from '~/components/nativewindui/bottomTab'
@@ -33,6 +33,8 @@ export default function UsersDashboardIndex() {
         };
         getSession();
     }, [])
+
+    const { colors } = useColorScheme()
       
   useInitialAndroidBarSync();
   return (
@@ -47,14 +49,14 @@ export default function UsersDashboardIndex() {
                     firstname={isAuth?.firstname} username={isAuth?.username} navigation={navigation} />
                   },
                   drawerStyle: {
-                    backgroundColor: 'black',
+                    backgroundColor: colors.primary,
                     elevation: 7
                   },
                   drawerLabelStyle: {
-                    color: 'white',
+                    color: 'black',
                   },
-                  drawerActiveTintColor: 'gray',
-                  drawerActiveBackgroundColor: 'gray'
+                  drawerActiveTintColor: 'white',
+                  drawerActiveBackgroundColor: 'white'
                   
                   
                 })}

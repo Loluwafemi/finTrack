@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { api_origin_address, apiHeaders, backendORIGIN, getData, GetrequestHandler, requestHandler, saveBudget, SessionUser } from "~/lib/server/server";
+import { SaveToHost } from "../generator";
 
 
 
@@ -302,6 +303,7 @@ export class Auth {
     }
 
     async generateBudgetReport(data){
+
         let transaction;
         let auth = await this.user()
 
@@ -309,18 +311,24 @@ export class Auth {
             auth: auth,
             data: data
         }        
-
+        
         transaction = await requestHandler({ data: outgoing, url: '/api/service/report_generator' })
 
         if (transaction) {
             if (!transaction.status) return transaction
-
-            return transaction
+            let filename = String(`${data.budget}_${new Date().toString()}`)
+            let newfilename = filename.replace(/[ :+]/g, '_')
+            const operation = await SaveToHost(transaction.data, newfilename)
+            return operation
             
         }
+
+        
         
         
     }
+
+
 
 }
 

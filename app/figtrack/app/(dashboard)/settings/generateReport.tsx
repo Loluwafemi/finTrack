@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { generateOnlyExpenseFromObject } from '../upload';
 import { generateReportSchema } from '~/lib/func/auth';
 import { date } from 'yup';
+import { openFile, showListOfReport } from '~/lib/func/generator';
 
 /* 
 
@@ -41,6 +42,7 @@ export default function UsersSettings() {
 
   const [ accounttype, assignAccounttype ] = useState<"personal"|"institution"|"Institution"|null>(null)
 
+  const [sheetLists, getSheetList] = useState<string[]>([])
     useEffect(()=>{
         const gettTransactions = async () => {
         let transactions: {budgets: budgetList[], expenses: expensesTemplate[], balances: balacesTemplate} = await userObject.records('')  
@@ -56,6 +58,14 @@ export default function UsersSettings() {
         selectedBudget(expenses)
 
         };
+
+        const getAllGeneratedReport = async () => {
+          let list = await showListOfReport()
+
+          getSheetList(list)
+        }
+
+        getAllGeneratedReport()
         gettTransactions();
     }, [])
 
@@ -63,9 +73,9 @@ export default function UsersSettings() {
     const [ reportMessage, setReportMessage ] = useState('')
 
   return (
-          <SafeAreaView className='p-2'>
+          <SafeAreaView className='p-2 h-full bg-white'>
             {/* container */}
-            <View className='w-full h-full  rounded-xl'>
+            <View className='w-full rounded-xl'>
               {/* Display all information about user using formik form and add a submit button to allow user to edit and submit at a go */}
 
               <ScrollView>
@@ -90,9 +100,8 @@ export default function UsersSettings() {
                 validationSchema={generateReportSchema}
                 >
                   {({values, errors, handleBlur, handleChange, handleSubmit, setFieldTouched, setFieldValue, isValid})=>(
-                    <View className='p-8 flex flex-col'>
-                    <Text className='text-3xl text-gray-500'>Hello, Abel Levi</Text>
-                    <Text className='text-lg text-gray-500'>Generate Report</Text>
+                    <View className='p-8 flex flex-col bg-white h-full rounded-xl'>
+                      <Text className='text-lg text-gray-500'>Generate Report 📃</Text>
 
                     {/* Design a layout to show a selection list for budget and for document type */}
                     <View className='mt-2'>
@@ -160,7 +169,9 @@ export default function UsersSettings() {
                       onBlur={handleBlur('password')}
                       value={values.password}
                       className='border text-gray-500 py-2 px-2 my-1'
-                      placeholder='******' />
+                      placeholder='******' 
+                      secureTextEntry={true}
+                      />
 
                       {errors.password? <Text className='text-red-500 font-bold px-2'>
                       {errors.password}
@@ -189,6 +200,34 @@ export default function UsersSettings() {
                 <Text className='p-4 rounded-xl bg-green-600 mx-3 text-bold text-white'>{reportMessage}</Text>: 
                 <Text></Text>}
               </ScrollView>
+            </View>
+
+
+            {/* List file generated sorted descending by date */}
+            <View className='h-1/4 bg-white w-full'>
+                  <ScrollView className='h-full py-4 rounded-xl bg-gray-100'>
+                    {sheetLists.length > 0? 
+                    sheetLists.map((value, index)=> {
+                        // slice and pick file name only
+                        let fileName = value.split('/').at(-1)
+                        fileName = fileName?.split('%').at(-1)                        
+                      return (
+                          <TouchableHighlight
+                          onPress={async()=> {
+                            // open file
+                            await openFile(value)
+                          }}
+                          key={index} 
+                          className='border-[0.5px] border-black mx-2 p-3 my-1 rounded bg-gray-200'>
+                            <View className='flex flex-row items-center justify-between'>
+                              <Text>{fileName} </Text>
+                            </View>
+                          </TouchableHighlight>
+                      )
+                    }): 
+                    <Text className='m-auto font-bold'>File list In progress...</Text>
+                    }
+                  </ScrollView>
             </View>
           </SafeAreaView>
   );

@@ -5,6 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Formik } from 'formik';
 import { TextInput } from 'react-native';
 import { Icon } from '@roninoss/icons';
+import { useEffect, useState } from 'react';
+import { UserProfile } from './profile';
+import { Auth } from '~/lib/func/tailored';
 
 /* 
 
@@ -27,9 +30,41 @@ Note all web pagemlink are defined in the google parse link. the button refers t
 export default function UserPrivacy() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+const [profile, setProfile] = useState<UserProfile>({
+    accounttype: null,
+    created_at: null,
+    data: {
+      data: [],
+      id: null,
+      organization: null,
+      organization_name: null
+    },
+    deleted_at: null,
+    email: null,
+    firstname: null,
+    id: null,
+    lastname: null,
+    status: null,
+    updated_at: null,
+    userid: null,
+    username: null  
+  })
+
+  const userObject = new Auth()
+
+  useEffect(() =>{
+    const collectProfile = async () => {
+      const profileData = await userObject.profile()
+        setProfile(profileData)
+    }
+
+    collectProfile();
+      // This function will collect user profile information from the backend
+  })
+
 
   return (
-          <SafeAreaView className='p-2'>
+          <SafeAreaView className='p-2 bg-white'>
             {/* container */}
             <View className='w-full h-full  rounded-xl'>
               {/* Display all information about user using formik form and add a submit button to allow user to edit and submit at a go */}
@@ -41,8 +76,8 @@ export default function UserPrivacy() {
                 >
                   {({dirty, values, errors, handleBlur, handleChange, handleSubmit})=>(
                     <View className='p-8 flex flex-col'>
-                    <Text className='text-3xl text-gray-500'>Hello, Abel Levi</Text>
-                    <Text className='text-xl text-gray-800 mt-4'>Change Password</Text>
+                    <Text className='text-3xl text-gray-500'>Hello,{profile.firstname!}</Text>
+                    <Text className='text-xl text-gray-800 mt-4'>Change Password 🔏</Text>
               
                     <View className='mt-1'>
                       <Text>Email: </Text>

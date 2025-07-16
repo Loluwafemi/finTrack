@@ -38,14 +38,14 @@ export default function UserAddGrant() {
   */
 
   // remove later
+  const [sheetstatus, changeSheetStatus] = useState(false)
   const chainFunctionFromChildtoParent = ()=>{
-      // console.log('chain function called');
-      
+      changeSheetStatus(false)
   }
 
   const userObject = new Auth()
   return (
-        <SafeAreaView edges={['top']} className='m-4'
+        <SafeAreaView className='p-4 bg-white h-full'
         >
           <Formik
           initialValues={{
@@ -71,7 +71,7 @@ export default function UserAddGrant() {
 
           >
           {({handleBlur, handleReset, handleChange, values, errors, handleSubmit, setFieldValue, setFieldTouched})=>(
-            <View>
+            <View className='mt-8 h-full'>
                 <View className='flex flex-row items-center'>
                 <TouchableHighlight onPress={()=> navigation.back()}>
                   <Icon name='chevron-left' />
@@ -137,9 +137,20 @@ export default function UserAddGrant() {
               >
                 {(arrayFunction)=>(
                   <View>
-                    <BottomSheet funcClose={''}>
+                    <BottomSheet 
+                    CallisVisible={sheetstatus}
+                    >
                           <ExpenseForm 
-                            output={(incoming)=>{arrayFunction.push(incoming)}}
+                            output={(incoming)=>{
+                              // remove duplicate expense
+                              const isDuplicate = values.expenses.some(expense => expense.expenseCategory === incoming.expenseCategory);
+
+                              if (isDuplicate) {
+                                return arrayFunction.replace(values.expenses.findIndex(expense => expense.expenseCategory === incoming.expenseCategory), incoming);
+                              }
+                              arrayFunction.push(incoming);
+
+                            }}
                             onSubmitCloseModal={chainFunctionFromChildtoParent}
                             />
                       
@@ -191,9 +202,11 @@ const ExpenseForm = ({output, onSubmitCloseModal})=>{
     onSubmit={async (expenseData, {resetForm, setErrors})=>{
 
         console.log(expenseData);
-        
+        if (!expenseData.expenseCategory) return setErrors({expenseCategory: 'Please select a category'})
+        if (!expenseData.cost) return setErrors({cost: 'Please enter a cost'})  
         output(expenseData)
-        // onSubmitCloseModal()      // not working fix
+        resetForm()
+        onSubmitCloseModal()      // not working fix
         
 
         
@@ -239,7 +252,7 @@ const ExpenseForm = ({output, onSubmitCloseModal})=>{
 
 
           <TouchableHighlight
-          onPress={handleSubmit}
+              onPress={handleSubmit}
             className='bg-black rounded-md my-2 p-2 flex flex-row justify-center'
             >
               <View className='flex flex-row justify-center items-center'>

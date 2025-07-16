@@ -8,6 +8,7 @@ import { COLORS } from '~/theme/colors';
 
 export function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
+  
   return (
     <LayoutAnimationConfig skipEntering>
       <Animated.View

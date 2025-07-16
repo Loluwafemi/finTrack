@@ -32,9 +32,8 @@ export default function SignUpAuthentication() {
         }, [])
   
         return (
-          <View style={styles.body}>  
-              <View style={styles.form}>
-                <Text style={styles.signup}>Sign Up</Text>
+          <View className='mx-2'>  
+              <View className='h-full'>
                 <FormNav />
               </View>
         </View>

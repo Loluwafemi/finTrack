@@ -28,10 +28,10 @@ export function GrantFeatureList( {expensesList} ) {
 
 function GrantFeatureItem({values}) {
 
-    const percentage = values.percentage === isNaN || values.percentage > 1? 0: values.percentage
-    
-    const displayablePercentage = Number((values.percentage * 100)).toFixed(0)
-    
+    const percentage = values.percentage === isNaN || values.percentage > values.percentage? 1: values.percentage
+    const displayablePercentage = Math.round(percentage * 100)    
+    // make progress bar color red if percentage is greater than 1
+    const progressColor = percentage > 1 ? 'red' : 'black'
 
 
     
@@ -43,12 +43,12 @@ function GrantFeatureItem({values}) {
                 <Text className='font-bold'>N{numeral(values.cost).format('0,0.00')}</Text>
             </View>
             <View className='flex flex-row justify-between'>
-                <Text className='px-2 bg-gray-700 text-gray-100 rounded-xl'>{displayablePercentage}% used</Text>
-                <Text className='text-gray-600 text-sm text-[13px]'>available</Text>
+                <Text className='px-2 bg-gray-700 text-gray-100 text-xs pt-[0.8px] rounded-xl mb-1'>{displayablePercentage}% used</Text>
+                <Text className='text-gray-600 text-sm text-[13px]'>approved</Text>
             </View>
 
             <View className='flex flex-row justify-between'>
-                <Progress.Bar color='black' className='flex mt-[1px] flex-1' progress={percentage} width={null}
+                <Progress.Bar color={progressColor} className='flex mt-[1px] flex-1' progress={percentage} width={null}
                 />
             </View>
         </View>

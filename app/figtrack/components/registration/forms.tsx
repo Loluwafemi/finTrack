@@ -353,90 +353,87 @@ export class FormNav extends Component{
     
     render(): ReactNode {
         const validationSchema = signupSchema
-    const navigation = useRouter()
+        const navigation = useRouter()
 
         return (
 
             <SafeAreaProvider>
-            <SafeAreaView edges={['top']} style={style.container}>
-
-            <ScrollView>
-            <Formik
-                initialValues={{ displayer: '' }}
-                onSubmit={async (res, {setErrors})=>{
-                        const response = await signupREQUEST(res)
-                        
-                        if (!response.status) {
-                            return await setErrors({displayer: response.message})
-                        }else{
-                           return navigation.navigate('/(auth)')
-                        }
-                        
-                    }}
+            <SafeAreaView className=''>
                 
+                <Formik
+                    initialValues={{ displayer: '' }}
+                    onSubmit={async (res, {setErrors})=>{
+                            const response = await signupREQUEST(res)
+                            
+                            if (!response.status) {
+                                return await setErrors({displayer: response.message})
+                            }else{
+                            return navigation.navigate('/(auth)')
+                            }
+                            
+                        }}
                     
-                validationSchema={signupSchema}
-            >{(formObjects)=>(
-                <ScrollView style={formStyle.form}>
-
-
-                    <View>
-                    {
-                    this.state.currentScreen == 3? <Bank validation={formObjects}/> :
-                    this.state.currentScreen == 2? <Organization validation={formObjects} /> :
-                    // this.state.currentScreen == 1? <Personal/> :
-                    this.state.currentScreen == 1? <Personal validation={formObjects} /> :
-                    <Text>Done</Text>
-                    }
-                    </View>
-
-                    <View className='flex flex-row mx-1'>
-                    <TouchableOpacity
-                        className='p-3 flex-2 w-1/4 border border-gray-700 m-1 rounded-xl'
-                        onPress={()=> {
-                            this.decreaseNav(this.state)
-                        }}
-                        // go back
-                    >
-                    <Text style={[style.navigatorText, style.navigatorBack]}> Back</Text>
-                    </TouchableOpacity>
-            
-                    <TouchableOpacity 
-                    className='p-3 bg-gray-700 m-1 flex-8 w-3/4 items-end rounded-xl'
-                        onPress={()=> {
-                            this.increaseNav(this.state)
-                        }}
-                        // go forward
-                    >
-                    <Text className='text-white'>Continue</Text>
-                    </TouchableOpacity>
-                    </View>
-
-                    <TouchableOpacity 
-                    // disabled={true}
-                    onPress={(form)=>{
-                        formObjects.handleSubmit(form)
                         
-                    }}
-                    // disabled={formObjects.isValid}
-                    
-                    
-                    className={`flex ${formObjects.isValid? 'bg-green-800 p-3': 'bg-red-800'} flex-row justify-center rounded-md p-2 m-4`}
-                    >
-                    <Text style={style.navigatorText}>Submit </Text>
-                    </TouchableOpacity>
-{/* 
-                    {!formObjects.isValid? <Text className='text-red-500 font-bold px-2'>
-                    Form incomplete, continue....
-                    </Text>: <Text>validating.....</Text>} */}
-                </ScrollView>
+                    validationSchema={signupSchema}
+                >{(formObjects)=>(
+                    <ScrollView contentContainerClassName='h-full flex flex-col justify-center'>
+                        <Text className='text-4xl mb-8 px-3'>Sign Up</Text>
 
-            )}
+                        <View>
+                        {
+                        this.state.currentScreen == 3? <Bank validation={formObjects}/> :
+                        this.state.currentScreen == 2? <Organization validation={formObjects} /> :
+                        // this.state.currentScreen == 1? <Personal/> :
+                        this.state.currentScreen == 1? <Personal validation={formObjects} /> :
+                        <Text>Done</Text>
+                        }
+                        </View>
+
+                        <View className='flex flex-row mx-1'>
+                        <TouchableOpacity
+                            className='p-3 flex-1 border border-gray-700 m-1 rounded-xl'
+                            onPress={()=> {
+                                this.decreaseNav(this.state)
+                            }}
+                            // go back
+                        >
+                        <Text className='text-center' style={[style.navigatorText, style.navigatorBack]}> Back</Text>
+                        </TouchableOpacity>
+                
+                        <TouchableOpacity 
+                        className='p-3 bg-gray-700 m-1 flex-1 rounded-xl'
+                            onPress={()=> {
+                                this.increaseNav(this.state)
+                            }}
+                            // go forward
+                        >
+                        <Text className='text-white text-center'>Continue</Text>
+                        </TouchableOpacity>
+                        </View>
+
+                        <TouchableOpacity 
+                        // disabled={true}
+                        onPress={(form)=>{
+                            formObjects.handleSubmit(form)
+                            
+                        }}
+                        // disabled={formObjects.isValid}
+                        
+                        
+                        className={`flex ${formObjects.isValid? 'bg-green-800 p-3': 'bg-red-800'} flex-row justify-center rounded-xl p-2 m-1 mt-4`}
+                        >
+                        <Text className='font-bold' style={style.navigatorText}>Submit </Text>
+                        </TouchableOpacity>
+    {/* 
+                        {!formObjects.isValid? <Text className='text-red-500 font-bold px-2'>
+                        Form incomplete, continue....
+                        </Text>: <Text>validating.....</Text>} */}
+                    </ScrollView>
+
+                )}
 
 
-            </Formik>
-            </ScrollView>
-
+                </Formik>
             </SafeAreaView>
             </SafeAreaProvider>
 

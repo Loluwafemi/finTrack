@@ -82,7 +82,7 @@ export default function UsersUpload() {
     }, [])
     
   return (
-      <SafeAreaView edges={['top']} className='m-4'>
+      <SafeAreaView edges={['top']} className='m-4 h-full bg-white'>
         
           <View className='flex flex-row items-center'>
               <TouchableHighlight onPress={()=> {
@@ -92,7 +92,7 @@ export default function UsersUpload() {
               </TouchableHighlight>
               <Text className='mx-5 font-bold'>Upload Receipts</Text>
           </View>
-          <View className='m-4 flex flex-col'>
+          <View className='m-4 flex flex-col bg-white p-4'>
               {/* Allow User to select grant and spending package */}
               <Formik
                 initialValues={{
@@ -116,7 +116,7 @@ export default function UsersUpload() {
 
 
                 validationSchema={receiptUploadingSchema}
-              >{(formObject:any)=>(
+              >{(formObject)=>(
                 <View>
                     <View className='mt-4 mb-3'>
                         <GrantDropList validation={formObject} userGrant={budget} 
@@ -201,7 +201,7 @@ export default function UsersUpload() {
                             </Text>: ''}
                     </View>
                     <View className='flex flex-col mt-4'>
-                        <Button onPress={formObject.handleSubmit} color={'black'} title='Process' />
+                        <Button disabled={formObject.isSubmitting} onPress={formObject.handleSubmit} color={'black'} title='Process' />
                     </View>
                 </View>
 

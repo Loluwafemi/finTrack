@@ -26,7 +26,7 @@ Note all web pagemlink are defined in the google parse link. the button refers t
 
 */
 
-type UserProfile = { 
+export type UserProfile = { 
   "accounttype": string | null, 
   "created_at": string | null, 
   "data": { 
@@ -86,7 +86,7 @@ export default function UsersSettings() {
 
 
   return (
-          <SafeAreaView className='p-2'>
+          <SafeAreaView className='p-2 bg-white'>
             {/* container */}
             <View className='w-full h-full  rounded-xl'>
               {/* Display all information about user using formik form and add a submit button to allow user to edit and submit at a go */}
@@ -98,7 +98,7 @@ export default function UsersSettings() {
                 >
                   {({dirty, values, errors, handleBlur, handleChange, handleSubmit})=>(
                     <View className='p-8 flex flex-col'>
-                    <Text className='text-3xl text-gray-500'>Hello, Abel Levi</Text>
+                    <Text className='text-3xl text-gray-500'>Hello, {profile.firstname!}</Text>
 
                     <View className='mt-8'>
                       <Text>First Name: </Text>

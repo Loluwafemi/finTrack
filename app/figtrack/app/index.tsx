@@ -22,7 +22,8 @@ export default function WelcomeConsentScreen() {
           </Text>
 
           <Text
-            className="text-4xl text-primary text-center font-bold">
+            style={{color: colors.primary}}
+            className="text-4xl text-center font-bold">
             FIGTRACK
           </Text>
           <Text className='text-center'>Your Trusted Partner in Financial Clarity</Text>
@@ -43,20 +44,23 @@ export default function WelcomeConsentScreen() {
             <Text className="text-[11px] leading-4 pt-1 text-center">
               By pressing continue, you agree to our{' '}
               <Link href="/">
-                <Text className="text-[11px] leading-4 text-primary">
+                <Text 
+                style={{color: colors.primary}}
+                className="text-[11px] leading-4">
                   Terms of Service
                 </Text>
               </Link>{' '}
               and that you have read our{' '}
               <Link href="/">
-                <Text className="text-[11px] leading-4 text-primary">
+                <Text style={{color: colors.primary}} className="text-[11px] leading-4">
                   Privacy Policy
                 </Text>
               </Link>
             </Text>
           </View>
           <Link href="/(auth)" replace asChild>
-            <Button 
+            <Button
+              style={{backgroundColor: colors.primary}}
               size={Platform.select({ ios: 'lg', default: 'md' })}
               >
               <Text className='text-white'>Continue</Text>
@@ -75,7 +79,7 @@ const FEATURES = [
     icon: 'account-circle-outline',
   },
   {
-    title: 'Finance and Grant Analysis',
+    title: 'Finance and Expense Analysis',
     description: 'Visualize trends, compare budget allocations, and assess grant performance with powerful analytics tools.',
     icon: 'grid',
   },

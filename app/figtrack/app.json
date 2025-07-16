@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-expo-app",
+    "name": "FigTrack",
     "slug": "my-expo-app",
     "version": "1.0.0",
     "scheme": "my-expo-app",
@@ -14,7 +14,8 @@
       "react-native-edge-to-edge",
       "expo-document-picker",
       "expo-web-browser",
-      "expo-secure-store"
+      "expo-secure-store",
+      "./plugins/withDisableForcedDarkModeAndroid.js"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -22,7 +23,7 @@
     },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -32,7 +33,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "userInterfaceStyle": "light"
+
     },
     "android": {
       "adaptiveIcon": {
@@ -41,7 +44,9 @@
         
       },
       "package": "com.femi_android.myexpoapp",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": false,
+      "userInterfaceStyle": "light"
+
     },
     "extra": {
       "router": {},

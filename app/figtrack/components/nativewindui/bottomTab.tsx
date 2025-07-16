@@ -1,5 +1,5 @@
 import React, { Component, ReactNode, useEffect, useMemo, useState } from "react";
-import { Button, StyleSheet, TouchableHighlight, View } from "react-native";
+import { Button, StyleSheet, TouchableHighlight, View, ViewStyle } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import {  } from "react-native-safe-area-context";
 import { Text } from "./Text";
@@ -17,6 +17,8 @@ import { signouREQUEST } from "~/lib/server/server";
 import { Formik } from "formik";
 import { recordProviderForBudgetSchema } from "~/lib/func/auth";
 import numeral from 'numeral'
+import { ThemeToggle } from "../ThemeToggle";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 
 
@@ -48,9 +50,12 @@ export function UserHome(){
         };
         gettTransactions();
     }, [])
-    
+  const { colors, colorScheme, toggleColorScheme } = useColorScheme();
+
+    const ROOT_STYLE: ViewStyle = { flex: 1, backgroundColor: colors.foreground };
+
     return (
-        <ScrollView className="p[4px]">
+        <ScrollView className="p[4px] bg-transparent">
             {/* header */}
             <View className="flex flex-row p-[2px] justify-between items-center">
                 <Text className="font-bold text-2xl">Dashboard</Text>
@@ -60,13 +65,13 @@ export function UserHome(){
             </View>
 
             {/* Asset Balance Display */}
-            <View className="shadow-2xl p-3 bg-black rounded-md">
+            <View style={{backgroundColor: colors.primary}} className="shadow-2xl p-3 rounded-md">
                 <View className="flex flex-row justify-between items-center">
                     <Text  className="text-gray-200 text-xs">Total Available</Text>
-                    <View className="bg-gray-600 p-[3px] px-[8px] rounded-lg">
+                    <View className="bg-white p-[3px] px-[8px] rounded-lg">
                         <Text className="flex-row items-center">
                             <Icon color="red" size={15} name="cash" />
-                            <Text className="text-gray-300 text-xs">+N0.00 spent this month</Text>
+                            <Text className="text-black text-xs">+N0.00 spent this month</Text>
                         </Text>
                     </View>
                 </View>
@@ -84,16 +89,38 @@ export function UserHome(){
             </View>
             
             {/* Transaction actions */}
-            <View className="shadow-md flex flex-row justify-between p-3">
+            <View className="flex flex-row justify-between p-1 mt-4 mb-4">
                 <TouchableHighlight 
-                className="p-3 rounded-xl bg-gray-400 flex-1"
+                className="p-3 rounded-xl shadow bg-white border border-b-blue-700 border-l-blue-700 flex-1 mx-1 shadow-xl"
                 onPress={()=>{
                     navigation.navigate('/(dashboard)/upload')
                 }}
                 >
-                    <Text className="text-md flex items-center flex-row">
+                    <View className="flex flex-row justify-center items-center">
                         <Icon name="arrow-up-bold-circle" size={18} />
-                        Upload</Text>
+                        <Text className="mx-1 text-md text-center flex items-center flex-row">
+                        Upload
+                        </Text>
+
+                    </View>
+                </TouchableHighlight>
+
+
+                <TouchableHighlight 
+                style={{backgroundColor: colors.primary}}
+                className="p-3 rounded-xl flex-1 shadow-xl"
+                onPress={()=>{
+                   navigation.navigate('/(dashboard)/new')
+                }}
+                >
+                    <View className="flex flex-row justify-center items-center">
+                        <Icon color="white" name="file-plus-outline" size={18} />
+                        <Text className="mx-1 text-md text-center text-white flex items-center flex-row">
+
+                            Add Expense
+                        </Text>
+
+                    </View>
                 </TouchableHighlight>
             </View>
             {/* <View className="d-none shadow-md bg-gray-400 flex flex-row p-3 h-4">
@@ -109,7 +136,7 @@ export function UserHome(){
                     </TouchableHighlight>
                 </View>
 
-                <View className="p-3">
+                <View className="mt-[4px]">
                     {true? <TransactionList transactions={transactions}  />: 
                     <View className='m-auto p-1'>
                         <Text className="text-gray-400 text-sm">No Record Found</Text>
@@ -156,6 +183,8 @@ export function UserRecord(){
     function toggleScreen(){
         changeView(!isChart)
     }
+
+    const { colors } = useColorScheme()
     
     // use formik to present data. on select calls and resond immediately
     if (budget.length > 0) {
@@ -190,25 +219,31 @@ export function UserRecord(){
 
                     {/* Display selected grant */}
                     <View>
-                        <View className="shadow-2xl mt-3 p-3 bg-black rounded-md">
+                        <View style={{backgroundColor: colors.primary}} className="shadow-2xl mt-3 p-3 rounded">
                             <View className="flex flex-row justify-between items-center">
-                                <Text  className="text-gray-200 text-xs">Total </Text>
-                                <View className="bg-gray-600 p-[3px] px-[8px] rounded-lg">
-                                    <Text className="text-gray-200 text-xs">Total Available</Text>
+                                <Text  className=" hidden text-gray-200 text-xs">Total </Text>
+                                <View className="">
+
+                                </View>
+                            </View>
+                            <View className="flex flex-col justify-between">
+                                <View>     
+                                    <Text className="bg-white p-[3px] px-[8px] ps-0 pt-1 rounded-lg text-gray-800 text-xs">Total Approved</Text>  
+                         
+                                    <Text className="text-gray-200 text-2xl font-bold">
+                                    N{numeral(balances.total_a).format('0,0.00')}
+                                    </Text>
+                                </View>
+                                <View className="mt-2">    
+                                    <Text className="bg-gray-600 p-[3px] px-[8px] ps-0 pt-1 rounded-lg text-gray-200 text-xs">Total Available</Text>                              
+                                    <Text className="text-gray-200 text-2xl font-bold">
+                                        N{numeral(balances.total_s).format('0,0.00')}
+                                    </Text>
                                 </View>
                             </View>
                             <View className="flex flex-row justify-between">
-                                <Text className="text-gray-200 text-2xl font-bold">
-                                    N{numeral(balances.total_a).format('0,0.00')}
-                                </Text>
-
-                                <Text className="text-gray-200 text-2xl font-bold">
-                                    N{numeral(balances.total_s).format('0,0.00')}
-                                </Text>
-                            </View>
-                            <View className="flex flex-row justify-between">
-                                <Text className="text-gray-200 text-[10px]">
-                                    Dec 23, 2024
+                                <Text className=" text-gray-200 text-[10px]">
+                                    ---
                                 </Text>
                                 <Text className="text-gray-200 text-[10px]">
                                     N0.00 this week
@@ -216,9 +251,10 @@ export function UserRecord(){
                             </View>
                         </View>
                         {/* Filter */}
-                        <View className="flex flex-row p-2 mt-2 bg-red-700 rounded-lg justify-between items-center">
+                        <View className="flex flex-row p-2 mt-2 bg-black rounded-lg justify-between items-center">
                             <TouchableHighlight
                                 onPress={toggleScreen}
+                                disabled={true}
                             >
                                 {
                                 isChart? 
@@ -432,10 +468,13 @@ export function Settings(){
                         <View>
                             <Text className="text-lg text-gray-800 font-bold">App Preferences</Text>
                             <View>
-                                <TouchableHighlight>
+                                
+
+                                <TouchableHighlight disabled={true}>
                                     <View className="flex flex-row items-center p-4 border-b border-black my-2 rounded-lg">
-                                        <Icon name="weather-sunny" />
-                                        <Text className="mx-4">Dark Mood</Text>
+                                        {/* <ThemeToggle /> */}
+                                        <Icon name="lightbulb" />
+                                        <Text className="mx-4">Light Mood</Text>
                                     </View>
                                 </TouchableHighlight>
 
