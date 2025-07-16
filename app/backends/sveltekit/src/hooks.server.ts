@@ -10,7 +10,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	let cloneResponse = event.request.clone()
 
 	let theOrigin = allowed_origin.find((value, index)=> value === cloneResponse.headers.get('origin')!)
-	
+
 	// handle all api request here
 	if (event.url.pathname.startsWith('/api')) {	
 		// Required for CORS to work

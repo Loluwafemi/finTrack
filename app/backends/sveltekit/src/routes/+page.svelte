@@ -3,7 +3,6 @@
     import { onMount } from 'svelte';
     import Modal from '../components/modal.svelte';
 
-
     export let data;
 
     onMount(()=>{
@@ -25,6 +24,7 @@
         })
     })
 
+
     let selectedBudgetCategory: any;
 
     let budgetData = {
@@ -38,7 +38,6 @@
         name: null,
         cost: null
     }
-
 
     function addExpense() {
         if (budgetPayload.cost && budgetPayload.name) {
@@ -371,5 +370,44 @@
         </div>
 
         <div class=" bg-white p-4 rounded my-6">
+        </div>
+</div>
+
+
+
+<div class="p-4 flex flex-col justify-center items-center h-screen bg-gray-300">
+        <div class=" bg-white p-4 rounded flex flex-col items-center">
+            <div>
+                <h1>EXPENSE REPORT TEMPLATE UPDATING</h1>
+                <h3 class="text-xl text-center font-bold">STORE TEMPLATE TO CLOUD BLOB</h3>
+            </div>
+            {#if true}
+                <form class="flex flex-col items-center" enctype="multipart/form-data" action="?/updateTemplate" method="post">
+                    <div class="flex flex-col justify-between items-center">
+                        <button>Select Template (.xlsx)</button>
+                        <input name="template" class="border p-2 border-black shadow-xl" type="file" placeholder="Template" accept='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'>
+
+                        <button class="p-2 bg-gray-800 text-white font-bold mt-4" type="submit">Update Template</button>
+
+                        <div class="flex flex-col mt-8 items-center">
+                            <h4 class="text-lg font-bold">Current Template</h4>
+
+                                {#each data.values as blob}
+                                    <div class="flex flex-col p-2 bg-gray-200 border boder-black rounded-xl shadow m-2">
+                                        <a href={blob.downloadUrl}>{blob.pathname}</a>
+                                        <p>url: {blob.url}</p>
+                                        <p>date: {blob.uploadedAt}</p>
+                                    </div>
+                                {:else}
+                                    <p>No blob file found yet</p>
+                                {/each}
+                            <p>Template name: </p>
+                            <p>Template hyper link: </p>
+                        </div>
+                    </div>
+                </form>
+            {:else}
+                <p>Sign In To create Budget Template</p>
+            {/if}
         </div>
 </div>

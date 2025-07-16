@@ -37,8 +37,7 @@ export const POST: RequestHandler = async (event) => {
     let generateReport = await prepareReport.extractReport(workingReport)
     
 
-
-    return json({status: true, message: "Report has been generated. Kindly check your folder [storage/expTracker/report] to retrieve your report", data: generateReport.data})
+    return json({status: true, message: "Report has been generated. Kindly check your folder [storage/expTracker/report] to retrieve your report", data: generateReport?.data})
 
     
 };

@@ -42,14 +42,15 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@tailwindcss/vite": "^4.1.10",
+		"@vercel/blob": "^1.1.1",
 		"@vercel/postgres": "^0.10.0",
 		"bcrypt": "^6.0.0",
 		"dotenv": "^17.0.1",
 		"drizzle-orm": "^0.40.1",
-		"exceljs": "^4.4.0",
 		"lucia": "^3.2.2",
 		"pg": "^8.16.1",
 		"postgres": "^3.4.7",
-		"tailwindcss": "^4.1.10"
+		"tailwindcss": "^4.1.10",
+		"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
 	}
 }

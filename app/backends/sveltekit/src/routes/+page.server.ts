@@ -4,7 +4,11 @@ import { createSession, deleteSessionTokenCookie, generateSessionToken, setSessi
 import { Admin } from "$lib/server/models/admin";
 import type { PageServerLoad } from "./$types";
 import { Budget } from "$lib/server/models/budget";
+import { put } from '@vercel/blob';
+import { listBlob } from "$lib/gen/processor";
 
+
+export const prerender = false;
 
 export const load: PageServerLoad = async (event) => {
     
@@ -12,11 +16,12 @@ export const load: PageServerLoad = async (event) => {
     // let allBudget = await budgets.templates()   
     
     // // console.log(allBudget);
-    
 
-    // return {
-    //     registeredBudget: allBudget
-    // }
+    
+    return {
+        // registeredBudget: allBudget,
+        values: await listBlob()
+    }
 };
 
 
@@ -107,6 +112,25 @@ export const actions: Actions = {
         const auth = await event.locals.user
         transaction = await admin.registerBuget(formData, auth)
 
+    },
+
+    updateTemplate: async (event) => {
+        const form = await event.request.formData()
+
+        try {        
+            const file = form.get('template') as File;
+
+            if (!file.name) return {  status: false }
+            const blob = await put(`report/${file.name}`, file, {
+            access: 'public',
+            allowOverwrite: true,
+            token: process.env.FIGTRACK_READ_WRITE_TOKEN!
+            });
+        } catch (error) {
+            console.log("Error: ", error);
+            
+        }
+                
     }
     
 };
