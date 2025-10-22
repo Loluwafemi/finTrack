@@ -16,7 +16,6 @@ export const POST: RequestHandler = async (event) => {
 
     
     if (!findUserByID.status) return json(findUserByID)
-    
 
     /* 
     send in the receipt to the db. 
@@ -29,7 +28,6 @@ export const POST: RequestHandler = async (event) => {
         if no, return a status-message object
     
     */
-   
     const budget = await user.uploadReceipt(data, auth)
 
 

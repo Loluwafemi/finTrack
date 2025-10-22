@@ -454,9 +454,6 @@ export class User {
             // record bug to another table. do this for the rest of the transactions to the database
         }
 
-
-
-
         return transaction
     }
 
@@ -483,6 +480,8 @@ export class User {
                         desc: data.description,
                         expense: data.expenseCategory, 
                         cost: data.cost,
+                        bank: data.bank,
+                        date: data.date
                     },
                     date: Date.now()
                 },
@@ -494,8 +493,6 @@ export class User {
             
         }
         
-        
-
         if (!transaction?.status) return transaction
 
         return transaction
@@ -573,9 +570,6 @@ export class User {
        const budgetInfo = transaction
 
        if (!receipt || !budgetInfo)  return { status: false, message: "Unable to retrieve budget information. Kindly contact customer support." }
-
-
-       
 
         return { status: true, data:  { receipt, budgetInfo }}
     }

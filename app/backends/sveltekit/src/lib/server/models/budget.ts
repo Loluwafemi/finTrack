@@ -1,7 +1,7 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { budget_expense, registered_budget_templates, user_budget } from "../db/schema";
 import { Transactions } from "./transaction";
-import { generateTimeStamp } from "./user";
+import { User, generateTimeStamp } from "./user";
 import db from "./index";
 
 
@@ -44,11 +44,14 @@ export class Budget{
     async add(data:{ title: string, type: string, expenses: [] }, auth:any){
         let transaction;
 
+        const isApproved = await autoApproveBudget(auth)
+
         transaction = (await db.insert(user_budget).values({
             userid: auth.userid,
             budgetname: data.title,
             budgettitle: data.type,
-            approvedby: 'none'
+            approvedby: 'none',
+            status: isApproved? 'approved': 'pending'
         }).returning()).pop()
 
         if (!transaction) return { status: false, message: "Unable to save user's budget." }        
@@ -58,6 +61,26 @@ export class Budget{
             expense_object: data.expenses,
             expense_composition: data.expenses
         }).returning()
+
+
+        if(isApproved){
+            try {
+                let invoking = new Transactions()
+                await invoking.invoke({
+                    author: auth.userid,
+                    receiver: auth.userid,
+                    message: {
+                        text: "Your budget has been approved.",
+                        title: "Budget Request"
+                    },
+                    status: 'approved',
+                    type: 'activity'
+                })
+            } catch (error) {
+                // record bug to another table. do this for the rest of the transactions to the database
+            }
+    
+        }
 
         if (!transaction) return { status: false, message: "Unable to save user's budget." }
 
@@ -224,4 +247,16 @@ function validateExpense(data:expenseTemplate , expenses: expenseTemplate[]|any)
     });
     return expenses
 
+}
+
+async function autoApproveBudget(auth): Promise<boolean> {
+
+    const userObject = new User()
+    const info = await userObject.find(auth.userid)
+
+    if(String(info.data?.data.organization).toLowerCase() == 'personal') return true
+
+    return false
+    
+    
 }

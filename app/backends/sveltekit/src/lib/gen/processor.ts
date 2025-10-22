@@ -69,7 +69,7 @@ type expenseTemplate = {
 }
 
 type receiptExpense = {
-    desc: string, expense: string, cost: string
+    desc: string, expense: string, cost: string, bank: string, date: string
 }
 
 type receiptTemplate = {
@@ -201,6 +201,69 @@ export class ReportGenerator{
     
     }
 
+    async LocalextractReport(data:rawReportTemplate, type: 'pdf'|'excel' = 'excel') {
+        let userdata = this.auth
+
+
+        /* 
+        Comment out before you deploy
+        */
+        try {
+            set_fs(await import("fs"))
+
+            /* Find local template */
+            const workbook = readFile(join(cwd(), "template", "expense_report_template.xlsx"), { cellFormula: true });
+            
+            const f_wsheetTable: WorkSheet = workbook.Sheets[workbook.SheetNames[0]]
+            const s_wsheetTable: WorkSheet = workbook.Sheets[workbook.SheetNames[1]]
+
+            // send them to function and save to new file/stream
+
+            // let processed: EXCELJS.Workbook;
+            workbook.SheetNames.forEach( async (sheet, index)=>{   
+
+                let transaction;
+                
+                switch (sheet) {
+                    case 'summary':
+                        transaction = await this.writeToSummaryTable(data, workbook.Sheets[sheet])
+                    break;
+
+                    case 'express':
+                        transaction = await this.writeToExpressTable(data, workbook.Sheets[sheet])
+                    break;
+                
+                    default:
+                    // pack everything and save in one place with a message
+                    break;
+                }
+                
+                // process and save
+                writeFile(workbook, join(cwd(), 'template', 'output.xlsx'))
+                
+                // encode file for transmission
+
+
+
+                    
+            })
+            
+            const transmission = write(workbook, {
+                type: 'base64',
+                bookType: 'xlsx'
+            })
+
+            return { status: true, data:  transmission}
+            
+        } catch (error) {
+            console.log("Error detection reading");
+            console.log("Error: ", error);
+            
+        }
+        
+    
+    }
+
     private async writeToSummaryTable(raw_data: rawReportTemplate, table:WorkSheet){
         const budget = raw_data.budgetInfo
         const expense_object:expenseTemplate[] = budget.expense?.expense_object
@@ -221,7 +284,7 @@ export class ReportGenerator{
                 const date = budget.created_at.toString()
 
                 const ws = utils.sheet_add_aoa(table, [
-                    [1+index, date, expense, cost, Math.abs(spent), { t: "n", val: balance, f: `D${2 + index} + E${2 + index}` }]
+                    [1+index, date, expense, cost, Math.abs(spent), { t: "n", val: balance, f: `D${2 + index} - E${2 + index}` }]
                 ], { origin: `A${2 + index}`, UTC: true, cellStyles: true, password: 'figtrack-enckey' , dense: true})
 
                 // formatting
@@ -254,7 +317,7 @@ export class ReportGenerator{
         let receipts: receiptTemplate[] = raw_data.receipt
         const budget = raw_data.budgetInfo
         const expense_object:expenseTemplate[] = budget.expense?.expense_object
-
+        
         this.header.created = budget.created_at
         this.header.modified = budget.updated_at
 
@@ -298,9 +361,11 @@ export class ReportGenerator{
                 const cost = Number(receipt.message.text.cost)
                 const desc = receipt.message.text.desc
                 const balance = currentCategoryCost(receipt)
+                const bank = receipt.message.text.bank
+                const receiptDate = receipt.message.text.date
 
                 const ws = utils.sheet_add_aoa(table, [
-                    [1+index, date, expense, desc, cost, balance, overdraft.amount]
+                    [1+index, date, expense, desc, cost, balance, overdraft.amount, receiptDate, bank]
                 ], { origin: `A${2 + index}`, UTC: true, cellStyles: true, password: 'figtrack-enckey', dense: false,  })
 
                 
@@ -318,6 +383,8 @@ export class ReportGenerator{
                     ws['!cols'][4] = { width: 30 }
                     ws['!cols'][5] = { width: 30 }
                     ws['!cols'][6] = { width: 30 }
+                    ws['!cols'][7] = { width: 30 }
+                    ws['!cols'][8] = { width: 60 }
             });
 
 

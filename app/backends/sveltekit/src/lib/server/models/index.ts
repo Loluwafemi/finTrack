@@ -1,6 +1,6 @@
 import { verceldb, db as localdb, type dbInterface } from "../db";
 
-const environment: "development" | "production" = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+export const environment: "development" | "production" = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
 console.log('environment:', environment);
 
