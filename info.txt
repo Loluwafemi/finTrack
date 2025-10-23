@@ -1,0 +1,6 @@
+figtrack-build-artifacts
+This shared drive is to store every build version deployed
+Every release is named according to its name-version-date
+
+reach out to handssistance@gmail.com for support
+Feel free to contribute, thank you 🙂
