@@ -14,7 +14,9 @@ export const GET: RequestHandler = async (event) => {
 
     /* 
     check if the origin is active by running a surface get request
+    Do not override or change the response structure as the app is dependent to it
     */
+
     const response = await fetch(RECEIPT_SCANNER_DOMAIN, {
         method: "GET",
         redirect: 'follow'
