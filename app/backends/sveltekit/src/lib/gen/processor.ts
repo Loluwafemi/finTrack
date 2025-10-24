@@ -47,7 +47,7 @@ export type AuthenticationTemplate = {
 }
 
 type rawReportTemplate = {
-    receipt: object[],
+    receipt: receiptTemplate[],
     budgetInfo: {
       userid: string,
       id: number,
@@ -74,7 +74,7 @@ type receiptExpense = {
 
 type receiptTemplate = {
     receiver: string,
-    message: { title: string, text: receiptExpense, date: Date },
+    message: { title: string, text: receiptExpense, date: Date, bid: string },
     type: string,
     status: 'disabled'|'approved'|'deleted'|'pending',
     author: string,
@@ -271,9 +271,6 @@ export class ReportGenerator{
 
         this.header.created = budget.created_at
         this.header.modified = budget.updated_at
-
-        
-        
         try {
             
             expense_object.forEach((data, index) => {
@@ -321,13 +318,21 @@ export class ReportGenerator{
         this.header.created = budget.created_at
         this.header.modified = budget.updated_at
 
-        
         // get all the sheet in the workbook
+
+        /* 
+        Receipt now contains receipt.message budgetid which is used to compare with the expense object
+        If expense budget.bid === receipt.message.bid
+        */
     
         
         try {
+            let rowCount: number = 0
+
             receipts.forEach((receipt, index) => {
                 
+
+                if (receipt.message.bid === budget.budgetid) {
                 /* 
                 Every iteration. Scan into the budget object and find the cost using the category as a pointer and return just the cost, which goes through dynamic change from the cost for every express
                 */
@@ -365,26 +370,30 @@ export class ReportGenerator{
                 const receiptDate = receipt.message.text.date
 
                 const ws = utils.sheet_add_aoa(table, [
-                    [1+index, date, expense, desc, cost, balance, overdraft.amount, receiptDate, bank]
-                ], { origin: `A${2 + index}`, UTC: true, cellStyles: true, password: 'figtrack-enckey', dense: false,  })
+                    [1+rowCount, date, expense, desc, cost, balance, overdraft.amount, receiptDate, bank]
+                ], { origin: `A${2 + rowCount}`, UTC: true, cellStyles: true, password: 'figtrack-enckey', dense: false,  })
 
                 
                 // formatting
-                ws[`E${2 + index}`].z = '"NGN "#,##0.00'
-                ws[`F${2 + index}`].z = '"NGN "#,##0.00'
-                ws[`G${2 + index}`].z = '"NGN "#,##0.00'
+                ws[`E${2 + rowCount}`].z = '"NGN "#,##0.00'
+                ws[`F${2 + rowCount}`].z = '"NGN "#,##0.00'
+                ws[`G${2 + rowCount}`].z = '"NGN "#,##0.00'
 
                 // width size
                 if (!ws['!cols']) ws['!cols'] = []
 
-                    ws['!cols'][1] = { width: 25 } 
-                    ws['!cols'][2] = { width: 40 } 
-                    ws['!cols'][3] = { width: 30 }
-                    ws['!cols'][4] = { width: 30 }
-                    ws['!cols'][5] = { width: 30 }
-                    ws['!cols'][6] = { width: 30 }
-                    ws['!cols'][7] = { width: 30 }
-                    ws['!cols'][8] = { width: 60 }
+                ws['!cols'][1] = { width: 25 } 
+                ws['!cols'][2] = { width: 40 } 
+                ws['!cols'][3] = { width: 30 }
+                ws['!cols'][4] = { width: 30 }
+                ws['!cols'][5] = { width: 30 }
+                ws['!cols'][6] = { width: 30 }
+                ws['!cols'][7] = { width: 30 }
+                ws['!cols'][8] = { width: 60 }
+
+                ++rowCount
+            }
+
             });
 
 

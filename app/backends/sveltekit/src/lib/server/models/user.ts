@@ -3,7 +3,7 @@ import { protection, user, user_bank, user_budget, user_data, user_transactions 
 import { Budget } from "./budget";
 import { Transactions } from "./transaction";
 import db from "./index";
-
+import bcrypt from 'bcrypt';
 
 export interface User {
     firstname: string | null,
@@ -69,8 +69,13 @@ export class User {
 
         if (!transaction) return { status: false, message: "Unable to save user data"}
 
+        // encrypt password
+        const saltRounds = 9;
+        const hashedPassword = await bcrypt.hash(userdata.password, saltRounds);
+
+
         transaction = await db.insert(protection).values({
-            password: userdata.password,
+            password: hashedPassword,
             userid: transaction.userid
         }).returning()
             if (cred_data){
@@ -416,7 +421,11 @@ export class User {
                     where: eq(response.userid, protection.userid)
                     })
 
-                    if (transaction?.password == password) {{
+                    //  validate password with hashedPassword
+                    const passwordMatch = await bcrypt.compare(password, transaction?.password!);
+
+                    
+                    if (passwordMatch) {{
                         return response
                     }}else{
                         return null
@@ -474,6 +483,7 @@ export class User {
                 author: auth.userid,
                 message: {
                     title: "Receipt Upload",
+                    bid: data.bid,
                     text: {
                         title: (await budgetInfo).data?.budgettitle,
                         name: (await budgetInfo).data?.budgetname,
